@@ -10,7 +10,7 @@ module GitPusshuTen
         exit
       end
       
-      
+      "GitPusshuTen::Command::#{cli.command.classify}".constantize.new(cli, configuration)
     end
     
     ##

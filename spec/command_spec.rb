@@ -1,5 +1,15 @@
 require 'spec_helper'
 
+module GitPusshuTen
+  class Command
+    class NonExistingCommand
+      def initialize(cli, configuration)
+        
+      end
+    end
+  end
+end
+
 describe GitPusshuTen::Command do
     
   let(:cli)           { mock('cli')           }
@@ -25,6 +35,16 @@ describe GitPusshuTen::Command do
       command.expects(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
       command.available_commands.should include('mock_tag')
     end
+  end
+  
+  it "should initialize the specified command" do
+    GitPusshuTen::Command.any_instance.stubs(:exit)
+    GitPusshuTen::Log.stubs(:error)
+    
+    GitPusshuTen::Command::NonExistingCommand.expects(:new).with(cli, configuration)
+    
+    command = GitPusshuTen::Command.new(cli, configuration)
+    command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
   end
   
 end
