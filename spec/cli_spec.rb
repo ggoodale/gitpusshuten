@@ -34,6 +34,11 @@ describe GitPusshuTen::CLI do
       cli = GitPusshuTen::CLI.new(%w[maintenance on for production])
       cli.environment.should == :production
     end
+    
+    it "should return the environment" do
+      cli = GitPusshuTen::CLI.new(%w[maintenance on for pr0duct10n])
+      cli.environment.should == :pr0duct10n
+    end
   end
   
 end
