@@ -7,8 +7,8 @@ module GitPusshuTen
     attr_accessor :application
 
     ##
-    # Contains the remote branch name which is extracted from
-    # the selected configuration in the configuration file
+    # Contains the environment on the remote server name which
+    # is extracted from the selected configuration in the configuration file
     attr_accessor :environment
 
     ##
