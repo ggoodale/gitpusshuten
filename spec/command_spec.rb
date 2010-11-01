@@ -1,15 +1,5 @@
 require 'spec_helper'
 
-module GitPusshuTen
-  class Command
-    class NonExistingCommand
-      def initialize(cli, configuration)
-        
-      end
-    end
-  end
-end
-
 describe GitPusshuTen::Command do
     
   let(:cli)           { mock('cli')           }
