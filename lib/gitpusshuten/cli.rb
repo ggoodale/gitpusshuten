@@ -9,7 +9,14 @@ module GitPusshuTen
     # Environment
     attr_accessor :environment
     
+    ##
+    # Command
+    attr_accessor :command
+    
     def initialize(*args)
+      
+      ##
+      # Clean up arguments
       @arguments = args.flatten.uniq.compact.map(&:strip)
       
       ##
@@ -19,6 +26,11 @@ module GitPusshuTen
           @environment = match.to_sym unless match.nil?
         end
       end
+      
+      ##
+      # Extract Command
+      @command = @arguments.first.strip
+      
     end
     
   end

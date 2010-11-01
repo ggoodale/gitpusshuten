@@ -41,4 +41,11 @@ describe GitPusshuTen::CLI do
     end
   end
   
+  describe '#command' do
+    it "should extract the command from the cli" do
+      cli = GitPusshuTen::CLI.new(%w[maintenance on for pr0duct10n])
+      cli.command.should == 'maintenance'
+    end
+  end
+  
 end
