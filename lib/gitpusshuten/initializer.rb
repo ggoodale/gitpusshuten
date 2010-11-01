@@ -7,7 +7,7 @@ module GitPusshuTen
         exit
       end
       
-      GitPusshuTen::Configuration.new(:staging).parse!(configuration_file)
+      GitPusshuTen::Configuration.new(args).parse!(configuration_file)
     end
     
     def configuration_file
