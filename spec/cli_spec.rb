@@ -6,7 +6,7 @@ describe GitPusshuTen::CLI do
   
   it "should flatten the arguments" do
     cli = GitPusshuTen::CLI.new(['tag', [['1.4.2', 'to'], 'staging']])
-    cli.arguments.should == ['tag', '1.4.2', 'to', 'staging']
+    cli.arguments.should == ['1.4.2']
   end
   
   describe "extracting the environment" do
