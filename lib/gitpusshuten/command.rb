@@ -16,6 +16,12 @@ module GitPusshuTen
         exit
       end
       
+      perform!(cli, configuration)
+    end
+    
+    ##
+    # Performs the target command, based on the CLI and Configuration
+    def perform!(cli, configuration)
       "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
     end
     
