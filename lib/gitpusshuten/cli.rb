@@ -29,7 +29,7 @@ module GitPusshuTen
       
       ##
       # Extract Command
-      @command = @arguments.first.strip
+      @command = @arguments.first.strip.underscore
       
     end
     

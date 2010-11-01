@@ -46,6 +46,11 @@ describe GitPusshuTen::CLI do
       cli = GitPusshuTen::CLI.new(%w[maintenance on for pr0duct10n])
       cli.command.should == 'maintenance'
     end
+
+    it "should make underscores from dashes for commands" do
+      cli = GitPusshuTen::CLI.new(%w[remote-command on pr0duct10n])
+      cli.command.should == 'remote_command'
+    end
   end
   
 end
