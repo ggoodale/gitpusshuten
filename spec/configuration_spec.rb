@@ -17,7 +17,7 @@ describe GitPusshuTen::Configuration do
     end
 
     it "should extract the application and remote branch names from the staging branch" do
-      configuration.application_name.should == 'RSpec Staging Example Application'
+      configuration.application.should == 'RSpec Staging Example Application'
     end
 
     it "should parse the authorization details" do

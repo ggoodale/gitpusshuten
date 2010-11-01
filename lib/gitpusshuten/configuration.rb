@@ -4,7 +4,7 @@ module GitPusshuTen
     ##
     # Contains the Application's name which is extracted from
     # the selected configuration in the configuration file
-    attr_accessor :application_name
+    attr_accessor :application
 
     ##
     # Contains the remote branch name which is extracted from
@@ -64,9 +64,9 @@ module GitPusshuTen
     ##
     # Pusshuten
     # Helper method used to configure the configuration file
-    def pusshuten(environment, application_name, &block)
+    def pusshuten(environment, application, &block)
       if environment.to_sym == @environment
-        @application_name = application_name
+        @application = application
         block.call
       end
     end
