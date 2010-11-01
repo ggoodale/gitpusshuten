@@ -4,11 +4,14 @@ describe GitPusshuTen::Configuration do
 
   let(:configuration) { GitPusshuTen::Configuration.new(:staging) }
 
-  before do
-  end
-
   it "should contain the remote environment" do
     configuration.environment.should == :staging
+  end
+  
+  it "should not be allowed to contain spaces in the environment" do
+    GitPusshuTen::Log.expects(:error).with('You cannot have spaces in your environment name.') 
+    configuration.expects(:exit)
+    configuration.pusshuten('broken space', 'RSpec Production Example Application')
   end
 
   describe '#parse!' do
