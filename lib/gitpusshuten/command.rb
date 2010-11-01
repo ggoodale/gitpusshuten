@@ -26,14 +26,20 @@ module GitPusshuTen
         GitPusshuTen::Log.error "Command <#{cli.command}> not found."
         exit
       end
-      
-      perform!
     end
     
     ##
     # Performs the target command, based on the CLI and Configuration
     def perform!
-      "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
+      %w[pre_perform! perform! post_perform!].each do |action|
+        command.send(action)
+      end
+    end
+    
+    ##
+    # Wrapper for the command instance
+    def command
+      @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
     end
     
     ##

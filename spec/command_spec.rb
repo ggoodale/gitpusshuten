@@ -44,6 +44,27 @@ describe GitPusshuTen::Command do
     
     command = GitPusshuTen::Command.new(cli, configuration)
     command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
+    command.command
+  end
+  
+  describe "perform hooks" do
+    let(:command_initializer) { GitPusshuTen::Command.new(cli, configuration) }
+    let(:command)             { command_initializer.command }
+    
+    before do
+      GitPusshuTen::Command.any_instance.stubs(:exit)
+      GitPusshuTen::Log.stubs(:error)
+    end
+    
+    it "should invoke a pre-perform hook" do
+      command.expects(:pre_perform!).once
+      command_initializer.perform! 
+    end
+    
+    it "should invoke a post-perform hook" do
+      command.expects(:post_perform!).once
+      command_initializer.perform! 
+    end
   end
   
 end

@@ -1,7 +1,7 @@
 module GitPusshuTen
   module Commands
     class Tag < GitPusshuTen::Commands::Base
-            
+      
       ##
       # Tag
       attr_accessor :tag

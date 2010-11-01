@@ -9,8 +9,9 @@ end
 # GitPusshuTen::Command Mock
 module GitPusshuTen
   module Commands
-    class NonExistingCommand
-      def initialize(cli, configuration); end
+    class NonExistingCommand < GitPusshuTen::Commands::Base
+      def initialize(cli, configuration); self; end
+      def perform!; self; end
     end
   end
 end
