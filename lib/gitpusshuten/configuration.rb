@@ -22,7 +22,7 @@ module GitPusshuTen
 
     ##
     # Contains the operating_system, webserver, webserver_module and framework
-    # that gitープッシュ天 uses to add additional pre-defined/convenient configuration
+    # that git ー プ ッ シ ュ 天 uses to add additional pre-defined/convenient configuration
     attr_accessor :operating_system, :webserver, :webserver_module, :framework
 
     ##
