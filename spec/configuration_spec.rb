@@ -4,16 +4,18 @@ describe GitPusshuTen::Configuration do
 
   let(:configuration) { GitPusshuTen::Configuration.new(:staging) }
 
-  it "should contain the remote environment" do
-    configuration.environment.should == :staging
+  describe 'the environment name' do
+    it "should contain the remote environment" do
+      configuration.environment.should == :staging
+    end
+    
+    it "should be a symbol object" do
+      GitPusshuTen::Log.expects(:error).with('Please use symbols as environment name.') 
+      configuration.expects(:exit)
+      configuration.pusshuten('notasymbol', 'RSpec Production Example Application')
+    end
   end
   
-  it "should not be allowed to contain spaces in the environment" do
-    GitPusshuTen::Log.expects(:error).with('You cannot have spaces in your environment name.') 
-    configuration.expects(:exit)
-    configuration.pusshuten('broken space', 'RSpec Production Example Application')
-  end
-
   describe '#parse!' do
     before do
       configuration.parse!(File.dirname(__FILE__) + '/fixtures/config.rb')

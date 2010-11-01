@@ -66,12 +66,12 @@ module GitPusshuTen
     # Helper method used to configure the configuration file
     def pusshuten(environment, application, &block)
       
-      if (environment = environment.to_s.strip) =~ /\s+/
-        GitPusshuTen::Log.error 'You cannot have spaces in your environment name.'
+      unless environment.is_a?(Symbol)
+        GitPusshuTen::Log.error 'Please use symbols as environment name.'
         exit
       end
       
-      if environment.to_sym == @environment
+      if environment == @environment
         @application = application
         block.call
       end
