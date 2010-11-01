@@ -9,7 +9,7 @@ module GitPusshuTen
     ##
     # Contains the remote branch name which is extracted from
     # the selected configuration in the configuration file
-    attr_accessor :remote_branch
+    attr_accessor :environment
 
     ##
     # Contains the user, password, ip and port for connecting
@@ -48,9 +48,9 @@ module GitPusshuTen
     end
 
     ##
-    # Environment
+    # Platform
     # Helper method for the pusshuten configuration method
-    def environment
+    def platform
       yield self
     end
 
@@ -64,8 +64,8 @@ module GitPusshuTen
     ##
     # Pusshuten
     # Helper method used to configure the configuration file
-    def pusshuten(remote_branch, application_name, &block)
-      if remote_branch.to_sym == @remote_branch
+    def pusshuten(environment, application_name, &block)
+      if environment.to_sym == @environment
         @application_name = application_name
         block.call
       end
@@ -74,8 +74,8 @@ module GitPusshuTen
     ##
     # Initializes a new configuration object
     # takes the absolute path to the configuration file
-    def initialize(remote_branch)
-      @remote_branch = remote_branch
+    def initialize(environment)
+      @environment = environment
       
       @deploy_hooks        = []
       @custom_deploy_hooks = []

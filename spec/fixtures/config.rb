@@ -11,11 +11,11 @@ pusshuten :staging, 'RSpec Staging Example Application' do
     g.path = '/var/apps/'
   end
   
-  environment do |e|
-    e.operating_system = :ubuntu
-    e.webserver        = :nginx
-    e.webserver_module = :passenger
-    e.framework        = :rails
+  platform do |p|
+    p.operating_system = :ubuntu
+    p.webserver        = :nginx
+    p.webserver_module = :passenger
+    p.framework        = :rails
   end
   
   configuration do |c|

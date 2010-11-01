@@ -7,8 +7,8 @@ describe GitPusshuTen::Configuration do
   before do
   end
 
-  it "should contain the remote branch" do
-    configuration.remote_branch.should == :staging
+  it "should contain the remote environment" do
+    configuration.environment.should == :staging
   end
 
   describe '#parse!' do
@@ -18,7 +18,6 @@ describe GitPusshuTen::Configuration do
 
     it "should extract the application and remote branch names from the staging branch" do
       configuration.application_name.should == 'RSpec Staging Example Application'
-      configuration.remote_branch.should    == :staging
     end
 
     it "should parse the authorization details" do
