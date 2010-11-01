@@ -31,7 +31,7 @@ describe GitPusshuTen::Command do
     GitPusshuTen::Command.any_instance.stubs(:exit)
     GitPusshuTen::Log.stubs(:error)
     
-    GitPusshuTen::Command::NonExistingCommand.expects(:new).with(cli, configuration)
+    GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration)
     
     command = GitPusshuTen::Command.new(cli, configuration)
     command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
