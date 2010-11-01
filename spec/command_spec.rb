@@ -25,6 +25,15 @@ describe GitPusshuTen::Command do
       command.expects(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
       command.available_commands.should include('mock_tag')
     end
+    
+    it "should not include the base command" do
+      GitPusshuTen::Command.any_instance.stubs(:exit)
+      GitPusshuTen::Log.stubs(:error)
+      
+      command = GitPusshuTen::Command.new(cli, configuration)
+      command.expects(:commands_directory).returns(Dir[File.expand_path(File.dirname(__FILE__) + '/../lib/gitpusshuten/commands/*.rb')])
+      command.available_commands.should_not include('base')
+    end
   end
   
   it "should initialize the specified command" do
