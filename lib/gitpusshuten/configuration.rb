@@ -92,6 +92,7 @@ module GitPusshuTen
     # configuration values into the GitPusshuTen::Configuration instance
     def parse!(configuration_file)
       instance_eval(File.read(configuration_file))
+      self
     end
 
   end

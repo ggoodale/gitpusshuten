@@ -43,6 +43,10 @@ describe GitPusshuTen::Configuration do
       configuration.deploy_hooks.should               == []
       configuration.custom_deploy_hooks.should        == []
     end
+    
+    it "should return self" do
+      configuration.should == configuration.parse!(File.dirname(__FILE__) + '/fixtures/config.rb')
+    end
   end
 
 end 
