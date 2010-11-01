@@ -4,11 +4,13 @@ module GitPusshuTen
     ##
     # Initializes the specified command if it exists or
     # errors out when it does not exist in the commands/*.rb
-    def initialize(command)
-      unless available_commands.include?(command)
-        GitPusshuTen::Log.error "Command <#{command}> not found."
+    def initialize(cli, configuration)
+      unless available_commands.include?(cli.command)
+        GitPusshuTen::Log.error "Command <#{cli.command}> not found."
         exit
       end
+      
+      
     end
     
     ##

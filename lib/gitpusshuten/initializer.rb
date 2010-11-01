@@ -17,8 +17,9 @@ module GitPusshuTen
       # Load in the requested environment and it's configuration
       configuration = GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)
       
-      
-      
+      ##
+      # Bootstrap the command
+      GitPusshuTen::Command.new(cli, configuration)
     end
     
     ##
