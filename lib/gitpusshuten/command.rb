@@ -8,20 +8,31 @@ module GitPusshuTen
     BLACKLISTED = %w[base]
     
     ##
+    # Command-line Interface
+    attr_accessor :cli
+    
+    ##
+    # Configuration (Environment)
+    attr_accessor :configuration
+    
+    ##
     # Initializes the specified command if it exists or
     # errors out when it does not exist in the commands/*.rb
     def initialize(cli, configuration)
+      @cli           = cli
+      @configuration = configuration
+      
       unless available_commands.include?(cli.command)
         GitPusshuTen::Log.error "Command <#{cli.command}> not found."
         exit
       end
       
-      perform!(cli, configuration)
+      perform!
     end
     
     ##
     # Performs the target command, based on the CLI and Configuration
-    def perform!(cli, configuration)
+    def perform!
       "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
     end
     
