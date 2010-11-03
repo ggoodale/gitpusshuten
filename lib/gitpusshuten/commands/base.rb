@@ -36,12 +36,15 @@ module GitPusshuTen
           GitPusshuTen::Log.message "There are no pre-deploy hooks, skipping."
           return
         end
-        
-        commands = []
-        hooks.pre_hooks.each do |hook|
-          commands << hook.commands.join(';')
+
+        ##
+        # Connect to the remote environment and perform the pre deploy hooks        
+        environment.connect do |env|
+          hooks.render_commands(hooks.pre_hooks).each do |name, commands|
+            GitPusshuTen::Log.message("Performing Pre Deploy Hook: #{name}")
+            env.exec!("cd #{environment.application_root}; #{commands}")
+          end
         end
-        environment.execute(commands.join(';'))
       end
 
       ##
@@ -53,11 +56,14 @@ module GitPusshuTen
           return
         end
         
-        commands = []
-        hooks.post_hooks.each do |hook|
-          commands << hook.commands.join(';')
+        ##
+        # Connect to the remote environment and perform the post deploy hooks
+        environment.connect do |env|
+          hooks.render_commands(hooks.post_hooks).each do |name, commands|
+            GitPusshuTen::Log.message("Performing Post Deploy Hook: #{name}")
+            env.exec!("cd #{environment.application_root}; #{commands}")
+          end
         end
-        environment.execute(commands.join(';'))
       end
 
       def initialize(cli, configuration, hooks, environment)

@@ -103,5 +103,27 @@ describe GitPusshuTen::Hooks do
       end
     end
   end
-
+  
+  describe 'the hooks' do
+    
+    let(:cli)                { GitPusshuTen::CLI.new(%w[tag 1.4.2 to staging])                                        }
+    let(:configuration_file) { File.expand_path(File.dirname(__FILE__) + '/fixtures/config.rb')                       }
+    let(:configuration)      { GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)            }  
+    let(:hooks_file)         { File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks.rb')                        }
+    let(:hooks)              { GitPusshuTen::Hooks.new(cli.environment).parse!(hooks_file)                            }
+    let(:environment)        { GitPusshuTen::Environment.new(configuration)                                           }
+    let(:command)            { GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks, environment) }
+    
+    describe '#render_commands_as_string' do
+      it do
+        hooks.render_commands(hooks.post_hooks).should == {
+          :render_output                => 'rake render:output;',
+          :restart_nginx_and_passenger  => '/etc/init.d/nginx stop;sleep 1;/etc/init.d/nginx start;mkdir tmp;touch tmp/restart.txt;',
+          :ensure_correct_branch        => 'git commit -am "Commit and Ensuring";git checkout master;'
+        }
+      end
+    end
+    
+  end
+  
 end

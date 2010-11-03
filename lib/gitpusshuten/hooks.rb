@@ -107,5 +107,20 @@ module GitPusshuTen
       end.compact
     end
 
+    ##
+    # Takes an array of hooks and renders them a Hash that
+    # contains the name of the hook, as well as all the commands
+    # bundled in a single string, separated by semi-colons.
+    def render_commands(hooks)
+      hooks_hash = {}
+      hooks.each do |hook|
+        hooks_hash[hook.name] = ''
+        hook.commands.each do |command|
+          hooks_hash[hook.name] << "#{command};".gsub(/;{2,}/, ';')
+        end
+      end
+      hooks_hash
+    end
+
   end
 end
