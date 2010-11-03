@@ -10,8 +10,14 @@ end
 module GitPusshuTen
   module Commands
     class NonExistingCommand < GitPusshuTen::Commands::Base
-      def initialize(cli, configuration, hooks, environment); self; end
-      def perform!; self; end
+      def initialize(cli, configuration, hooks, environment)
+         super
+         self
+      end
+      
+      def perform!
+        self
+      end
     end
   end
 end

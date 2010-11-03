@@ -103,5 +103,5 @@ describe GitPusshuTen::Hooks do
       end
     end
   end
-  
+
 end

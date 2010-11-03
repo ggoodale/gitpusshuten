@@ -60,12 +60,14 @@ describe GitPusshuTen::Command do
     
     it "should invoke a pre-perform hook" do
       command.expects(:pre_perform!).once
-      command_initializer.perform! 
+      command.stubs(:post_perform!)
+      command_initializer.perform!
     end
     
     it "should invoke a post-perform hook" do
       command.expects(:post_perform!).once
-      command_initializer.perform! 
+      command.stubs(:pre_perform!)
+      command_initializer.perform!
     end
   end
   
@@ -81,6 +83,6 @@ describe GitPusshuTen::Command do
       command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks, environment)
       command.should respond_to(:usage)
     end
-  end  
+  end
   
 end

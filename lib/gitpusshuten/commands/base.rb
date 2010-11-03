@@ -11,6 +11,10 @@ module GitPusshuTen
       attr_accessor :configuration
 
       ##
+      # Stores the pre and post deploy hooks
+      attr_accessor :hooks
+
+      ##
       # Environment connection
       attr_accessor :environment
       
@@ -28,12 +32,32 @@ module GitPusshuTen
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!
+        unless hooks.pre_hooks.any?
+          GitPusshuTen::Log.message "There are no pre-deploy hooks, skipping."
+          return
+        end
+        
+        commands = []
+        hooks.pre_hooks.each do |hook|
+          commands << hook.commands.join(';')
+        end
+        environment.execute(commands.join(';'))
       end
 
       ##
       # The Post-perform command
       # It should be invoked after the #perform! command
       def post_perform!
+        unless hooks.post_hooks.any?
+          GitPusshuTen::Log.message "There are no post-deploy hooks, skipping."
+          return
+        end
+        
+        commands = []
+        hooks.post_hooks.each do |hook|
+          commands << hook.commands.join(';')
+        end
+        environment.execute(commands.join(';'))
       end
 
       def initialize(cli, configuration, hooks, environment)
