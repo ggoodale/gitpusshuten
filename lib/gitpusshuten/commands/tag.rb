@@ -8,9 +8,10 @@ module GitPusshuTen
 
       ##
       # Initializes the Tag command
-      def initialize(cli, configuration)
+      def initialize(cli, configuration, hooks)
         @cli           = cli
         @configuration = configuration
+        @hooks         = hooks
         
         @tag           = cli.arguments.shift
       end

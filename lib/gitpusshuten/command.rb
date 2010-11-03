@@ -44,7 +44,7 @@ module GitPusshuTen
     ##
     # Wrapper for the command instance
     def command
-      @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
+      @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration, hooks)
     end
 
     ##

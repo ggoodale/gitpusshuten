@@ -41,7 +41,7 @@ describe GitPusshuTen::Command do
     GitPusshuTen::Command.any_instance.stubs(:exit)
     GitPusshuTen::Log.stubs(:error)
     
-    GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration)
+    GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration, hooks)
     
     command = GitPusshuTen::Command.new(cli, configuration, hooks)
     command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
@@ -70,14 +70,14 @@ describe GitPusshuTen::Command do
   
   describe '#description' do
     it "should have a description method" do
-      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration)
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks)
       command.should respond_to(:description)
     end
   end
   
   describe '#usage' do
     it "should have a usage method" do
-      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration)
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks)
       command.should respond_to(:usage)
     end
   end  
