@@ -5,6 +5,7 @@ describe GitPusshuTen::Command do
   let(:cli)           { mock('cli')           }
   let(:configuration) { mock('configuration') }
   let(:hooks)         { mock('hooks')         }
+  let(:environment)   { mock('environment')   }
   
   before do
     cli.stubs(:command).returns('non_existing_command')
@@ -14,7 +15,7 @@ describe GitPusshuTen::Command do
     GitPusshuTen::Log.expects(:error).with('Command <non_existing_command> not found.')
     GitPusshuTen::Command.any_instance.expects(:exit)
     
-    GitPusshuTen::Command.new(cli, configuration, hooks)
+    GitPusshuTen::Command.new(cli, configuration, hooks, environment)
   end
   
   describe '#available_commands' do
@@ -22,7 +23,7 @@ describe GitPusshuTen::Command do
       GitPusshuTen::Command.any_instance.stubs(:exit)
       GitPusshuTen::Log.stubs(:error)
       
-      command = GitPusshuTen::Command.new(cli, configuration, hooks)
+      command = GitPusshuTen::Command.new(cli, configuration, hooks, environment)
       command.expects(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
       command.available_commands.should include('mock_tag')
     end
@@ -31,7 +32,7 @@ describe GitPusshuTen::Command do
       GitPusshuTen::Command.any_instance.stubs(:exit)
       GitPusshuTen::Log.stubs(:error)
       
-      command = GitPusshuTen::Command.new(cli, configuration, hooks)
+      command = GitPusshuTen::Command.new(cli, configuration, hooks, environment)
       command.expects(:commands_directory).returns(Dir[File.expand_path(File.dirname(__FILE__) + '/../lib/gitpusshuten/commands/*.rb')])
       command.available_commands.should_not include('base')
     end
@@ -41,15 +42,15 @@ describe GitPusshuTen::Command do
     GitPusshuTen::Command.any_instance.stubs(:exit)
     GitPusshuTen::Log.stubs(:error)
     
-    GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration, hooks)
+    GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration, hooks, environment)
     
-    command = GitPusshuTen::Command.new(cli, configuration, hooks)
+    command = GitPusshuTen::Command.new(cli, configuration, hooks, environment)
     command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
     command.command
   end
   
   describe "perform hooks" do
-    let(:command_initializer) { GitPusshuTen::Command.new(cli, configuration, hooks) }
+    let(:command_initializer) { GitPusshuTen::Command.new(cli, configuration, hooks, environment) }
     let(:command)             { command_initializer.command }
     
     before do
@@ -70,14 +71,14 @@ describe GitPusshuTen::Command do
   
   describe '#description' do
     it "should have a description method" do
-      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks)
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks, environment)
       command.should respond_to(:description)
     end
   end
   
   describe '#usage' do
     it "should have a usage method" do
-      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks)
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks, environment)
       command.should respond_to(:usage)
     end
   end  

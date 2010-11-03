@@ -20,12 +20,17 @@ module GitPusshuTen
     attr_accessor :hooks
 
     ##
+    # Environment connection
+    attr_accessor :environment
+
+    ##
     # Initializes the specified command if it exists or
     # errors out when it does not exist in the commands/*.rb
-    def initialize(cli, configuration, hooks)
+    def initialize(cli, configuration, hooks, environment)
       @cli           = cli
       @configuration = configuration
       @hooks         = hooks
+      @environment   = environment
       
       unless available_commands.include?(cli.command)
         GitPusshuTen::Log.error "Command <#{cli.command}> not found."
@@ -44,7 +49,7 @@ module GitPusshuTen
     ##
     # Wrapper for the command instance
     def command
-      @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration, hooks)
+      @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration, hooks, environment)
     end
 
     ##

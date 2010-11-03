@@ -22,8 +22,12 @@ module GitPusshuTen
       hooks = GitPusshuTen::Hooks.new(cli.environment).parse!(hooks_file)
 
       ##
+      # Configure the environment connection establisher
+      environment = GitPusshuTen::Environment.new(configuration)
+
+      ##
       # Bootstrap the command
-      GitPusshuTen::Command.new(cli, configuration, hooks)
+      GitPusshuTen::Command.new(cli, configuration, hooks, environment)
     end
 
     ##

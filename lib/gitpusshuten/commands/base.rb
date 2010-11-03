@@ -11,6 +11,10 @@ module GitPusshuTen
       attr_accessor :configuration
 
       ##
+      # Environment connection
+      attr_accessor :environment
+      
+      ##
       # This is used by the "help" command to display the
       # description of the command in the CLI
       attr_accessor :description
@@ -30,6 +34,13 @@ module GitPusshuTen
       # The Post-perform command
       # It should be invoked after the #perform! command
       def post_perform!
+      end
+
+      def initialize(cli, configuration, hooks, environment)
+        @cli           = cli
+        @configuration = configuration
+        @hooks         = hooks
+        @environment   = environment
       end
 
     end

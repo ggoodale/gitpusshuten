@@ -1,6 +1,6 @@
 module GitPusshuTen
   class Log
-    
+
     ##
     # Displays a regular message
     def self.message(message)
@@ -18,5 +18,6 @@ module GitPusshuTen
     def self.error(message)
       puts "[error] ".color(:red) + message
     end
+
   end
 end
