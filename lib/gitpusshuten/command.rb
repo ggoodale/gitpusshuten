@@ -1,20 +1,20 @@
 module GitPusshuTen
   class Command
-    
+
     ##
     # Contains an array of blacklisted commands
     # These are files that aren't actually CLI commands but just
     # classes that are used by Git プ ッ シ ュ 天
     BLACKLISTED = %w[base]
-    
+
     ##
     # Command-line Interface
     attr_accessor :cli
-    
+
     ##
     # Configuration (Environment)
     attr_accessor :configuration
-    
+
     ##
     # Initializes the specified command if it exists or
     # errors out when it does not exist in the commands/*.rb
@@ -27,7 +27,7 @@ module GitPusshuTen
         exit
       end
     end
-    
+
     ##
     # Performs the target command, based on the CLI and Configuration
     def perform!
@@ -35,13 +35,13 @@ module GitPusshuTen
         command.send(action)
       end
     end
-    
+
     ##
     # Wrapper for the command instance
     def command
       @command ||= "GitPusshuTen::Commands::#{cli.command.classify}".constantize.new(cli, configuration)
     end
-    
+
     ##
     # Returns an array of available commands
     def available_commands
@@ -51,26 +51,26 @@ module GitPusshuTen
         end
       end
     end
-    
+
     ##
     # Returns the absolute path to each command (ruby file)
     # insidethe commands directory and returns an array of each entry
     def commands_directory
       Dir[File.expand_path(File.join(File.dirname(__FILE__), 'commands/*.rb'))]
     end
-    
+
     ##
     # Determines whether the provided command is blacklisted or not
     def blacklisted?(command)
       BLACKLISTED.include?(find(command))
     end
-    
+
     ##
     # Expects a (full) path to the command ruby file and returns
     # only the file name without the .rb extension
     def find(command)
       command.gsub(/\.rb/, '').split('/').last
     end
-    
+
   end
 end

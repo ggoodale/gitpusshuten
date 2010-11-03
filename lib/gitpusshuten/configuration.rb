@@ -69,7 +69,7 @@ module GitPusshuTen
         GitPusshuTen::Log.error 'Please use symbols as environment name.'
         exit
       end
-      
+
       if environment == @environment
         @application = application
         block.call

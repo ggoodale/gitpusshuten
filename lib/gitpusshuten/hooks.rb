@@ -1,20 +1,20 @@
 module GitPusshuTen
   class Hooks
-    
+
     ##
     # Contains the environment on the remote server name which
     # is extracted from the selected configuration in the configuration file
     attr_accessor :environment
-    
+
     ##
     # Contains an array of GitPusshuTen::Hook objects for the current environment
     attr_accessor :to_perform
-    
+
     ##
     # Contains an array of commands to run for the currently parsed hook
     # This gets reset to [] every time a new hook is being parsed
     attr_accessor :commands_to_run
-    
+
     ##
     # Initializes a new Hooks object
     # Provide the environment (e.g. :staging, :production) to parse
@@ -23,7 +23,7 @@ module GitPusshuTen
       @to_perform      = []
       @commands_to_run = []
     end
-    
+
     ##
     # Parses the configuration file and loads all the
     # configuration values into the GitPusshuTen::Configuration instance
@@ -31,7 +31,7 @@ module GitPusshuTen
       instance_eval(File.read(hooks_file))
       self
     end
-    
+
     ##
     # Perform On
     # Helper method used to configure the hooks.rb file
@@ -40,7 +40,7 @@ module GitPusshuTen
         configuration.call
       end
     end
-    
+
     ##
     # Pre
     # A method for setting pre-hooks inside the perform_on block
@@ -59,7 +59,7 @@ module GitPusshuTen
         :commands => commands_to_run
       })
     end
-    
+
     ##
     # Post
     # A method for setting post-hooks inside the perform_on block
@@ -78,7 +78,7 @@ module GitPusshuTen
         :commands => commands_to_run
       })
     end
-    
+
     ##
     # Run
     # A method for setting commands on a
