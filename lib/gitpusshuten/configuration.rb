@@ -65,7 +65,6 @@ module GitPusshuTen
     # Pusshuten
     # Helper method used to configure the configuration file
     def pusshuten(environment, application, &block)
-      
       unless environment.is_a?(Symbol)
         GitPusshuTen::Log.error 'Please use symbols as environment name.'
         exit
