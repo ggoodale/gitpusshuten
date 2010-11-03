@@ -4,6 +4,7 @@ describe GitPusshuTen::Command do
     
   let(:cli)           { mock('cli')           }
   let(:configuration) { mock('configuration') }
+  let(:hooks)         { mock('hooks')         }
   
   before do
     cli.stubs(:command).returns('non_existing_command')
@@ -13,7 +14,7 @@ describe GitPusshuTen::Command do
     GitPusshuTen::Log.expects(:error).with('Command <non_existing_command> not found.')
     GitPusshuTen::Command.any_instance.expects(:exit)
     
-    GitPusshuTen::Command.new(cli, configuration)
+    GitPusshuTen::Command.new(cli, configuration, hooks)
   end
   
   describe '#available_commands' do
@@ -21,7 +22,7 @@ describe GitPusshuTen::Command do
       GitPusshuTen::Command.any_instance.stubs(:exit)
       GitPusshuTen::Log.stubs(:error)
       
-      command = GitPusshuTen::Command.new(cli, configuration)
+      command = GitPusshuTen::Command.new(cli, configuration, hooks)
       command.expects(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
       command.available_commands.should include('mock_tag')
     end
@@ -30,7 +31,7 @@ describe GitPusshuTen::Command do
       GitPusshuTen::Command.any_instance.stubs(:exit)
       GitPusshuTen::Log.stubs(:error)
       
-      command = GitPusshuTen::Command.new(cli, configuration)
+      command = GitPusshuTen::Command.new(cli, configuration, hooks)
       command.expects(:commands_directory).returns(Dir[File.expand_path(File.dirname(__FILE__) + '/../lib/gitpusshuten/commands/*.rb')])
       command.available_commands.should_not include('base')
     end
@@ -42,13 +43,13 @@ describe GitPusshuTen::Command do
     
     GitPusshuTen::Commands::NonExistingCommand.expects(:new).with(cli, configuration)
     
-    command = GitPusshuTen::Command.new(cli, configuration)
+    command = GitPusshuTen::Command.new(cli, configuration, hooks)
     command.stubs(:commands_directory).returns([Dir.pwd + '/commands/mock_tag.rb'])
     command.command
   end
   
   describe "perform hooks" do
-    let(:command_initializer) { GitPusshuTen::Command.new(cli, configuration) }
+    let(:command_initializer) { GitPusshuTen::Command.new(cli, configuration, hooks) }
     let(:command)             { command_initializer.command }
     
     before do

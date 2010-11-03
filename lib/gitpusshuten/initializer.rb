@@ -18,14 +18,30 @@ module GitPusshuTen
       configuration = GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)
 
       ##
+      # Load in hooks
+      hooks = GitPusshuTen::Hooks.new(cli.environment).parse!(hooks_file)
+
+      ##
       # Bootstrap the command
-      GitPusshuTen::Command.new(cli, configuration)
+      GitPusshuTen::Command.new(cli, configuration, hooks)
     end
 
     ##
     # Path to assumed configuration file
     def configuration_file
-      File.expand_path(File.join(Dir.pwd, '.gitpusshuten', 'config.rb'))
+      gitpusshuten_root + '/config.rb'
+    end
+
+    ##
+    # Path to assumed hooks file
+    def hooks_file
+      gitpusshuten_root + '/hooks.rb'
+    end
+
+    ##
+    # Path to the assumed .gitpusshuten directory
+    def gitpusshuten_root
+      File.expand_path(File.join(Dir.pwd, '.gitpusshuten'))
     end
 
   end

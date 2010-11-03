@@ -4,6 +4,7 @@ describe GitPusshuTen::Initializer do
   
   before do
     GitPusshuTen::Configuration.any_instance.stubs(:parse!)
+    GitPusshuTen::Hooks.any_instance.stubs(:parse!)
     GitPusshuTen::Command.stubs(:new)
   end
   

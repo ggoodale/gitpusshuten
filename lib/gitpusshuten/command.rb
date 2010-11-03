@@ -16,11 +16,16 @@ module GitPusshuTen
     attr_accessor :configuration
 
     ##
+    # Contains pre/post-deployment hooks
+    attr_accessor :hooks
+
+    ##
     # Initializes the specified command if it exists or
     # errors out when it does not exist in the commands/*.rb
-    def initialize(cli, configuration)
+    def initialize(cli, configuration, hooks)
       @cli           = cli
       @configuration = configuration
+      @hooks         = hooks
       
       unless available_commands.include?(cli.command)
         GitPusshuTen::Log.error "Command <#{cli.command}> not found."
