@@ -11,6 +11,16 @@ module GitPusshuTen
       attr_accessor :configuration
 
       ##
+      # This is used by the "help" command to display the
+      # description of the command in the CLI
+      attr_accessor :description
+
+      ##
+      # This is used by the "help" command to display the
+      # usage of the command in the CLI
+      attr_accessor :usage
+
+      ##
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!

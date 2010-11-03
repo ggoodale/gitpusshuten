@@ -67,4 +67,18 @@ describe GitPusshuTen::Command do
     end
   end
   
+  describe '#description' do
+    it "should have a description method" do
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration)
+      command.should respond_to(:description)
+    end
+  end
+  
+  describe '#usage' do
+    it "should have a usage method" do
+      command = GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration)
+      command.should respond_to(:usage)
+    end
+  end  
+  
 end
