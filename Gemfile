@@ -1,7 +1,10 @@
 source 'http://rubygems.org'
 
 gem 'rainbow'
-gem 'activesupport', :require => 'active_support/inflector'
+gem 'net-ssh',
+    :require => 'net/ssh'
+gem 'activesupport',
+    :require => 'active_support/inflector'
 
 group :test do
   gem 'rspec'

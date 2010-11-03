@@ -7,6 +7,7 @@ GEM
       watchr (>= 0.7)
     mocha (0.9.8)
       rake
+    net-ssh (2.0.23)
     rainbow (1.1)
     rake (0.8.7)
     rspec (2.0.1)
@@ -28,5 +29,6 @@ DEPENDENCIES
   activesupport
   infinity_test
   mocha
+  net-ssh
   rainbow
   rspec
