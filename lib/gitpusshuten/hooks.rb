@@ -19,8 +19,9 @@ module GitPusshuTen
     # Initializes a new Hooks object
     # Provide the environment (e.g. :staging, :production) to parse
     def initialize(environment)
-      @environment = environment
-      @to_perform  = []
+      @environment     = environment
+      @to_perform      = []
+      @commands_to_run = []
     end
     
     ##
@@ -43,6 +44,12 @@ module GitPusshuTen
     ##
     # Pre
     # A method for setting pre-hooks inside the perform_on block
+    # Resets the "commands_to_run" variable to an empty array so that
+    # there's a clean array to work with the next set of commands.
+    # The "commands.call" invokes all the "run(<command>)" the user
+    # provided in the hooks.rb configuration file and extracts the strings
+    # of commands to run. This array is then passed into a newly made Hook object
+    # which is again stored into the "to_perform" array.
     def pre(name, &commands)
       @commands_to_run = []
       commands.call
@@ -56,6 +63,12 @@ module GitPusshuTen
     ##
     # Post
     # A method for setting post-hooks inside the perform_on block
+    # Resets the "commands_to_run" variable to an empty array so that
+    # there's a clean array to work with the next set of commands.
+    # The "commands.call" invokes all the "run(<command>)" the user
+    # provided in the hooks.rb configuration file and extracts the strings
+    # of commands to run. This array is then passed into a newly made Hook object
+    # which is again stored into the "to_perform" array.
     def post(name, &commands)
       @commands_to_run = []
       commands.call
