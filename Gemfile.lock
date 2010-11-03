@@ -1,0 +1,32 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activesupport (3.0.1)
+    diff-lcs (1.1.2)
+    infinity_test (0.2.0)
+      watchr (>= 0.7)
+    mocha (0.9.8)
+      rake
+    rainbow (1.1)
+    rake (0.8.7)
+    rspec (2.0.1)
+      rspec-core (~> 2.0.1)
+      rspec-expectations (~> 2.0.1)
+      rspec-mocks (~> 2.0.1)
+    rspec-core (2.0.1)
+    rspec-expectations (2.0.1)
+      diff-lcs (>= 1.1.2)
+    rspec-mocks (2.0.1)
+      rspec-core (~> 2.0.1)
+      rspec-expectations (~> 2.0.1)
+    watchr (0.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activesupport
+  infinity_test
+  mocha
+  rainbow
+  rspec
