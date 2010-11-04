@@ -28,7 +28,11 @@ module GitPusshuTen
     # Parses the configuration file and loads all the
     # configuration values into the GitPusshuTen::Configuration instance
     def parse!(hooks_file)
-      instance_eval(File.read(hooks_file))
+      if File.exist?(hooks_file)
+        instance_eval(File.read(hooks_file))
+      else
+        GitPusshuTen::Log.warn "Could not locate the hooks.rb file in #{hooks_file}"
+      end
       self
     end
 

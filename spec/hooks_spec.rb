@@ -21,6 +21,24 @@ describe GitPusshuTen::Hooks do
       hooks_staging.should    == hooks_staging.parse!(File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks.rb'))
       hooks_production.should == hooks_production.parse!(File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks.rb'))
     end
+    
+    context "when the hooks file does not exist" do
+      it "should issue a warning" do
+        GitPusshuTen::Log.expects(:warn).with("Could not locate the hooks.rb file in /Users/Michael/Desktop/GitPusshuTen/spec/fixtures/hooks_not_exist.rb")
+        hooks_staging.should == hooks_staging.parse!(File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks_not_exist.rb'))
+      end
+      
+      it "should not attempt to parse it" do
+        GitPusshuTen::Log.stubs(:warn)
+        hooks_staging.expects(:instance_eval).never
+        hooks_staging.should == hooks_staging.parse!(File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks_not_exist.rb'))
+      end
+    end
+    
+    it "should parse if the hooks file eixsts" do
+      hooks_staging.expects(:instance_eval).once
+      hooks_staging.should == hooks_staging.parse!(File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks.rb'))      
+    end
 
     describe 'storing parsed information' do
       before do
