@@ -37,23 +37,24 @@ describe GitPusshuTen::Git do
     context 'when pushing a tag' do
       it 'should push a tag to the remote' do
         git.expects(:git).with('push rspec_staging 1.4.2~0:refs/heads/master --force')
-        git.push_tag('1.4.2', :rspec_staging)
+        git.push(:tag, '1.4.2').to(:rspec_staging)
       end
     end
     
     context 'when pushing a branch' do
       it 'should push a branch to the remote' do
         git.expects(:git).with('push rspec_staging development:refs/heads/master --force')
-        git.push_branch(:development, :rspec_staging)
+        git.push(:branch, :development).to(:rspec_staging)
       end
     end
   
     context 'when pushing a ref' do
       it 'should push a ref to the remote' do
         git.expects(:git).with('push rspec_staging ad36b4c018f7580db48c20fa4ed7911ea50a5684:refs/heads/master --force')
-        git.push_ref('ad36b4c018f7580db48c20fa4ed7911ea50a5684', :rspec_staging)
+        git.push(:ref, 'ad36b4c018f7580db48c20fa4ed7911ea50a5684').to(:rspec_staging)
       end
     end
+
   end
-  
+
 end
