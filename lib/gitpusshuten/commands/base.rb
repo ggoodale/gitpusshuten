@@ -29,6 +29,12 @@ module GitPusshuTen
       attr_accessor :usage
 
       ##
+      # Git object wrapper
+      def git
+        @git ||= GitPusshuTen::Git.new
+      end
+
+      ##
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!
