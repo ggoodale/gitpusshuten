@@ -10,9 +10,9 @@ Gem::Specification.new do |gem|
 
   gem.files         = %x[git ls-files].split("\n")
   gem.test_files    = %x[git ls-files -- {spec}/*].split("\n")
-  gem.require_paths = 'lib'
+  gem.require_path  = 'lib'
   
-  gem.executable    = 'pusshu'
+  gem.executables   = ['pusshu', 'push']
   
   gem.add_dependency 'rainbow',       ['~> 1.1.0']
   gem.add_dependency 'net-ssh',       ['~> 2.0.0']

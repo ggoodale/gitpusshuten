@@ -27,7 +27,7 @@ module GitPusshuTen
 
       ##
       # Bootstrap the command
-      GitPusshuTen::Command.new(cli, configuration, hooks, environment)
+      GitPusshuTen::Command.new(cli, configuration, hooks, environment).perform!
     end
 
     ##

@@ -64,7 +64,7 @@ module GitPusshuTen
         environment.connect do |env|
           hooks.render_commands(hooks.pre_hooks).each do |name, commands|
             GitPusshuTen::Log.message("Performing Pre Deploy Hook: #{name}")
-            env.exec!("cd '#{environment.application_root}'; #{commands}")
+            puts env.exec!("cd '#{environment.application_root}'; #{commands}")
           end
         end
       end
@@ -84,7 +84,7 @@ module GitPusshuTen
         environment.connect do |env|
           hooks.render_commands(hooks.post_hooks).each do |name, commands|
             GitPusshuTen::Log.message("Performing Post Deploy Hook: #{name}")
-            env.exec!("cd '#{environment.application_root}'; #{commands}")
+            puts env.exec!("cd '#{environment.application_root}'; #{commands}")
           end
         end
       end
