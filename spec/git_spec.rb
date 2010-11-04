@@ -54,7 +54,6 @@ describe GitPusshuTen::Git do
         git.push(:ref, 'ad36b4c018f7580db48c20fa4ed7911ea50a5684').to(:rspec_staging)
       end
     end
-
   end
 
 end

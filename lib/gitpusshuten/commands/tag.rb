@@ -3,13 +3,14 @@ module GitPusshuTen
     class Tag < GitPusshuTen::Commands::Base
 
       ##
-      # Tag
+      # Tag specific attributes/arguments
       attr_accessor :tag
 
       ##
       # Initializes the Tag command
-      def initialize(cli, configuration, hooks, environment)
+      def initialize(*objects)
         super
+        perform_hooks!
         
         @tag = cli.arguments.shift
       end
@@ -17,7 +18,7 @@ module GitPusshuTen
       ##
       # Performs the Tag command
       def perform!
-        
+        git.push(:tag, tag).to(environment.name)
       end
 
     end

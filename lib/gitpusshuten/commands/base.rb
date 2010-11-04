@@ -17,7 +17,7 @@ module GitPusshuTen
       ##
       # Environment connection
       attr_accessor :environment
-      
+
       ##
       # This is used by the "help" command to display the
       # description of the command in the CLI
@@ -29,6 +29,21 @@ module GitPusshuTen
       attr_accessor :usage
 
       ##
+      # This is a flag, that, when set to true, will invoke the
+      # potentially specified deployment hooks. When "perform_hooks"
+      # is set to false, deployment hooks will not be invoked. This is the default
+      # behavior. If hooks should be enabled for a specific command, invoke the
+      # "perform_hooks!" command from within the "initialize" method of that particular command
+      attr_accessor :perform_hooks
+      alias :perform_hooks? :perform_hooks
+
+      ##
+      # Sets the "perform_hooks" flag to "true"
+      def perform_hooks!
+        @perform_hooks = true
+      end
+
+      ##
       # Git object wrapper
       def git
         @git ||= GitPusshuTen::Git.new
@@ -38,13 +53,14 @@ module GitPusshuTen
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!
+        return unless perform_hooks?
         unless hooks.pre_hooks.any?
           GitPusshuTen::Log.message "There are no pre-deploy hooks, skipping."
           return
         end
-
+        
         ##
-        # Connect to the remote environment and perform the pre deploy hooks        
+        # Connect to the remote environment and perform the pre deploy hooks
         environment.connect do |env|
           hooks.render_commands(hooks.pre_hooks).each do |name, commands|
             GitPusshuTen::Log.message("Performing Pre Deploy Hook: #{name}")
@@ -57,6 +73,7 @@ module GitPusshuTen
       # The Post-perform command
       # It should be invoked after the #perform! command
       def post_perform!
+        return unless perform_hooks?
         unless hooks.post_hooks.any?
           GitPusshuTen::Log.message "There are no post-deploy hooks, skipping."
           return
@@ -77,6 +94,7 @@ module GitPusshuTen
         @configuration = configuration
         @hooks         = hooks
         @environment   = environment
+        @perform_hooks = false
       end
 
     end

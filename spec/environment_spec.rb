@@ -17,4 +17,10 @@ describe GitPusshuTen::Environment do
     end
   end
   
+  describe '#name' do
+    it "should return the name of the environment we're working in" do
+      environment.name.should == :staging
+    end
+  end
+  
 end

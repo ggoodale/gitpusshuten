@@ -12,6 +12,12 @@ module GitPusshuTen
     end
     
     ##
+    # Returns the name of the environment
+    def name
+      configuration.environment
+    end
+    
+    ##
     # Establishes a connection to the remote environment
     # to the user's home directory
     def connect(&ssh)
