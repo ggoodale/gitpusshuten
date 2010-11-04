@@ -9,7 +9,7 @@ module GitPusshuTen
 
     ##
     # Displays a warning message
-    def self.warn(message)
+    def self.warning(message)
       puts "[warning] ".color(:yellow) + message
     end
 

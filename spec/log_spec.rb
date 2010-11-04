@@ -9,7 +9,7 @@ describe GitPusshuTen::Log do
   
   it "should log a message" do
     GitPusshuTen::Log.expects(:puts).with("[warning] heavenly message")
-    GitPusshuTen::Log.warn("heavenly message")
+    GitPusshuTen::Log.warning("heavenly message")
   end
   
   it "should log a message" do
