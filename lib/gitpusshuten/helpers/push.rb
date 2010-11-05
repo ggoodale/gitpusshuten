@@ -1,7 +1,7 @@
 module GitPusshuTen
   module Helpers
     module Push
-      
+
       def confirm_remote!
         unless git.has_remote?(environment.name)
           GitPusshuTen::Log.error "Cannot push to #{environment.name.to_s.color(:yellow)} because the remote does not exist."

@@ -26,6 +26,12 @@ module GitPusshuTen
       # Performs the Setup command
       def perform!
         if object == 'remote'
+          if not configuration.found?
+            GitPusshuTen::Log.error "Could not find any configuration for #{environment.name.to_s.color(:yellow)} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
+            GitPusshuTen::Log.error "Please add it and run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} to set it up with git remote."
+            exit
+          end
+          
           if git.has_remote?(environment.name)
             git.remove_remote(environment.name)
           end
@@ -34,7 +40,7 @@ module GitPusshuTen
             configuration.user + '@' + configuration.ip + ':' + environment.application_root
           )
           GitPusshuTen::Log.message("The " + environment.name.to_s.color(:yellow) + " remote has been added:")
-          GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n\n")
+          GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n")
         end
       end
 
