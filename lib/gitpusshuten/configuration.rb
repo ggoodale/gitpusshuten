@@ -12,6 +12,11 @@ module GitPusshuTen
     attr_accessor :environment
 
     ##
+    # Returns true if the configuration has been found
+    attr_accessor :found
+    alias :found? :found
+
+    ##
     # Contains the user, password, ip and port for connecting
     # and authorizing the user to the remote server
     attr_accessor :user, :password, :ip, :port
@@ -32,7 +37,7 @@ module GitPusshuTen
     # hooks on/off the stack
     attr_accessor :perform_deploy_hooks, :perform_custom_deploy_hook,
                   :deploy_hooks, :custom_deploy_hooks
-
+    
     ##
     # Authorize
     # Helper method for the pusshuten configuration method 
@@ -72,6 +77,7 @@ module GitPusshuTen
 
       if environment == @environment
         @application = application
+        @found       = true
         block.call
       end
     end
@@ -81,6 +87,7 @@ module GitPusshuTen
     # takes the absolute path to the configuration file
     def initialize(environment)
       @environment = environment
+      @found       = false
       
       @deploy_hooks        = []
       @custom_deploy_hooks = []

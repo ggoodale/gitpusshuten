@@ -5,15 +5,19 @@ module GitPusshuTen
       def confirm_remote!
         unless git.has_remote?(environment.name)
           GitPusshuTen::Log.error "Cannot push to #{environment.name.to_s.color(:yellow)} because the remote does not exist."
-          GitPusshuTen::Log.error "If you've specified this remote in your #{".gitpusshuten/config.rb".color(:yellow)}, don't forget to add it to your git repository."
-          GitPusshuTen::Log.error "To do that, you must run: " + "gitpusshuten setup remote for #{environment.name}\n".color(:yellow)
-          add_remote! if add_remote?
+          if configuration.found?
+            add_remote! if add_remote?
+          else
+            GitPusshuTen::Log.error "Could not find any configuration for #{environment.name.to_s.color(:yellow)} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
+            GitPusshuTen::Log.error "Please add it and run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} to set it up with git remote."
+          end
           exit
         end
       end
 
       def add_remote?
-        GitPusshuTen::Log.message "Would you like to run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} now?"
+        GitPusshuTen::Log.message "There appears to be a configuration for #{environment.name.to_s.color(:yellow)} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
+        GitPusshuTen::Log.message "Would you like to run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} now to set it up?"
         choose do |menu|
           menu.prompt = ''
           menu.choice('Yes') { true  }
