@@ -87,25 +87,25 @@ module GitPusshuTen
     ##
     # Displays a list of available commands in the CLI
     def display_commands
-      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
+      puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
       puts "[Command List]\n\n"
       available_commands.compact.sort.each do |command|
-        puts "\s\s" + command + "\t\t\t" + get_constant_for(command).description          
+        puts "\s\s" + command + "\t\t" + get_constant_for(command).description          
       end
-      puts "\n\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>".color(:yellow)
-      puts "\nFor more information, visit: http://gitpusshuten.com/"
+      puts "\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>\n".color(:yellow)
+      puts "For more information, visit: http://gitpusshuten.com/"
     end
 
     ##
     # Displays command specific details in the CLI
     def display_usage(command)
-      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
-      puts "[Command]\n\n\s\s#{command}\n\n\n"
-      puts "[Description]\n\n\s\s#{get_constant_for(command).description}"
-      puts "\n\n[Usage]\n\n\s\s#{get_constant_for(command).usage}"
-      puts "\n\n[Example]\n\n\s\s#{get_constant_for(command).example}"
-      puts "\n\nFor a list of all commands: " + "gitpusshuten help".color(:yellow)
-      puts "\nFor more information, visit: http://gitpusshuten.com/"
+      puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
+      puts "[Command]\n\n\s\s#{command}\n\n"
+      puts "[Description]\n\n\s\s#{get_constant_for(command).description}\n\n"
+      puts "[Usage]\n\n\s\s#{get_constant_for(command).usage}\n\n"
+      puts "[Example]\n\n\s\s#{get_constant_for(command).example}\n\n"
+      puts "For a list of all commands: " + "gitpusshuten help".color(:yellow)
+      puts "For more information, visit: http://gitpusshuten.com/"
     end
 
     ##
