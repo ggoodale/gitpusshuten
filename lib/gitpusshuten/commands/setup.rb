@@ -86,7 +86,7 @@ module GitPusshuTen
             end
           end
         else
-          GitPusshuTen::Log.message "It looks like #{configuration.user.to_s.color(:yellow)} does not yet exists."
+          GitPusshuTen::Log.message "It looks like #{configuration.user.to_s.color(:yellow)} does not yet exist."
           GitPusshuTen::Log.message "Would you like to add #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}?"
           yes = choose do |menu|
             menu.prompt = ''
@@ -117,7 +117,7 @@ module GitPusshuTen
         ##
         # Installs PushAnd if it has not yet been installed
         if not environment.directory?(File.join(configuration.path, 'pushand'))
-          GitPusshuTen::Log.message "Installing #{"PushAnd".color(:yellow)} for #{configuration.ip.to_s.color(:yellow)}."
+          GitPusshuTen::Log.message "Installing #{"PushAnd".color(:yellow)} for #{configuration.user.to_s.color(:yellow)}."
           environment.install_pushand!
         else
           GitPusshuTen::Log.message "PushAnd ".color(:yellow) + "already installed."
