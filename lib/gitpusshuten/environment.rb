@@ -83,6 +83,8 @@ module GitPusshuTen
       end
     end
 
+    ##
+    # Performs a command as root
     def execute_as_root(command)
       @root_not_authenticated ||= false
       @root_password ||= nil
@@ -101,7 +103,7 @@ module GitPusshuTen
           
           unless @root_not_authenticated
             @root_password = ask("") { |q| q.echo = false }
-          end          
+          end
         end
       end
     end
