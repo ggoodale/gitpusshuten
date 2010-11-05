@@ -55,7 +55,7 @@ module GitPusshuTen
     # environment, run it without attemping to parse environment
     # specific files.
     def invoke_independent_command!(args)
-      if %w[help].include? args.flatten.first
+      if %w[help version].include? args.flatten.first
         "GitPusshuTen::Commands::#{args.flatten.first.classify}".constantize.new(
           GitPusshuTen::CLI.new(args), nil, nil, nil
         ).perform!
