@@ -56,7 +56,8 @@ module GitPusshuTen
         if value.nil?
           @example
         else
-          @example = value
+          @example ||= ""
+          @example << "\n\s\s#{value}"
         end
       end
 

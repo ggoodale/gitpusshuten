@@ -103,7 +103,7 @@ module GitPusshuTen
       puts "[Command]\n\n\s\s#{command}\n\n"
       puts "[Description]\n\n\s\s#{get_constant_for(command).description}\n\n"
       puts "[Usage]\n\n\s\s#{get_constant_for(command).usage}\n\n"
-      puts "[Example]\n\n\s\s#{get_constant_for(command).example}\n\n"
+      puts "[Examples]\n#{get_constant_for(command).example}\n\n"
       puts "For a list of all commands: " + "gitpusshuten help".color(:yellow)
       puts "For more information, visit: http://gitpusshuten.com/"
     end
