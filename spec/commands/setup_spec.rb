@@ -18,6 +18,7 @@ describe GitPusshuTen::Commands::Setup do
     
     before do
       command.stubs(:git).returns(git)
+      GitPusshuTen::Log.stubs(:message)
     end
     
     context "when the remote does not yet exist" do

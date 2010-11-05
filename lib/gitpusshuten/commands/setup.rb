@@ -33,6 +33,8 @@ module GitPusshuTen
             environment.name,
             configuration.user + '@' + configuration.ip + ':' + environment.application_root
           )
+          GitPusshuTen::Log.message("The " + environment.name.to_s.color(:yellow) + " remote has been added:")
+          GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n\n")
         end
       end
 
