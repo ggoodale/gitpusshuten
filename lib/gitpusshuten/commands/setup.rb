@@ -36,6 +36,29 @@ module GitPusshuTen
       ##
       # Performs the "user" action
       def perform_user!
+        if not environment.installed?('git')
+          GitPusshuTen::Log.warning "It is required that you have #{"Git".color(:yellow)} installed on your server."
+          GitPusshuTen::Log.warning "Could not find #{"Git".color(:yellow)}, would you like to install it?"
+          install_git = choose do |menu|
+            menu.prompt = ''
+            menu.choice('Yes') { true  }
+            menu.choice('No')  { false }
+          end
+          
+          if install_git
+            GitPusshuTen::Log.message "Installing #{"Git".color(:yellow)}!"
+            environment.install!('git-core')
+            if environment.installed?('git')
+              GitPusshuTen::Log.message "#{"Git".color(:yellow)} has been successfully installed!"
+            else
+              GitPusshuTen::Log.error "Unable to install #{"Git".color(:yellow)}."
+              exit
+            end
+          else
+            exit
+          end
+        end
+        
         GitPusshuTen::Log.message "Confirming existance of user #{configuration.user.to_s.color(:yellow)} on the #{configuration.environment.to_s.color(:yellow)} environment."
         if environment.user_exists?
           GitPusshuTen::Log.message "It looks like #{configuration.user.to_s.color(:yellow)} already exists at #{configuration.ip.to_s.color(:yellow)}."
@@ -54,10 +77,12 @@ module GitPusshuTen
               else
                 GitPusshuTen::Log.error "Failed to add user #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}."
                 GitPusshuTen::Log.error "An error occurred."
+                exit
               end
             else
               GitPusshuTen::Log.error "Failed to remove user #{configuration.user.to_s.color(:yellow)} from #{configuration.ip.to_s.color(:yellow)}."
               GitPusshuTen::Log.error "An error occurred."
+              exit
             end
           end
         else
@@ -74,8 +99,28 @@ module GitPusshuTen
             else
               GitPusshuTen::Log.error "Failed to add user #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}."
               GitPusshuTen::Log.error "An error occurred."
+              exit
             end
           end
+        end
+        
+        ##
+        # Installs the .gitconfig and minimum configuration
+        # if the configuration file does not exist.
+        if not environment.file?(File.join(configuration.path, '.gitconfig'))
+          GitPusshuTen::Log.message "Creating a #{".gitconfig".color(:yellow)} for #{configuration.user.to_s.color(:yellow)}."
+          environment.install_gitconfig!
+        else
+          GitPusshuTen::Log.message ".gitconfig ".color(:yellow) + "already installed."
+        end
+        
+        ##
+        # Installs PushAnd if it has not yet been installed
+        if not environment.directory?(File.join(configuration.path, 'pushand'))
+          GitPusshuTen::Log.message "Installing #{"PushAnd".color(:yellow)} for #{configuration.ip.to_s.color(:yellow)}."
+          environment.install_pushand!
+        else
+          GitPusshuTen::Log.message "PushAnd ".color(:yellow) + "already installed."
         end
       end
 

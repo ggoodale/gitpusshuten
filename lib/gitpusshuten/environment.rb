@@ -84,6 +84,58 @@ module GitPusshuTen
     end
 
     ##
+    # Determines whether the specified utility has been installed or not
+    def installed?(utility)
+      if execute_as_root("which #{utility}").nil?
+        return false
+      else
+        return true
+      end
+    end
+
+    ##
+    # Installs Git
+    def install!(utility)
+      execute_as_root("apt-get install -y #{utility}")
+    end
+
+    ##
+    # Installs PushAnd
+    def install_pushand!
+      command  = "cd '#{configuration.path}'; git clone git://github.com/meskyanichi/pushand.git;"
+      command += "chown -R #{configuration.user}:#{configuration.user} pushand; '#{configuration.path}/pushand/pushand_server_install'"
+      execute_as_root(command)
+    end
+
+    ##
+    # Installs a generated .gitconfig
+    def install_gitconfig!
+      command  = "cd #{configuration.path}; echo -e \"[receive]\ndenyCurrentBranch = ignore\" > .gitconfig;"
+      command += "chown #{configuration.user}:#{configuration.user} .gitconfig"
+      execute_as_root(command)
+    end
+
+    ##
+    # Tests if the specified directory exists
+    def directory?(path)
+      if execute_as_root("if [[ -d '#{path}' ]]; then exit; else echo 1; fi").nil?
+        return true
+      else
+        return false
+      end
+    end
+
+    ##
+    # Tests if the specified file exists
+    def file?(path)
+      if execute_as_root("if [[ -f '#{path}' ]]; then exit; else echo 1; fi").nil?
+        return true
+      else
+        return false
+      end
+    end
+
+    ##
     # Performs a command as root
     def execute_as_root(command)
       @root_not_authenticated ||= false
