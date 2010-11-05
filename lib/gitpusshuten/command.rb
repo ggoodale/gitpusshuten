@@ -90,7 +90,7 @@ module GitPusshuTen
       puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
       puts "[Command List]\n\n"
       available_commands.compact.sort.each do |command|
-        puts "\s\s" + command + "\t\t" + get_constant_for(command).description          
+        puts "\s\s" + command + (command.length < 6 ? "\t" : "") + "\t" + get_constant_for(command).description          
       end
       puts "\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>\n".color(:yellow)
       puts "For more information, visit: http://gitpusshuten.com/"
