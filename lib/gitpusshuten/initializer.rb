@@ -4,6 +4,8 @@ module GitPusshuTen
     ##
     # Method to be called from CLI/Executable
     def initialize(*args)
+      invoke_independent_command!(args)
+      
       if not File.exist?(configuration_file)
         GitPusshuTen::Log.error "Couldn't find the GitPusshuTen configuration file in #{configuration_file}."
         exit
@@ -46,6 +48,19 @@ module GitPusshuTen
     # Path to the assumed .gitpusshuten directory
     def gitpusshuten_root
       File.expand_path(File.join(Dir.pwd, '.gitpusshuten'))
+    end
+
+    ##
+    # If a command that does not rely on an initialized
+    # environment, run it without attemping to parse environment
+    # specific files.
+    def invoke_independent_command!(args)
+      if %w[help].include? args.flatten.first
+        "GitPusshuTen::Commands::#{args.flatten.first.classify}".constantize.new(
+          GitPusshuTen::CLI.new(args), nil, nil, nil
+        ).perform!
+        exit
+      end
     end
 
   end
