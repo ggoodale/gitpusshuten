@@ -52,12 +52,10 @@ module GitPusshuTen
     ##
     # Checks the remote server to see if the provided user exists
     def user_exists?
-      Net::SSH.start(configuration.ip, 'root') do |environment|
-        if(environment.exec!("grep '#{configuration.user}' /etc/passwd").nil?)
-          return false
-        else
-          return true
-        end
+      if(execute_as_root("grep '#{configuration.user}' /etc/passwd").nil?)
+        return false
+      else
+        return true
       end
     end
 
@@ -66,13 +64,11 @@ module GitPusshuTen
     # to the path specified in the config.rb. This is the location
     # to where applications will be deployed
     def add_user!
-      Net::SSH.start(configuration.ip, 'root') do |environment|
-        response = environment.exec!("useradd -m --home='#{configuration.path}' --password='#{configuration.password}' '#{configuration.user}'")
-        if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
-          return true
-        else
-          return false
-        end
+      response = execute_as_root("useradd -m --home='#{configuration.path}' --password='" + %x[openssl passwd #{configuration.password}].chomp + "' '#{configuration.user}'")
+      if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
+        return true
+      else
+        return false
       end
     end
 
@@ -80,11 +76,32 @@ module GitPusshuTen
     # Removes a user from the remote server but does not remove
     # the user's home directory since it might contain applications
     def remove_user!
-      Net::SSH.start(configuration.ip, 'root') do |environment|
-        if environment.exec!("userdel '#{configuration.user}'").nil?
-          return true
-        else
-          return false
+      if execute_as_root("userdel '#{configuration.user}'").nil?
+        return true
+      else
+        return false
+      end
+    end
+
+    def execute_as_root(command)
+      @root_not_authenticated ||= false
+      @root_password ||= nil
+      while true
+        begin
+          Net::SSH.start(configuration.ip, 'root', {:password => @root_password, :port => configuration.port}) do |environment|
+            @root_not_authenticated = true
+            return environment.exec!(command)
+          end
+        rescue Net::SSH::AuthenticationFailed
+          if @root_password.nil?
+            GitPusshuTen::Log.message "Please provide your root password for #{configuration.ip.to_s.color(:yellow)}."
+          else
+            GitPusshuTen::Log.error "That passwords appears to be incorrect. Unable to log in. Try again!"
+          end
+          
+          unless @root_not_authenticated
+            @root_password = ask("") { |q| q.echo = false }
+          end          
         end
       end
     end
