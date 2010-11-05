@@ -67,6 +67,19 @@ module GitPusshuTen
       end
 
       ##
+      # Displays the help screen for the current command
+      def help
+        command_object.display_usage(cli.command)
+        exit
+      end
+
+      ##
+      # Contains an instance of the command object
+      def command_object
+        @command_object ||= GitPusshuTen::Command.new(cli, configuration, hooks, environment)
+      end
+
+      ##
       # Git object wrapper
       def git
         @git ||= GitPusshuTen::Git.new

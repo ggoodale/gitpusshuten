@@ -16,6 +16,8 @@ module GitPusshuTen
         perform_hooks!
         
         @tag = cli.arguments.shift
+        
+        help if tag.nil? or environment.name.nil?
       end
 
       ##

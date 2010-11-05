@@ -26,11 +26,7 @@ module GitPusshuTen
           command_object.display_usage(command)
         end
       end
-
-      def command_object
-        @command_object ||= GitPusshuTen::Command.new(cli, configuration, hooks, environment)
-      end
-
+      
     end
   end
 end
