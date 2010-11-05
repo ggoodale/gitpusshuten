@@ -3,7 +3,8 @@ module GitPusshuTen
     class Tag < GitPusshuTen::Commands::Base
       description "Pushes the specified tag to a remote."
       usage       "push tag <tag> to <environment>"
-      example     "push tag 1.4.2 to production"
+      example     "push tag 1.4.2 to staging"
+      example     "push tag 1.4.0 to production"
 
       ##
       # Tag specific attributes/arguments
