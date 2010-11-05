@@ -36,10 +36,26 @@ describe GitPusshuTen::Commands::Help do
     it do
       command.command.should == 'tag'
     end
+    
+    context "when the command exists" do
+      it "should display the usage for the tag command" do
+        command_object.expects(:display_usage).with('tag')
+        command_object.expects(:available_commands).returns(command_object)
+        command_object.expects(:include?).returns(true)
+        command.perform!
+      end
+    end
 
-    it "should display the usage for the tag command" do
-      command_object.expects(:display_usage).with('tag')
-      command.perform!
+    context "when the command does not exist" do
+      command_setup!('Help', %w[help idontexist])
+      
+      it "should display an error" do
+        command_object.expects(:display_usage).never
+        command_object.expects(:available_commands).returns(command_object)
+        command_object.expects(:include?).returns(false)
+        GitPusshuTen::Log.expects(:error).with("Command <idontexist> not found.")
+        command.perform!
+      end
     end
   end
 
