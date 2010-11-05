@@ -103,7 +103,7 @@ module GitPusshuTen
     # Installs PushAnd
     def install_pushand!
       command  = "cd '#{configuration.path}'; git clone git://github.com/meskyanichi/pushand.git;"
-      command += "chown -R #{configuration.user}:#{configuration.user} pushand; '#{configuration.path}/pushand/pushand_server_install'"
+      command += "chown -R #{configuration.user}:#{configuration.user} pushand; '#{configuration.path}/pushand/pushand_server_uninstall'; '#{configuration.path}/pushand/pushand_server_install'"
       execute_as_root(command)
     end
 
