@@ -16,7 +16,7 @@ module GitPusshuTen
       # Initializes the Setup command
       def initialize(*objects)
         super
-                
+        
         @object = cli.arguments.shift
         
         help if object.nil? or environment.name.nil?
@@ -26,7 +26,13 @@ module GitPusshuTen
       # Performs the Setup command
       def perform!
         if object == 'remote'
-          
+          if git.has_remote?(environment.name)
+            git.remove_remote(environment.name)
+          end
+          git.add_remote(
+            environment.name,
+            configuration.user + '@' + configuration.ip + ':' + environment.application_root
+          )
         end
       end
 
