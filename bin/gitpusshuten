@@ -1,0 +1,3 @@
+#! /usr/bin/env ruby
+require 'gitpusshuten'
+GitPusshuTen::Initializer.new(ARGV)
