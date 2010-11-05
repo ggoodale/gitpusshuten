@@ -21,7 +21,8 @@ module GitPusshuTen
 
       ##
       # Extract Command
-      @command = @arguments.shift.underscore
+      @command = @arguments.shift
+      @command = @command.underscore unless @command.nil?
 
       ##
       # Extract Environment

@@ -55,6 +55,17 @@ module GitPusshuTen
     # environment, run it without attemping to parse environment
     # specific files.
     def invoke_independent_command!(args)
+      
+      ##
+      # Initializes the help command by default if there aren't any arguments
+      if args.flatten.empty?
+        GitPusshuTen::Command.new(GitPusshuTen::CLI.new(args), nil, nil, nil).display_commands
+        exit
+      end
+      
+      ##
+      # Append more arguments to the array below to allow more commands
+      # to invoke without initializing an environment
       if %w[help version initialize].include? args.flatten.first
         "GitPusshuTen::Commands::#{args.flatten.first.classify}".constantize.new(
           GitPusshuTen::CLI.new(args), nil, nil, nil
