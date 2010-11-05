@@ -87,7 +87,7 @@ module GitPusshuTen
     ##
     # Displays a list of available commands in the CLI
     def display_commands
-      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\s#{GitPusshuTen::VERSION}\n\n"
+      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
       puts "[Command List]\n\n"
       available_commands.compact.sort.each do |command|
         puts "\s\s" + command + "\t\t\t" + get_constant_for(command).description          
