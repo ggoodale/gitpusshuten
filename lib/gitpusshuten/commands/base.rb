@@ -19,16 +19,6 @@ module GitPusshuTen
       attr_accessor :environment
 
       ##
-      # This is used by the "help" command to display the
-      # description of the command in the CLI
-      attr_accessor :description
-
-      ##
-      # This is used by the "help" command to display the
-      # usage of the command in the CLI
-      attr_accessor :usage
-
-      ##
       # This is a flag, that, when set to true, will invoke the
       # potentially specified deployment hooks. When "perform_hooks"
       # is set to false, deployment hooks will not be invoked. This is the default
@@ -36,6 +26,39 @@ module GitPusshuTen
       # "perform_hooks!" command from within the "initialize" method of that particular command
       attr_accessor :perform_hooks
       alias :perform_hooks? :perform_hooks
+
+      ##
+      # This is used by the "help" command to display the
+      # description of the command in the CLI
+      def self.description(value = nil)
+        if value.nil?
+          @description
+        else
+          @description = value
+        end
+      end
+
+      ##
+      # This is used by the "help" command to display the
+      # usage of the command in the CLI
+      def self.usage(value = nil)
+        if value.nil?
+          @usage
+        else
+          @usage = value
+        end
+      end
+
+      ##
+      # This is used by the "help" command to display an
+      # example of the command in the CLI
+      def self.example(value = nil)
+        if value.nil?
+          @example
+        else
+          @example = value
+        end
+      end
 
       ##
       # Sets the "perform_hooks" flag to "true"
@@ -55,7 +78,7 @@ module GitPusshuTen
       def pre_perform!
         return unless perform_hooks?
         unless hooks.pre_hooks.any?
-          GitPusshuTen::Log.message "There are no pre-deploy hooks, skipping."
+          GitPusshuTen::Log.message "No Pre-Deploy Hooks To Perform."
           return
         end
         
@@ -75,7 +98,7 @@ module GitPusshuTen
       def post_perform!
         return unless perform_hooks?
         unless hooks.post_hooks.any?
-          GitPusshuTen::Log.message "There are no post-deploy hooks, skipping."
+          GitPusshuTen::Log.message "No Post-Deploy Hooks To Perform."
           return
         end
         

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module GitPusshuTen
   class Command
 
@@ -80,6 +82,36 @@ module GitPusshuTen
     # only the file name without the .rb extension
     def find(command)
       command.gsub(/\.rb/, '').split('/').last
+    end
+
+    ##
+    # Displays a list of available commands in the CLI
+    def display_commands
+      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\s#{GitPusshuTen::VERSION}\n\n"
+      puts "[Command List]\n\n"
+      available_commands.compact.sort.each do |command|
+        puts "\s\s" + command + "\t\t\t" + get_constant_for(command).description          
+      end
+      puts "\n\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>".color(:yellow)
+      puts "\nFor more information, visit: http://gitpusshuten.com/"
+    end
+
+    ##
+    # Displays command specific details in the CLI
+    def display_usage(command)
+      puts "\n\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\s\s\s\s\s\s\s\sv#{GitPusshuTen::VERSION}\n\n"
+      puts "[Command]\n\n\s\s#{command}\n\n\n"
+      puts "[Description]\n\n\s\s#{get_constant_for(command).description}"
+      puts "\n\n[Usage]\n\n\s\s#{get_constant_for(command).usage}"
+      puts "\n\n[Example]\n\n\s\s#{get_constant_for(command).example}"
+      puts "\n\nFor a list of all commands: " + "gitpusshuten help".color(:yellow)
+      puts "\nFor more information, visit: http://gitpusshuten.com/"
+    end
+
+    ##
+    # Returns the constant of a command
+    def get_constant_for(command)
+      "GitPusshuTen::Commands::#{command.classify}".constantize
     end
 
   end

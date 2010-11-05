@@ -21,7 +21,7 @@ module GitPusshuTen
 
       ##
       # Extract Command
-      @command = @arguments.shift.strip.underscore
+      @command = @arguments.shift.underscore
 
       ##
       # Extract Environment
