@@ -6,11 +6,11 @@ module GitPusshuTen
       example     "gitpusshuten help | gitpusshuten help tag"
 
       ##
-      # Tag specific attributes/arguments
+      # Help specific attributes/arguments
       attr_accessor :command
 
       ##
-      # Initializes the Tag command
+      # Initializes the Help command
       def initialize(*objects)
         super
         
@@ -18,7 +18,7 @@ module GitPusshuTen
       end
 
       ##
-      # Performs the Tag command
+      # Performs the Help command
       def perform!
         if command.nil?
           command_object.display_commands
