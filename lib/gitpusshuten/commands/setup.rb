@@ -19,6 +19,12 @@ module GitPusshuTen
         
         @object = cli.arguments.shift
         
+        if not configuration.found?
+          GitPusshuTen::Log.error "Could not find any configuration for #{environment_name} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
+          GitPusshuTen::Log.error "Please add it and run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} to set it up with git remote."
+          exit
+        end
+        
         help if object.nil? or environment.name.nil?
       end
 
@@ -37,8 +43,8 @@ module GitPusshuTen
       # Performs the "user" action
       def perform_user!
         if not environment.installed?('git')
-          GitPusshuTen::Log.warning "It is required that you have #{"Git".color(:yellow)} installed on your server."
-          GitPusshuTen::Log.warning "Could not find #{"Git".color(:yellow)}, would you like to install it?"
+          GitPusshuTen::Log.warning "It is required that you have #{git_name} installed at #{ip_addr}."
+          GitPusshuTen::Log.warning "Could not find #{git_name}, would you like to install it?"
           install_git = choose do |menu|
             menu.prompt = ''
             menu.choice('Yes') { true  }
@@ -46,12 +52,12 @@ module GitPusshuTen
           end
           
           if install_git
-            GitPusshuTen::Log.message "Installing #{"Git".color(:yellow)}!"
+            GitPusshuTen::Log.message "Installing #{git_name}!"
             environment.install!('git-core')
             if environment.installed?('git')
-              GitPusshuTen::Log.message "#{"Git".color(:yellow)} has been successfully installed!"
+              GitPusshuTen::Log.message "#{git_name} has been successfully installed!"
             else
-              GitPusshuTen::Log.error "Unable to install #{"Git".color(:yellow)}."
+              GitPusshuTen::Log.error "Unable to install #{git_name}."
               exit
             end
           else
@@ -59,35 +65,35 @@ module GitPusshuTen
           end
         end
         
-        GitPusshuTen::Log.message "Confirming existance of user #{configuration.user.to_s.color(:yellow)} on the #{configuration.environment.to_s.color(:yellow)} environment."
+        GitPusshuTen::Log.message "Confirming existance of user #{user_name} on the #{environment_name} environment."
         if environment.user_exists?
-          GitPusshuTen::Log.message "It looks like #{configuration.user.to_s.color(:yellow)} already exists at #{configuration.ip.to_s.color(:yellow)}."
-          GitPusshuTen::Log.message "Would you like to remove and re-add #{configuration.user.to_s.color(:yellow)}?"
+          GitPusshuTen::Log.message "It looks like #{user_name} already exists at #{app_name} (#{ip_addr})."
+          GitPusshuTen::Log.message "Would you like to remove and re-add #{user_name}?"
           yes = choose do |menu|
             menu.prompt = ''
             menu.choice('Yes') { true  }
             menu.choice('No')  { false }
           end
           if yes
-            GitPusshuTen::Log.message "Removing user #{configuration.user.to_s.color(:yellow)} from #{configuration.ip.to_s.color(:yellow)}."
+            GitPusshuTen::Log.message "Removing user #{user_name} from #{app_name} (#{ip_addr})."
             if environment.remove_user!
-              GitPusshuTen::Log.message "Re-adding user #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}."
+              GitPusshuTen::Log.message "Re-adding user #{user_name} to #{app_name} (#{ip_addr})."
               if environment.add_user!
-                GitPusshuTen::Log.message "Successfully re-added #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}!"
+                GitPusshuTen::Log.message "Successfully re-added #{user_name} to #{app_name} (#{ip_addr})!"
               else
-                GitPusshuTen::Log.error "Failed to add user #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}."
+                GitPusshuTen::Log.error "Failed to add user #{user_name} to #{app_name} (#{ip_addr})."
                 GitPusshuTen::Log.error "An error occurred."
                 exit
               end
             else
-              GitPusshuTen::Log.error "Failed to remove user #{configuration.user.to_s.color(:yellow)} from #{configuration.ip.to_s.color(:yellow)}."
+              GitPusshuTen::Log.error "Failed to remove user #{user_name} from #{app_name} (#{ip_addr})."
               GitPusshuTen::Log.error "An error occurred."
               exit
             end
           end
         else
-          GitPusshuTen::Log.message "It looks like #{configuration.user.to_s.color(:yellow)} does not yet exist."
-          GitPusshuTen::Log.message "Would you like to add #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}?"
+          GitPusshuTen::Log.message "It looks like #{user_name} does not yet exist."
+          GitPusshuTen::Log.message "Would you like to add #{user_name} to #{app_name} (#{ip_addr})?"
           yes = choose do |menu|
             menu.prompt = ''
             menu.choice('Yes') { true  }
@@ -95,9 +101,9 @@ module GitPusshuTen
           end
           if yes
             if environment.add_user!
-              GitPusshuTen::Log.message "Successfully added #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}!"
+              GitPusshuTen::Log.message "Successfully added #{user_name} to #{app_name} (#{ip_addr})!"
             else
-              GitPusshuTen::Log.error "Failed to add user #{configuration.user.to_s.color(:yellow)} to #{configuration.ip.to_s.color(:yellow)}."
+              GitPusshuTen::Log.error "Failed to add user #{user_name} to #{app_name} (#{ip_addr})."
               GitPusshuTen::Log.error "An error occurred."
               exit
             end
@@ -108,31 +114,37 @@ module GitPusshuTen
         # Installs the .gitconfig and minimum configuration
         # if the configuration file does not exist.
         if not environment.file?(File.join(configuration.path, '.gitconfig'))
-          GitPusshuTen::Log.message "Creating a #{".gitconfig".color(:yellow)} for #{configuration.user.to_s.color(:yellow)}."
+          GitPusshuTen::Log.message "Configuring #{git_name} for #{user_name}."
           environment.install_gitconfig!
         else
-          GitPusshuTen::Log.message ".gitconfig ".color(:yellow) + "already installed."
+          GitPusshuTen::Log.message "#{git_name} already configured for #{user_name}."
         end
         
         ##
         # Installs PushAnd if it has not yet been installed
         if not environment.directory?(File.join(configuration.path, 'pushand'))
-          GitPusshuTen::Log.message "Installing #{"PushAnd".color(:yellow)} for #{configuration.user.to_s.color(:yellow)}."
+          GitPusshuTen::Log.message "Cloning and installing #{pushand_name} for #{user_name}."
           environment.install_pushand!
         else
-          GitPusshuTen::Log.message "PushAnd ".color(:yellow) + "already installed."
+          GitPusshuTen::Log.message "#{pushand_name} already cloned and installed for #{user_name}."
         end
+        
+        ##
+        # Finished adding user!
+        GitPusshuTen::Log.message "Finished adding and configuring #{user_name}!"
+        
+        ##
+        # Add remote
+        GitPusshuTen::Log.message "Adding #{environment_name} to your #{git_remote}."
+        perform_remote!
+        
+        GitPusshuTen::Log.message "Finished installation!"
+        GitPusshuTen::Log.message "You should now be able to push your application to #{app_name} at #{ip_addr}."
       end
 
       ##
       # Performs the "remote" action
       def perform_remote!
-        if not configuration.found?
-          GitPusshuTen::Log.error "Could not find any configuration for #{environment.name.to_s.color(:yellow)} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
-          GitPusshuTen::Log.error "Please add it and run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} to set it up with git remote."
-          exit
-        end
-        
         if git.has_remote?(environment.name)
           git.remove_remote(environment.name)
         end
@@ -142,6 +154,36 @@ module GitPusshuTen
         )
         GitPusshuTen::Log.message("The " + environment.name.to_s.color(:yellow) + " remote has been added:")
         GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n")
+      end
+
+      private
+      
+      def app_name
+        configuration.application.to_s.color(:yellow)
+      end
+      
+      def ip_addr
+        configuration.ip.to_s.color(:yellow)
+      end
+      
+      def git_name
+        "Git".color(:yellow)
+      end
+      
+      def user_name
+        configuration.user.to_s.color(:yellow)
+      end
+      
+      def environment_name
+        configuration.environment.to_s.color(:yellow)
+      end
+      
+      def pushand_name
+        "PushAnd".color(:yellow)
+      end
+
+      def git_remote
+        "git remote".color(:yellow)
       end
 
     end
