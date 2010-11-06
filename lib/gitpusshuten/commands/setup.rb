@@ -65,7 +65,7 @@ module GitPusshuTen
           end
         end
         
-        GitPusshuTen::Log.message "Confirming existance of user #{user_name} on the #{environment_name} environment."
+        GitPusshuTen::Log.message "Confirming existence of user #{user_name} on the #{environment_name} environment."
         if environment.user_exists?
           GitPusshuTen::Log.message "It looks like #{user_name} already exists at #{app_name} (#{ip_addr})."
           GitPusshuTen::Log.message "Would you like to remove and re-add #{user_name}?"
@@ -137,6 +137,27 @@ module GitPusshuTen
         # Add remote
         GitPusshuTen::Log.message "Adding #{environment_name} to your #{git_remote}."
         perform_remote!
+        
+        ##
+        # Install ssh key
+        if environment.has_ssh_key? and environment.ssh_key_installed?
+          GitPusshuTen::Log.message "Your ssh key is already installed for #{user_name} at #{ip_addr}."
+        else
+          if environment.has_ssh_key?
+            GitPusshuTen::Log.message "You seem to have a ssh key in #{environment.ssh_key_path}"
+            GitPusshuTen::Log.message "This key isn't installed for #{user_name} at #{ip_addr}. Would you like to install it?"
+            yes = choose do |menu|
+              menu.prompt = ''
+              menu.choice('Yes') { true  }
+              menu.choice('No')  { false }
+            end
+            if yes
+              GitPusshuTen::Log.message "Installing your ssh key for #{user_name} at #{ip_addr}."
+              environment.install_ssh_key!
+              GitPusshuTen::Log.message "Your ssh key has been installed!"
+            end
+          end
+        end
         
         GitPusshuTen::Log.message "Finished installation!"
         GitPusshuTen::Log.message "You should now be able to push your application to #{app_name} at #{ip_addr}."
