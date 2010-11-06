@@ -4,9 +4,8 @@ module GitPusshuTen
       description "Setups up various things for you, based on the .gitpusshuten/config.rb file."
       usage       "gitpusshuten setup <object> for <environment>"
       example     "gitpusshuten setup remote for staging      # Sets up the git remote for staging"
-      example     "gitpusshuten setup remote for production   # Sets up the git remote for production"
-      example     "gitpusshuten setup user for staging        # Sets up the user on the remote server for staging"
       example     "gitpusshuten setup user for production     # Sets up the user on the remote server for production"
+      example     "gitpusshuten setup sshkey for staging      # Installs your ssh key on the remote server for staging"
 
       ##
       # Setup specific attributes/arguments
