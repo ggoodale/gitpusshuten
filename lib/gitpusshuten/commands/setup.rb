@@ -156,28 +156,47 @@ module GitPusshuTen
         GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n")
       end
 
+      ##
+      # Performs the "sshkey"
+      def perform_sshkey!
+        unless environment.has_ssh_key?
+          GitPusshuTen::Log.error "Could not find ssh key in #{environment.ssh_key_path}"
+          GitPusshuTen::Log.error "To create one, run: " + "ssh-keygen -t rsa".color(:yellow)
+          exit
+        end
+        
+        unless environment.ssh_key_installed?
+          GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{user_name} at #{ip_addr}."
+          GitPusshuTen::Log.message "Installing now."
+          environment.install_ssh_key!
+          GitPusshuTen::Log.message "Your ssh key has been installed!"
+        else
+          GitPusshuTen::Log.message "Your ssh has already been installed for #{user_name} at #{ip_addr}."
+        end
+      end
+
       private
-      
+
       def app_name
         configuration.application.to_s.color(:yellow)
       end
-      
+
       def ip_addr
         configuration.ip.to_s.color(:yellow)
       end
-      
+
       def git_name
         "Git".color(:yellow)
       end
-      
+
       def user_name
         configuration.user.to_s.color(:yellow)
       end
-      
+
       def environment_name
         configuration.environment.to_s.color(:yellow)
       end
-      
+
       def pushand_name
         "PushAnd".color(:yellow)
       end
