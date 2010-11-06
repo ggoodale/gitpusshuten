@@ -1,3 +1,4 @@
 #! /usr/bin/env ruby
+@ignore_bundler = true
 require 'gitpusshuten'
 GitPusshuTen::Initializer.new(ARGV)

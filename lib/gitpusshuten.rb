@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'bundler/setup'
+require 'bundler/setup' unless @ignore_bundler
 require 'active_support/inflector'
 require 'net/ssh'
 require 'highline/import'
