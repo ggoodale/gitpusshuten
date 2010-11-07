@@ -13,27 +13,27 @@
 # For more information, visit: http://gitpusshuten.com/modules
 
 perform_on :staging, :production do
-  # pre :echo_something do
+  # pre "Echo out something" do
   #   run 'echo "Ready to Deploy"'
   # end
 end
 
 perform_on :staging do
-  # post :view_directory do
+  # post "Display application root directory contents" do
   #   run 'ls -la'
   # end
 
-  # post :restart_nginx do
+  # post "Restart NginX" do
   #   run '/etc/init.d/nginx restart'
   # end
 end
 
 perform_on :production do
-  # post :view_directory do
+  # post "Display application root directory contents" do
   #   run 'ls -la'
   # end
 
-  # post :restart_nginx do
+  # post "Restart NginX" do
   #   run '/etc/init.d/nginx restart'
   # end
 end
