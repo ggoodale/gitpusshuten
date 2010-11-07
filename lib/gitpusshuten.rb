@@ -5,7 +5,7 @@ require 'net/ssh'
 require 'highline/import'
 require 'rainbow'
 
-Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each_with_index do |file, index|
+Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each do |file|
   if not File.directory?(file) and not file =~ /\/modules\/.+\/hooks\.rb/
     require file
   end
