@@ -7,8 +7,8 @@ pusshuten :staging, 'RSpec Staging Example Application' do
     a.port      = '20'
   end
   
-  git do |g|
-    g.path = '/var/apps/'
+  applications do |a|
+    a.path = '/var/apps/'
   end
   
   modules do |m|

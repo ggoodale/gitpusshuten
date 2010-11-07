@@ -37,9 +37,9 @@ module GitPusshuTen
     end
 
     ##
-    # Git
+    # Applications
     # Helper method for the pusshuten configuration method
-    def git
+    def applications
       yield self
     end
 
