@@ -66,7 +66,7 @@ module GitPusshuTen
         exit
       end
 
-      if environment == @environment
+      if environment == @environment or @force_parse
         @application = application
         @found       = true
         block.call
@@ -88,6 +88,22 @@ module GitPusshuTen
     # configuration values into the GitPusshuTen::Configuration instance
     def parse!(configuration_file)
       instance_eval(File.read(configuration_file))
+      
+      ##
+      # If no configuration is found by environment then
+      # it will re-parse it in a forced manner, meaning it won't
+      # care about the environment and it will just parse everything it finds.
+      # This is done because we can then extract all set "modules" from the configuration
+      # file and display them in the "Help" screen so users can look up information/examples on them.
+      #
+      # This will only occur if no environment is found/specified. So when doing anything
+      # environment specific, it will never force the parsing.
+      if not found?
+        @force_parse = true
+        instance_eval(File.read(configuration_file))
+        @additional_modules.uniq!
+      end
+      
       self
     end
 

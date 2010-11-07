@@ -6,7 +6,7 @@ require 'highline/import'
 require 'rainbow'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each_with_index do |file, index|
-  if not File.directory?(file) and not file =~ /\/modules\//
+  if not File.directory?(file) and not file =~ /\/modules\/.+\/hooks\.rb/
     require file
   end
 end

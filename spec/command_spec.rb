@@ -9,6 +9,7 @@ describe GitPusshuTen::Command do
   
   before do
     cli.stubs(:command).returns('non_existing_command')
+    configuration.stubs(:additional_modules).returns([])
   end
   
   it "should error out if the command was not found" do

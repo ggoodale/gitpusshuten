@@ -57,9 +57,26 @@ module GitPusshuTen
     def invoke_independent_command!(args)
       
       ##
+      # Flatten Arguments to be able to test if the array is empty
+      # and not an empty array in an empty array
+      args.flatten!
+      
+      ##
+      # Parses the CLI
+      cli = GitPusshuTen::CLI.new(args)
+      
+      ##
+      # Parses the Configuration
+      if File.exist?(configuration_file)
+        configuration = GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)
+      else
+        configuration = nil
+      end
+      
+      ##
       # Initializes the help command by default if there aren't any arguments
-      if args.flatten.empty?
-        GitPusshuTen::Command.new(GitPusshuTen::CLI.new(args), nil, nil, nil).display_commands
+      if args.empty?
+        GitPusshuTen::Command.new(cli, configuration, nil, nil).display_commands
         exit
       end
       
@@ -68,7 +85,7 @@ module GitPusshuTen
       # to invoke without initializing an environment
       if %w[help version initialize].include? args.flatten.first
         "GitPusshuTen::Commands::#{args.flatten.first.classify}".constantize.new(
-          GitPusshuTen::CLI.new(args), nil, nil, nil
+          cli, configuration, nil, nil
         ).perform!
         exit
       end

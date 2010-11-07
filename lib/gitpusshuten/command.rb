@@ -57,11 +57,23 @@ module GitPusshuTen
     ##
     # Returns an array of available commands
     def available_commands
-      commands_directory.map do |command|
+      commands = commands_directory.map do |command|
         unless blacklisted?(command)
           find(command)
         end
       end
+      
+      if configuration.respond_to?(:additional_modules)
+        module_directory.each do |command|
+          configuration.additional_modules.each do |additional_module|
+            if command =~ /\/modules\/(#{additional_module})\/command\.rb/
+              commands << $1
+            end
+          end
+        end
+      end
+      
+      commands.flatten.compact.uniq
     end
 
     ##
@@ -69,6 +81,10 @@ module GitPusshuTen
     # insidethe commands directory and returns an array of each entry
     def commands_directory
       Dir[File.expand_path(File.join(File.dirname(__FILE__), 'commands/*.rb'))]
+    end
+
+    def module_directory
+      Dir[File.expand_path(File.join(File.dirname(__FILE__), 'modules', '*', 'command.rb'))]
     end
 
     ##
