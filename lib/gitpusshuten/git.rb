@@ -32,6 +32,18 @@ module GitPusshuTen
     end
 
     ##
+    # Determines whether Git has been initialized
+    def initialized?
+      File.directory?(File.join(Dir.pwd, '.git'))
+    end
+
+    ##
+    # Initializes Git
+    def initialize!
+      %x[git init]
+    end
+
+    ##
     # Push
     # Begin of the push(type, value).to(remote) chain
     # Pass in the type ("tag", "branch" or "ref") as the first argument

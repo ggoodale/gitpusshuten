@@ -22,6 +22,9 @@ module GitPusshuTen
       def perform!
         if may_initialize?
           copy_templates!
+          if not git.initialized?
+            git.initialize!
+          end
           GitPusshuTen::Log.message "Git Pusshu Ten (プッシュ点) initialized in: #{working_directory}!"
         else
           GitPusshuTen::Log.message "If you wish to initialize it elsewhere, please move into that directory and run " +
