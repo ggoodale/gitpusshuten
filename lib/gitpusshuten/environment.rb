@@ -104,7 +104,7 @@ module GitPusshuTen
         @new_password = configuration.password
       end
       
-      response = execute_as_root("useradd -m --home='#{configuration.path}' --password='" + %x[openssl passwd #{@new_password}].chomp + "' '#{configuration.user}'")
+      response = execute_as_root("useradd -m --home='#{configuration.path}' -s '/bin/bash' --password='" + %x[openssl passwd #{@new_password}].chomp + "' '#{configuration.user}'")
       if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
         return true
       else
@@ -185,7 +185,7 @@ module GitPusshuTen
           Net::SSH.start(configuration.ip, 'root',
           { :password   => @root_password,
             :passphrase => configuration.passphrase,
-            :port       => configuration.port            
+            :port       => configuration.port
           }) do |environment|
             @root_not_authenticated = true
             return environment.exec!(command)
