@@ -21,10 +21,27 @@ module GitPusshuTen
     # Establishes a connection to the remote environment
     # to the user's home directory
     def connect(&ssh)
-      Net::SSH.start(configuration.ip, configuration.user, {
-        :password => configuration.password,
-        :port     => configuration.port
-      }, &ssh)
+      @user_authenticated ||= false
+      @user_password      ||= configuration.password
+      @user_attempted     ||= false
+      
+      while not @user_authenticated
+        begin
+          Net::SSH.start(configuration.ip, configuration.user, {
+            :password => @user_password,
+            :port     => configuration.port
+          }, &ssh)
+          @user_authenticated = true
+        rescue Net::SSH::AuthenticationFailed
+          if @user_attempted
+            GitPusshuTen::Log.error "Password incorrect. Please retry."
+          else
+            GitPusshuTen::Log.message "Please provide the password for #{configuration.user.to_s.color(:yellow)}."
+            @user_attempted = true
+          end
+          @user_password = ask('') { |q| q.echo = false }
+        end
+      end
     end
 
     ##
