@@ -28,8 +28,9 @@ module GitPusshuTen
       while not @user_authenticated
         begin
           Net::SSH.start(configuration.ip, configuration.user, {
-            :password => @user_password,
-            :port     => configuration.port
+            :password   => @user_password,
+            :passphrase => configuration.passphrase,
+            :port       => configuration.port
           }, &ssh)
           @user_authenticated = true
         rescue Net::SSH::AuthenticationFailed
@@ -181,7 +182,11 @@ module GitPusshuTen
       @root_password ||= nil
       while true
         begin
-          Net::SSH.start(configuration.ip, 'root', {:password => @root_password, :port => configuration.port}) do |environment|
+          Net::SSH.start(configuration.ip, 'root',
+          { :password   => @root_password,
+            :passphrase => configuration.passphrase,
+            :port       => configuration.port            
+          }) do |environment|
             @root_not_authenticated = true
             return environment.exec!(command)
           end

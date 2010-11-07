@@ -26,12 +26,13 @@ describe GitPusshuTen::Configuration do
     end
 
     it "should parse the authorization details" do
-      configuration.user.should     == 'git'
-      configuration.password.should == 'testtest'
-      configuration.ip.should       == '123.45.678.910'
-      configuration.port.should     == '20'
+      configuration.user.should       == 'git'
+      configuration.password.should   == 'testtest'
+      configuration.passphrase.should == 'myphrase'
+      configuration.ip.should         == '123.45.678.910'
+      configuration.port.should       == '20'
       
-      configuration.path.should     == '/var/apps/'
+      configuration.path.should       == '/var/apps/'
       
       configuration.additional_modules.should == [:nginx, :passenger, :active_record]
     end

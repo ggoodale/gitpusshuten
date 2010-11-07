@@ -17,9 +17,9 @@ module GitPusshuTen
     alias :found? :found
 
     ##
-    # Contains the user, password, ip and port for connecting
+    # Contains the user, password, passphrase, ip and port for connecting
     # and authorizing the user to the remote server
-    attr_accessor :user, :password, :ip, :port
+    attr_accessor :user, :password, :passphrase, :ip, :port
 
     ##
     # Contains the path to where the application should be pushed
