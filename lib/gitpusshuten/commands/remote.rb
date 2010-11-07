@@ -2,9 +2,9 @@ module GitPusshuTen
   module Commands
     class Remote < GitPusshuTen::Commands::Base
       description "Performs a command on the remote server for the specified environment from the application root."
-      usage       "remote '<command>' for <environment>"
-      example     "remote 'cat log/production.log' for staging"
-      example     "remote 'mkdir tmp; touch tmp/restart.txt' for production"
+      usage       "remote for <environment> '<command>'"
+      example     "remote for staging 'cat log/production.log'"
+      example     "remote for production 'mkdir tmp; touch tmp/restart.txt'"
 
       ##
       # Setup specific attributes/arguments

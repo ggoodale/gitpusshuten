@@ -20,11 +20,6 @@ module GitPusshuTen
       @arguments = args.flatten.uniq.compact.map(&:strip)
 
       ##
-      # Extract Command
-      @command = @arguments.shift
-      @command = @command.underscore unless @command.nil?
-
-      ##
       # Extract Environment
       if @arguments.join(' ') =~ /(to (\w+)|(\w+) environment|for (\w+))/
         [$2, $3, $4].each do |match|
@@ -37,6 +32,11 @@ module GitPusshuTen
           @arguments.delete(argument) if @arguments.include?(argument)
         end
       end
+
+      ##
+      # Extract Command
+      @command = @arguments.shift
+      @command = @command.underscore unless @command.nil?
 
     end
 
