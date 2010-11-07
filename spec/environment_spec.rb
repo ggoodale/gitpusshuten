@@ -23,4 +23,28 @@ describe GitPusshuTen::Environment do
     end
   end
   
+  describe '#delete!' do
+    it "should delete the application root" do
+      environment.expects(:execute).with('rm -rf /var/apps/rspec_staging_example_application.staging')
+      environment.delete!
+    end
+  end
+  
+  describe 'the ssh methods' do
+    describe '#authorized_ssh_keys' do
+      it do
+        environment.expects(:execute_as_root).with("cat '/var/apps/.ssh/authorized_keys'")
+        environment.authorized_ssh_keys
+      end
+    end
+    
+    describe '#install_ssh_key!' do
+      it do
+        environment.expects(:ssh_key).returns('mysshkey')
+        environment.expects(:execute_as_root).with("mkdir -p '/var/apps/.ssh'; echo 'mysshkey' >> '/var/apps/.ssh/authorized_keys'")
+        environment.install_ssh_key!
+      end
+    end
+  end
+  
 end

@@ -181,13 +181,13 @@ module GitPusshuTen
     ##
     # Connects to the server to read out the ~/.ssh/authorized_keys
     def authorized_ssh_keys
-      execute_as_root("cat '#{configuration.path}/.ssh/authorized_keys'")
+      execute_as_root("cat '#{File.join(configuration.path, '.ssh', 'authorized_keys')}'")
     end
 
     ##
     # Installs the ssh key on the remote server
     def install_ssh_key!
-      execute_as_root("mkdir -p '#{configuration.path}/.ssh'; echo '#{ssh_key}' >> '#{configuration.path}/.ssh/authorized_keys'")
+      execute_as_root("mkdir -p '#{File.join(configuration.path, '.ssh')}'; echo '#{ssh_key}' >> '#{File.join(configuration.path, '.ssh', 'authorized_keys')}'")
     end
 
     ##
@@ -196,7 +196,7 @@ module GitPusshuTen
     def ssh_key_installed?
       return false unless has_ssh_key?
       return true if authorized_ssh_keys.include?(ssh_key)
-      false      
+      false
     end
 
     ##
