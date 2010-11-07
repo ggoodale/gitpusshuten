@@ -7,32 +7,54 @@
 #
 # For more information, visit: http://gitpusshuten.com/configuration
 
-pusshuten :staging, 'My Application' do
+
+##
+# Example of configuring both a staging and production environment
+pusshuten 'My Application', :staging, :production do
 
   authorize do |a|
     a.user      = 'gitpusshuten'
     a.password  = 'mypassword'
-    a.ip        = '123.45.678.910'
+    a.ip        = '123.45.678.90'
     a.port      = '22'
   end
 
-  git do |g|
-    g.path = '/var/applications/'
+  applications do |a|
+    a.path = '/var/applications/'
   end
 
 end
 
-pusshuten :production, 'My Application' do
+##
+# Example of only configuring a staging environment
+# pusshuten 'My Application', :staging do
+# 
+#   authorize do |a|
+#     a.user      = 'gitpusshuten'
+#     a.password  = 'mypassword'
+#     a.ip        = '123.45.678.90'
+#     a.port      = '22'
+#   end
+# 
+#   applications do |a|
+#     a.path = '/var/applications/'
+#   end
+# 
+# end
 
-  authorize do |a|
-    a.user      = 'gitpusshuten'
-    a.password  = 'mypassword'
-    a.ip        = '123.45.678.910'
-    a.port      = '22'
-  end
-  
-  git do |g|
-    g.path = '/var/applications/'
-  end
-
-end
+##
+# Example of only configuring a production environment
+# pusshuten 'My Application', :production do
+# 
+#   authorize do |a|
+#     a.user      = 'gitpusshuten'
+#     a.password  = 'mypassword'
+#     a.ip        = '123.45.678.90'
+#     a.port      = '22'
+#   end
+#   
+#   applications do |a|
+#     a.path = '/var/applications/'
+#   end
+# 
+# end
