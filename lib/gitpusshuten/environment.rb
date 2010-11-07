@@ -199,5 +199,11 @@ module GitPusshuTen
       false      
     end
 
+    ##
+    # Deletes the current environment (application)
+    def delete!
+      execute("rm -rf #{application_root}")
+    end
+
   end
 end
