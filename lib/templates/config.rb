@@ -13,10 +13,11 @@
 pusshuten 'My Application', :staging, :production do
 
   authorize do |a|
-    a.user      = 'gitpusshuten'
-    a.password  = 'mypassword'
-    a.ip        = '123.45.678.90'
-    a.port      = '22'
+    a.user       = 'gitpusshuten'
+    # a.password   = 'my-password'
+    # a.passphrase = 'my-ssh-passphrase'
+    a.ip         = '123.45.678.90'
+    a.port       = '22'
   end
 
   applications do |a|
@@ -31,7 +32,8 @@ end
 # 
 #   authorize do |a|
 #     a.user      = 'gitpusshuten'
-#     a.password  = 'mypassword'
+#     # a.password   = 'my-password'
+#     # a.passphrase = 'my-ssh-passphrase'
 #     a.ip        = '123.45.678.90'
 #     a.port      = '22'
 #   end
@@ -48,7 +50,8 @@ end
 # 
 #   authorize do |a|
 #     a.user      = 'gitpusshuten'
-#     a.password  = 'mypassword'
+#     # a.password   = 'my-password'
+#     # a.passphrase = 'my-ssh-passphrase'
 #     a.ip        = '123.45.678.90'
 #     a.port      = '22'
 #   end
