@@ -11,19 +11,10 @@ pusshuten :staging, 'RSpec Staging Example Application' do
     g.path = '/var/apps/'
   end
   
-  platform do |p|
-    p.operating_system = :ubuntu
-    p.webserver        = :nginx
-    p.webserver_module = :passenger
-    p.framework        = :rails
-  end
-  
-  configuration do |c|
-    c.perform_deploy_hooks       = true
-    c.perform_custom_deploy_hook = true
-    
-    c.deploy_hooks        -= [:migrate_database]
-    c.custom_deploy_hooks -= [:my_custom_deploy_hook]
+  modules do |m|
+    m.add :nginx
+    m.add :passenger
+    m.add :active_record
   end
   
 end

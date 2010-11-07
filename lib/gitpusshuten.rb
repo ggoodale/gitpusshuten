@@ -5,8 +5,10 @@ require 'net/ssh'
 require 'highline/import'
 require 'rainbow'
 
-Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each do |file|
-  require file unless File.directory?(file)
+Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each_with_index do |file, index|
+  if not File.directory?(file) and not file =~ /\/modules\//
+    require file
+  end
 end
 
 module GitPusshuTen

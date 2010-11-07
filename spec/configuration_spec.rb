@@ -32,16 +32,8 @@ describe GitPusshuTen::Configuration do
       configuration.port.should     == '20'
       
       configuration.path.should     == '/var/apps/'
-
-      configuration.operating_system.should == :ubuntu
-      configuration.webserver.should        == :nginx
-      configuration.webserver_module.should == :passenger
-      configuration.framework.should        == :rails
-
-      configuration.perform_deploy_hooks.should       == true
-      configuration.perform_custom_deploy_hook.should == true
-      configuration.deploy_hooks.should               == []
-      configuration.custom_deploy_hooks.should        == []
+      
+      configuration.additional_modules.should == [:nginx, :passenger, :active_record]
     end
     
     it "should return self" do

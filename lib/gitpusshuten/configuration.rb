@@ -26,18 +26,9 @@ module GitPusshuTen
     attr_accessor :path
 
     ##
-    # Contains the operating_system, webserver, webserver_module and framework
-    # that git ー プ ッ シ ュ 天 uses to add additional pre-defined/convenient configuration
-    attr_accessor :operating_system, :webserver, :webserver_module, :framework
+    # Contains a list of modules
+    attr_accessor :additional_modules
 
-    ##
-    # Contains the perform_deploy_hooks, perform_custom_deploy_hook,
-    # deploy_hooks and custom_deploy_hooks. These are used to determine
-    # whether the hooks should be invoked or not, as well as push or pop
-    # hooks on/off the stack
-    attr_accessor :perform_deploy_hooks, :perform_custom_deploy_hook,
-                  :deploy_hooks, :custom_deploy_hooks
-    
     ##
     # Authorize
     # Helper method for the pusshuten configuration method 
@@ -53,17 +44,17 @@ module GitPusshuTen
     end
 
     ##
-    # Platform
-    # Helper method for the pusshuten configuration method
-    def platform
+    # Modules
+    # Helper method for adding modules
+    def modules
       yield self
     end
 
     ##
-    # Configuration
-    # Helper method for the pusshuten configuration method
-    def configuration
-      yield self
+    # Modules - Add
+    # Helper method for the Modules helper to add modules to the array
+    def add(module_object)
+      @additional_modules << module_object
     end
 
     ##
@@ -89,8 +80,7 @@ module GitPusshuTen
       @environment = environment
       @found       = false
       
-      @deploy_hooks        = []
-      @custom_deploy_hooks = []
+      @additional_modules = []
     end
 
     ##

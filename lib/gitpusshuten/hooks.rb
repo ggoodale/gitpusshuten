@@ -7,6 +7,10 @@ module GitPusshuTen
     attr_accessor :environment
 
     ##
+    # Contains the configuration object
+    attr_accessor :configuration
+
+    ##
     # Contains an array of GitPusshuTen::Hook objects for the current environment
     attr_accessor :to_perform
 
@@ -18,8 +22,9 @@ module GitPusshuTen
     ##
     # Initializes a new Hooks object
     # Provide the environment (e.g. :staging, :production) to parse
-    def initialize(environment)
+    def initialize(environment, configuration)
       @environment     = environment
+      @configuration   = configuration
       @to_perform      = []
       @commands_to_run = []
     end
@@ -32,6 +37,18 @@ module GitPusshuTen
         instance_eval(File.read(hooks_file))
       else
         GitPusshuTen::Log.warning "Could not locate the hooks.rb file in #{hooks_file}"
+      end
+      self
+    end
+
+    ##
+    # Parses any modules that are set in the configuration (config.rb) file
+    def parse_modules!
+      configuration.additional_modules.each do |additional_module|
+        module_file = File.join(File.dirname(__FILE__), 'modules', additional_module.to_s, 'hooks.rb')
+        if File.exist?(module_file)
+          instance_eval(File.read(module_file))
+        end
       end
       self
     end

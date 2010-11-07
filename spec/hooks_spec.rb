@@ -2,8 +2,11 @@ require 'spec_helper'
 
 describe GitPusshuTen::Hooks do
   
-  let(:hooks_staging)    { GitPusshuTen::Hooks.new(:staging)    }
-  let(:hooks_production) { GitPusshuTen::Hooks.new(:production) }
+  let(:cli)                { GitPusshuTen::CLI.new(%w[tag 1.4.2 to staging])                              }
+  let(:configuration_file) { File.expand_path(File.dirname(__FILE__) + '/fixtures/config.rb')             }
+  let(:configuration)      { GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)  }
+  let(:hooks_staging)      { GitPusshuTen::Hooks.new(:staging, configuration)                             }
+  let(:hooks_production)   { GitPusshuTen::Hooks.new(:production, configuration)                          }
   
   describe '#new' do
     it "should intialize a new hooks object that takes a path to the hooks file as argument" do
@@ -128,7 +131,7 @@ describe GitPusshuTen::Hooks do
     let(:configuration_file) { File.expand_path(File.dirname(__FILE__) + '/fixtures/config.rb')                       }
     let(:configuration)      { GitPusshuTen::Configuration.new(cli.environment).parse!(configuration_file)            }  
     let(:hooks_file)         { File.expand_path(File.dirname(__FILE__) + '/fixtures/hooks.rb')                        }
-    let(:hooks)              { GitPusshuTen::Hooks.new(cli.environment).parse!(hooks_file)                            }
+    let(:hooks)              { GitPusshuTen::Hooks.new(cli.environment, configuration).parse!(hooks_file)             }
     let(:environment)        { GitPusshuTen::Environment.new(configuration)                                           }
     let(:command)            { GitPusshuTen::Commands::NonExistingCommand.new(cli, configuration, hooks, environment) }
     
