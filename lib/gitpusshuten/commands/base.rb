@@ -134,6 +134,37 @@ module GitPusshuTen
         @perform_hooks = false
       end
 
+
+      private
+
+      def app_name
+        configuration.application.to_s.color(:yellow)
+      end
+
+      def ip_addr
+        configuration.ip.to_s.color(:yellow)
+      end
+
+      def git_name
+        "Git".color(:yellow)
+      end
+
+      def user_name
+        configuration.user.to_s.color(:yellow)
+      end
+
+      def environment_name
+        configuration.environment.to_s.color(:yellow)
+      end
+
+      def pushand_name
+        "PushAnd".color(:yellow)
+      end
+
+      def git_remote
+        "git remote".color(:yellow)
+      end
+
     end
   end
 end
