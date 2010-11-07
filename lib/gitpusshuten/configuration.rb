@@ -30,6 +30,10 @@ module GitPusshuTen
     attr_accessor :additional_modules
 
     ##
+    # A flag to force the parsing
+    attr_accessor :force_parse
+
+    ##
     # Authorize
     # Helper method for the pusshuten configuration method 
     def authorize
@@ -60,13 +64,17 @@ module GitPusshuTen
     ##
     # Pusshuten
     # Helper method used to configure the configuration file
-    def pusshuten(environment, application, &block)
-      unless environment.is_a?(Symbol)
-        GitPusshuTen::Log.error 'Please use symbols as environment name.'
-        exit
+    def pusshuten(application, *environment, &block)
+      environment.flatten!
+      
+      environment.each do |env|
+        unless env.is_a?(Symbol)
+          GitPusshuTen::Log.error 'Please use symbols as environment name.'
+          exit
+        end
       end
-
-      if environment == @environment or @force_parse
+      
+      if environment.include?(@environment) or force_parse
         @application = application
         @found       = true
         block.call
@@ -79,6 +87,7 @@ module GitPusshuTen
     def initialize(environment)
       @environment = environment
       @found       = false
+      @force_parse = false
       
       @additional_modules = []
     end
@@ -98,10 +107,15 @@ module GitPusshuTen
       #
       # This will only occur if no environment is found/specified. So when doing anything
       # environment specific, it will never force the parsing.
-      if not found?
+      if not found? and environment.nil?
         @force_parse = true
         instance_eval(File.read(configuration_file))
         @additional_modules.uniq!
+      end
+      
+      if not found? and not environment.nil?
+        GitPusshuTen::Log.error "Could not find any configuration for #{environment.to_s.color(:yellow)}."
+        exit
       end
       
       self

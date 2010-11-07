@@ -1,4 +1,4 @@
-pusshuten :staging, 'RSpec Staging Example Application' do
+pusshuten 'RSpec Staging Example Application', :staging do
   
   authorize do |a|
     a.user      = 'git'
@@ -19,6 +19,6 @@ pusshuten :staging, 'RSpec Staging Example Application' do
   
 end
 
-pusshuten :production, 'RSpec Production Example Application' do
+pusshuten 'RSpec Production Example Application', :production do
   
 end
