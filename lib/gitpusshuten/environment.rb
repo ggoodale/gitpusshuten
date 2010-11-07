@@ -63,8 +63,30 @@ module GitPusshuTen
     # Adds a user to the remote server and sets the home directory
     # to the path specified in the config.rb. This is the location
     # to where applications will be deployed
+    #
+    # If a password is not specified in the configuration, it will prompt
+    # the user to fill one in here in the CLI.
     def add_user!
-      response = execute_as_root("useradd -m --home='#{configuration.path}' --password='" + %x[openssl passwd #{configuration.password}].chomp + "' '#{configuration.user}'")
+      if configuration.password.nil?
+        GitPusshuTen::Log.message "What password would you like to give #{configuration.user.to_s.color(:yellow)}?"
+        while @new_password.nil?
+          new_password = ask('Fill in a password.') { |q| q.echo = false }
+          new_password_verification = ask('Verify password.') { |q| q.echo = false }
+          if not new_password.empty? and (new_password == new_password_verification)
+            @new_password = new_password
+          else
+            if new_password.empty?
+              GitPusshuTen::Log.error "Please provide a password."
+            else
+              GitPusshuTen::Log.error "Verification failed, please try again."
+            end
+          end
+        end
+      else
+        @new_password = configuration.password
+      end
+      
+      response = execute_as_root("useradd -m --home='#{configuration.path}' --password='" + %x[openssl passwd #{@new_password}].chomp + "' '#{configuration.user}'")
       if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
         return true
       else
@@ -187,7 +209,10 @@ module GitPusshuTen
     ##
     # Installs the ssh key on the remote server
     def install_ssh_key!
-      execute_as_root("mkdir -p '#{File.join(configuration.path, '.ssh')}'; echo '#{ssh_key}' >> '#{File.join(configuration.path, '.ssh', 'authorized_keys')}'")
+      command  = "mkdir -p '#{File.join(configuration.path, '.ssh')}';"
+      command += "echo '#{ssh_key}' >> '#{File.join(configuration.path, '.ssh', 'authorized_keys')}';"
+      command += "chown -R #{configuration.user}:#{configuration.user} '#{File.join(configuration.path, '.ssh')}'"
+      execute_as_root(command)
     end
 
     ##
