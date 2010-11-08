@@ -78,5 +78,17 @@ module GitPusshuTen
       File.join(gitpusshuten_dir, 'tmp')
     end
 
+    ##
+    # Create gitpusshuten_tmp_dir
+    def create_gitpusshuten_tmp_dir!
+      %x[mkdir -p '#{gitpusshuten_tmp_dir}']
+    end
+
+    ##
+    # Removes everything inside the gitpusshuten_tmp_dir
+    def clean_gitpusshuten_tmp_dir!
+      puts %x[rm -rf '#{gitpusshuten_tmp_dir}']
+    end
+
   end
 end
