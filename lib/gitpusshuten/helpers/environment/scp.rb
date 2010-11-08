@@ -13,9 +13,9 @@ module GitPusshuTen
                 :passphrase => c.passphrase,
                 :port       => c.port
               }) do |scp|
-                return scp.send(direction, from, to)
+                return scp.send("#{direction}!", from, to)
               end              
-            rescue Net::SSH::AuthenticationFailed
+            rescue Net::SCP::AuthenticationFailed
               if @user_attempted
                 GitPusshuTen::Log.error "Password incorrect. Please retry."
               else
@@ -37,7 +37,7 @@ module GitPusshuTen
                 :passphrase => c.passphrase,
                 :port       => c.port
               }) do |scp|
-                return scp.send(direction, from, to)
+                return scp.send("#{direction}!", from, to)
               end              
             rescue Net::SSH::AuthenticationFailed
               if @root_attempted
