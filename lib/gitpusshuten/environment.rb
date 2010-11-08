@@ -142,10 +142,12 @@ module GitPusshuTen
 
     ##
     # Installs PushAnd
-    def install_pushand!
-      command  = "cd '#{configuration.path}'; git clone git://github.com/meskyanichi/pushand.git;"
-      command += "chown -R #{configuration.user}:#{configuration.user} pushand; '#{configuration.path}/pushand/pushand_server_uninstall'; '#{configuration.path}/pushand/pushand_server_install'"
+    def install_pushand!      
+      download_gitpusshuten_packages!
+      command = "cd #{configuration.path}; cp -R gitpusshuten-packages/pushand/ .; chown -R #{configuration.user}:#{configuration.user} pushand;"
+      command += "'#{configuration.path}/pushand/pushand_server_uninstall'; '#{configuration.path}/pushand/pushand_server_install'"
       execute_as_root(command)
+      clean_up_gitpusshuten_packages!
     end
 
     ##
@@ -245,6 +247,18 @@ module GitPusshuTen
     # Deletes the current environment (application)
     def delete!
       execute("rm -rf #{application_root}")
+    end
+
+    ##
+    # Downloads the gitpusshuten packages
+    def download_gitpusshuten_packages!
+      execute("git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
+    end
+
+    ##
+    # Cleans up the gitpusshuten-packages git repository
+    def clean_up_gitpusshuten_packages!
+      execute("rm -rf '#{File.join(configuration.path, 'gitpusshuten-packages')}'")
     end
 
   end
