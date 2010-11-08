@@ -66,5 +66,17 @@ module GitPusshuTen
       execute_as_user("rm -rf #{app_dir}")
     end
 
+    ##
+    # Returns the .gitpusshuten local directory
+    def gitpusshuten_dir
+      File.join(Dir.pwd, '.gitpusshuten')
+    end
+
+    ##
+    # Returns the .gitpusshuten tmp directory
+    def gitpusshuten_tmp_dir
+      File.join(gitpusshuten_dir, 'tmp')
+    end
+
   end
 end
