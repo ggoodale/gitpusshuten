@@ -25,8 +25,8 @@ module GitPusshuTen
       ##
       # Performs the Passenger command
       def perform!        
-        if respond_to?("perform_#{object}!")
-          send("perform_#{object}!")
+        if respond_to?("perform_#{command}!")
+          send("perform_#{command}!")
         else
           GitPusshuTen::Log.error "Unknown Nginx command: <#{object}>"
           GitPusshuTen::Log.error "Run " + "gitpusshuten help nginx".color(:yellow) + " for a list setup commands."
@@ -38,7 +38,7 @@ module GitPusshuTen
       def perform_start!
         ensure_nginx_executable_is_installed!
         GitPusshuTen::Log.message "Starting Nginx."
-        environment.execute_as_root("/etc/init.d/nginx start")
+        puts environment.execute_as_root("/etc/init.d/nginx start")
       end
 
       ##
@@ -46,7 +46,7 @@ module GitPusshuTen
       def perform_stop!
         ensure_nginx_executable_is_installed!
         GitPusshuTen::Log.message "Stopping Nginx."
-        environment.execute_as_root("/etc/init.d/nginx stop")
+        puts environment.execute_as_root("/etc/init.d/nginx stop")
       end
 
       ##
@@ -54,7 +54,8 @@ module GitPusshuTen
       def perform_restart!
         ensure_nginx_executable_is_installed!
         GitPusshuTen::Log.message "Restarting Nginx."
-        environment.execute_as_root("/etc/init.d/nginx restart")
+        perform_stop!
+        perform_start!
       end
 
       ##
@@ -62,14 +63,16 @@ module GitPusshuTen
       def perform_reload!
         ensure_nginx_executable_is_installed!
         GitPusshuTen::Log.message "Reloading Nginx."
-        environment.execute_as_root("/etc/init.d/nginx reload")
+        puts environment.execute_as_root("/etc/init.d/nginx reload")
       end
 
+      ##
+      # Installs the Nginx executable if it does not exist
       def ensure_nginx_executable_is_installed!
-        if not File.exist?("/etc/init.d/nginx")
+        if not environment.file?("/etc/init.d/nginx")
           GitPusshuTen::Log.message "Installing Nginx executable for starting/stopping/restarting/reloading Nginx."
           environment.download_gitpusshuten_packages!
-          environment.execute_as_root("cp '#{configuration.path}/gitpusshuten-packages/modules/nginx/nginx' /etc/init.d/nginx")
+          environment.execute_as_root("cp '#{File.join(environment.packages_path, 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
           environment.clean_up_gitpusshuten_packages!
         end
       end

@@ -18,6 +18,30 @@ module GitPusshuTen
     end
 
     ##
+    # Returns the path to the (downloaded) gitpusshuten packages
+    def packages_path
+      File.join(configuration.path, 'gitpusshuten-packages')
+    end
+
+    ##
+    # Users home directory
+    def home_directory
+      configuration.path
+    end
+
+    ##
+    # Returns the IP from the configuration file
+    def ip
+      configuration.ip
+    end
+
+    ##
+    # Returns the user
+    def user
+      configuration.user
+    end
+
+    ##
     # Establishes a connection to the remote environment
     # to the user's home directory
     def connect(&ssh)
@@ -252,19 +276,13 @@ module GitPusshuTen
     ##
     # Downloads the gitpusshuten packages
     def download_gitpusshuten_packages!
-      execute("git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
+      execute("cd #{home_directory}; git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
     end
 
     ##
     # Cleans up the gitpusshuten-packages git repository
     def clean_up_gitpusshuten_packages!
       execute("rm -rf '#{packages_path}'")
-    end
-
-    ##
-    # Returns the path to the (downloaded) gitpusshuten packages
-    def packages_path
-      File.join(configuration.path, 'gitpusshuten-packages')
     end
 
   end

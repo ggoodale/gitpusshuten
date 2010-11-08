@@ -49,7 +49,7 @@ describe GitPusshuTen::Environment do
   
   describe '#download_gitpusshuten_packages!' do
     it "should download the gitpusshuten packages" do
-      environment.expects(:execute).with("git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
+      environment.expects(:execute).with("cd /var/apps/; git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
       environment.download_gitpusshuten_packages!
     end
   end
