@@ -258,7 +258,13 @@ module GitPusshuTen
     ##
     # Cleans up the gitpusshuten-packages git repository
     def clean_up_gitpusshuten_packages!
-      execute("rm -rf '#{File.join(configuration.path, 'gitpusshuten-packages')}'")
+      execute("rm -rf '#{packages_path}'")
+    end
+
+    ##
+    # Returns the path to the (downloaded) gitpusshuten packages
+    def packages_path
+      File.join(configuration.path, 'gitpusshuten-packages')
     end
 
   end
