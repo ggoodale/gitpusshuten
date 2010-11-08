@@ -70,11 +70,8 @@ module GitPusshuTen
     ##
     # Checks the remote server to see if the provided user exists
     def user_exists?
-      if(execute_as_root("grep '#{configuration.user}' /etc/passwd").nil?)
-        return false
-      else
-        return true
-      end
+      return false if(execute_as_root("grep '#{configuration.user}' /etc/passwd").nil?)
+      true
     end
 
     ##
@@ -105,32 +102,36 @@ module GitPusshuTen
       end
       
       response = execute_as_root("useradd -m --home='#{configuration.path}' -s '/bin/bash' --password='" + %x[openssl passwd #{@new_password}].chomp + "' '#{configuration.user}'")
-      if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
-        return true
-      else
-        return false
-      end
+      return true if response.nil? or response =~ /useradd\: warning\: the home directory already exists\./
+      false
     end
 
     ##
     # Removes a user from the remote server but does not remove
     # the user's home directory since it might contain applications
     def remove_user!
-      if execute_as_root("userdel '#{configuration.user}'").nil?
-        return true
-      else
-        return false
-      end
+      return true if execute_as_root("userdel '#{configuration.user}'").nil?
+      false
+    end
+
+    ##
+    # Adds the user to the sudoers file
+    def add_user_to_sudoers!
+      execute_as_root("echo '#{configuration.user} ALL=(ALL) ALL' >> /etc/sudoers")
+    end
+
+    ##
+    # Checks to see if the user is already in the sudoers file or not
+    def user_in_sudoers?
+      return true if execute_as_root("cat /etc/sudoers").include?("#{configuration.user} ALL=(ALL) ALL")
+      false
     end
 
     ##
     # Determines whether the specified utility has been installed or not
     def installed?(utility)
-      if execute_as_root("which #{utility}").nil?
-        return false
-      else
-        return true
-      end
+      return false if execute_as_root("which #{utility}").nil?
+      true
     end
 
     ##
@@ -158,21 +159,15 @@ module GitPusshuTen
     ##
     # Tests if the specified directory exists
     def directory?(path)
-      if execute_as_root("if [[ -d '#{path}' ]]; then exit; else echo 1; fi").nil?
-        return true
-      else
-        return false
-      end
+      return true if execute_as_root("if [[ -d '#{path}' ]]; then exit; else echo 1; fi").nil?
+      false
     end
 
     ##
     # Tests if the specified file exists
     def file?(path)
-      if execute_as_root("if [[ -f '#{path}' ]]; then exit; else echo 1; fi").nil?
-        return true
-      else
-        return false
-      end
+      return true if execute_as_root("if [[ -f '#{path}' ]]; then exit; else echo 1; fi").nil?
+      false
     end
 
     ##

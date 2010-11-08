@@ -29,7 +29,7 @@ module GitPusshuTen
 
       ##
       # Performs the Setup command
-      def perform!
+      def perform!        
         if respond_to?("perform_#{object}!")
           send("perform_#{object}!")
         else
@@ -107,6 +107,12 @@ module GitPusshuTen
               exit
             end
           end
+        end
+        
+        ##
+        # Add user to sudoers file
+        if not environment.user_in_sudoers?
+          environment.add_user_to_sudoers!
         end
         
         ##
