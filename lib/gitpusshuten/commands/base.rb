@@ -92,17 +92,15 @@ module GitPusshuTen
       def pre_perform!
         return unless perform_hooks?
         unless hooks.pre_hooks.any?
-          GitPusshuTen::Log.message "No Pre-Deploy Hooks To Perform."
+          GitPusshuTen::Log.message "No pre deploy hooks to pzerform."
           return
         end
         
         ##
         # Connect to the remote environment and perform the pre deploy hooks
-        environment.connect do |env|
-          hooks.render_commands(hooks.pre_hooks).each do |name, commands|
-            GitPusshuTen::Log.message("Performing Pre Deploy Hook: #{name}")
-            puts env.exec!("cd '#{environment.application_root}'; #{commands}")
-          end
+        hooks.render_commands(hooks.pre_hooks).each do |name, commands|
+          GitPusshuTen::Log.message("Performing pre deploy hook: #{name.to_s.color(:yellow)}")
+          puts environment.execute_as_user("cd '#{environment.app_dir}'; #{commands}")
         end
       end
 
@@ -112,17 +110,15 @@ module GitPusshuTen
       def post_perform!
         return unless perform_hooks?
         unless hooks.post_hooks.any?
-          GitPusshuTen::Log.message "No Post-Deploy Hooks To Perform."
+          GitPusshuTen::Log.message "No post deploy hooks to perform."
           return
         end
         
         ##
         # Connect to the remote environment and perform the post deploy hooks
-        environment.connect do |env|
-          hooks.render_commands(hooks.post_hooks).each do |name, commands|
-            GitPusshuTen::Log.message("Performing Post Deploy Hook: #{name}")
-            puts env.exec!("cd '#{environment.application_root}'; #{commands}")
-          end
+        hooks.render_commands(hooks.post_hooks).each do |name, commands|
+          GitPusshuTen::Log.message("Performing post deploy hook: #{name.to_s.color(:yellow)}")
+          puts environment.execute_as_user("cd '#{environment.app_dir}'; #{commands}")
         end
       end
 
@@ -133,7 +129,6 @@ module GitPusshuTen
         @environment   = environment
         @perform_hooks = false
       end
-
 
       private
 

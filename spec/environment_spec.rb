@@ -11,9 +11,9 @@ describe GitPusshuTen::Environment do
     environment.configuration.should be_an_instance_of(GitPusshuTen::Configuration)
   end
   
-  describe '#application_root' do
+  describe '#app_dir' do
     it "should be the <path>/<application>.<environment>" do
-      environment.application_root.should == '/var/apps/rspec_staging_example_application.staging'
+      environment.app_dir.should == '/var/apps/rspec_staging_example_application.staging'
     end
   end
   
@@ -25,7 +25,7 @@ describe GitPusshuTen::Environment do
   
   describe '#delete!' do
     it "should delete the application root" do
-      environment.expects(:execute).with('rm -rf /var/apps/rspec_staging_example_application.staging')
+      environment.expects(:execute_as_user).with('rm -rf /var/apps/rspec_staging_example_application.staging')
       environment.delete!
     end
   end
@@ -49,14 +49,14 @@ describe GitPusshuTen::Environment do
   
   describe '#download_gitpusshuten_packages!' do
     it "should download the gitpusshuten packages" do
-      environment.expects(:execute).with("cd /var/apps/; git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
+      environment.expects(:execute_as_user).with("cd /var/apps/; git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
       environment.download_gitpusshuten_packages!
     end
   end
   
   describe '#clean_up_gitpusshuten_packages!' do
     it "should delete them as root" do
-      environment.expects(:execute).with("rm -rf '/var/apps/gitpusshuten-packages'")
+      environment.expects(:execute_as_user).with("rm -rf '/var/apps/gitpusshuten-packages'")
       environment.clean_up_gitpusshuten_packages!
     end
   end

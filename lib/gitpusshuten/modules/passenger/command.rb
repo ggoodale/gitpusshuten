@@ -23,7 +23,7 @@ module GitPusshuTen
       # Performs the Passenger command
       def perform!
         GitPusshuTen::Log.message "Restarting Passenger for #{app_name} (#{environment_name} environment)."
-        environment.execute("mkdir -p tmp; touch tmp/restart.txt")
+        environment.execute_as_user("cd #{environment.app_dir}; mkdir -p tmp; touch tmp/restart.txt")
       end
 
     end

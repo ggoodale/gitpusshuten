@@ -72,7 +72,7 @@ module GitPusshuTen
         if not environment.file?("/etc/init.d/nginx")
           GitPusshuTen::Log.message "Installing Nginx executable for starting/stopping/restarting/reloading Nginx."
           environment.download_gitpusshuten_packages!
-          environment.execute_as_root("cp '#{File.join(environment.packages_path, 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
+          environment.execute_as_root("cp '#{File.join(environment.packages_dir, 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
           environment.clean_up_gitpusshuten_packages!
         end
       end

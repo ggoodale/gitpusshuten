@@ -24,7 +24,7 @@ module GitPusshuTen
       # Performs the Delete command
       def perform!
         GitPusshuTen::Log.message "Performing command on #{app_name} (#{environment_name}) at #{ip_addr}!"
-        puts environment.execute(command)
+        puts environment.execute_as_user("cd #{environment.app_dir}; #{command}")
       end
 
     end

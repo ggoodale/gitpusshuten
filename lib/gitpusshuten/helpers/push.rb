@@ -28,10 +28,10 @@ module GitPusshuTen
       def add_remote!
         git.add_remote(
           environment.name,
-          configuration.user + '@' + configuration.ip + ':' + environment.application_root
+          configuration.user + '@' + configuration.ip + ':' + environment.app_dir
         )
         GitPusshuTen::Log.message("The " + environment.name.to_s.color(:yellow) + " remote has been added:")
-        GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.application_root + "\n\n")
+        GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.app_dir + "\n\n")
       end
       
     end

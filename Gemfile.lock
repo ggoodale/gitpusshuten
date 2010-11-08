@@ -4,6 +4,7 @@ PATH
     gitpusshuten (0.0.1)
       activesupport (~> 3.0.0)
       highline (~> 1.6.0)
+      net-scp (~> 1.0.0)
       net-ssh (~> 2.0.0)
       rainbow (~> 1.1.0)
 
@@ -17,6 +18,8 @@ GEM
       watchr (>= 0.7)
     mocha (0.9.8)
       rake
+    net-scp (1.0.4)
+      net-ssh (>= 1.99.1)
     net-ssh (2.0.23)
     rainbow (1.1)
     rake (0.8.7)
@@ -41,6 +44,7 @@ DEPENDENCIES
   highline (~> 1.6.0)
   infinity_test
   mocha
+  net-scp (~> 1.0.0)
   net-ssh (~> 2.0.0)
   rainbow (~> 1.1.0)
   rspec

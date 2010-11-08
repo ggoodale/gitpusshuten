@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler/setup' unless @ignore_bundler
 require 'active_support/inflector'
 require 'net/ssh'
+require 'net/scp'
 require 'highline/import'
 require 'rainbow'
 
