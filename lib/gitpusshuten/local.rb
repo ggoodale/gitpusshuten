@@ -1,6 +1,10 @@
 module GitPusshuTen
   class Local
     
+    def execute(command)
+      %x[#{command}]
+    end
+    
     ##
     # Returns the .gitpusshuten local directory
     def gitpusshuten_dir
@@ -21,7 +25,7 @@ module GitPusshuTen
 
     ##
     # Removes everything inside the tmp_dir
-    def clean_tmp_dir!
+    def remove_tmp_dir!
       puts %x[rm -rf '#{tmp_dir}']
     end
     

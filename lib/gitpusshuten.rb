@@ -5,6 +5,7 @@ require 'net/ssh'
 require 'net/scp'
 require 'highline/import'
 require 'rainbow'
+require 'yaml'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__), 'gitpusshuten/**/*'))].each do |file|
   if not File.directory?(file) and not file =~ /\/modules\/.+\/hooks\.rb/

@@ -66,29 +66,5 @@ module GitPusshuTen
       execute_as_user("rm -rf #{app_dir}")
     end
 
-    ##
-    # Returns the .gitpusshuten local directory
-    def gitpusshuten_dir
-      File.join(Dir.pwd, '.gitpusshuten')
-    end
-
-    ##
-    # Returns the .gitpusshuten tmp directory
-    def gitpusshuten_tmp_dir
-      File.join(gitpusshuten_dir, 'tmp')
-    end
-
-    ##
-    # Create gitpusshuten_tmp_dir
-    def create_gitpusshuten_tmp_dir!
-      %x[mkdir -p '#{gitpusshuten_tmp_dir}']
-    end
-
-    ##
-    # Removes everything inside the gitpusshuten_tmp_dir
-    def clean_gitpusshuten_tmp_dir!
-      puts %x[rm -rf '#{gitpusshuten_tmp_dir}']
-    end
-
   end
 end

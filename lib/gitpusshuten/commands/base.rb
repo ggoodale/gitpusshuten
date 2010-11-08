@@ -87,6 +87,12 @@ module GitPusshuTen
       end
 
       ##
+      # Local object wrapper
+      def local
+        @local ||= GitPusshuTen::Local.new
+      end
+
+      ##
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!
@@ -132,30 +138,44 @@ module GitPusshuTen
 
       private
 
+      ##
+      # Shorthand for the application name
       def app_name
         configuration.application.to_s.color(:yellow)
       end
 
+      ##
+      # Shorthand for the server's ip
       def ip_addr
         configuration.ip.to_s.color(:yellow)
       end
 
+      ##
+      # Shorthand for Git in yellow
       def git_name
         "Git".color(:yellow)
       end
 
+      ##
+      # Shorthand for the user's name
       def user_name
         configuration.user.to_s.color(:yellow)
       end
 
+      ##
+      # Shorthand for the environment name
       def environment_name
         configuration.environment.to_s.color(:yellow)
       end
 
+      ##
+      # Shorthand for PushAnd name in yellow
       def pushand_name
         "PushAnd".color(:yellow)
       end
 
+      ##
+      # Shorthand for git remote in yellow
       def git_remote
         "git remote".color(:yellow)
       end
