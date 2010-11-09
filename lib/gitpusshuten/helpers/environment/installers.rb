@@ -12,11 +12,11 @@ module GitPusshuTen
         ##
         # Installs PushAnd
         def install_pushand!      
-          download_gitpusshuten_packages!
+          download_packages!(home_dir)
           command = "cd #{home_dir}; cp -R gitpusshuten-packages/pushand/ .; chown -R #{c.user}:#{c.user} pushand;"
           command += "'#{home_dir}/pushand/pushand_server_uninstall'; '#{home_dir}/pushand/pushand_server_install'"
           execute_as_root(command)
-          clean_up_gitpusshuten_packages!
+          clean_up_packages!(home_dir)
         end
 
         ##

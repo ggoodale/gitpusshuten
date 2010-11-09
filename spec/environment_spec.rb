@@ -47,17 +47,17 @@ describe GitPusshuTen::Environment do
     end
   end
   
-  describe '#download_gitpusshuten_packages!' do
+  describe '#download_packages!' do
     it "should download the gitpusshuten packages" do
       environment.expects(:execute_as_user).with("cd /var/apps/; git clone git://github.com/meskyanichi/gitpusshuten-packages.git")
-      environment.download_gitpusshuten_packages!
+      environment.download_packages!('/var/apps/')
     end
   end
   
-  describe '#clean_up_gitpusshuten_packages!' do
+  describe '#clean_up_packages!' do
     it "should delete them as root" do
       environment.expects(:execute_as_user).with("rm -rf '/var/apps/gitpusshuten-packages'")
-      environment.clean_up_gitpusshuten_packages!
+      environment.clean_up_packages!('/var/apps')
     end
   end
   
