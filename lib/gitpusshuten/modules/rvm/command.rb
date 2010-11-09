@@ -43,7 +43,7 @@ module GitPusshuTen
         
         ##
         # Install RVM (system wide)
-        GitPusshuTen::Log.message "Starting #{y('RVM')} installing."
+        GitPusshuTen::Log.message "Starting #{y('RVM')} installation."
         Spinner.installing do
           e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
         end
