@@ -1,7 +1,7 @@
 module GitPusshuTen
   module Commands
     class Nginx < GitPusshuTen::Commands::Base
-      description "[module] Enables various NGINX commands."
+      description "[Module] NginX commands."
       usage       "nginx <command> for <environment>"
       example     "nginx setup for staging"
       example     "nginx update-vhost for staging"
