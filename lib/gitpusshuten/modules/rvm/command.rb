@@ -1,7 +1,8 @@
+# encoding: utf-8
 module GitPusshuTen
   module Commands
     class Rvm < GitPusshuTen::Commands::Base
-      description "Install RVM (Ruby Version Manager) on the remote server."
+      description "[Module] Ruby Version Manager (RVM) commands."
       usage       "rvm <command> for <environment>"
       example     "rvm install for staging"
 
@@ -31,44 +32,62 @@ module GitPusshuTen
       end
 
       def perform_install!
-        GitPusshuTen::Log.message "Installing #{y('RVM')} (System Wide)!"
+        GitPusshuTen::Log.message "Installing Ruby Version Manager (#{y('RVM')})!"
         
         ##
         # Update apt-get and install git/curl/wget
-        puts "updating apt-get and installing git curl wget"
-        e.execute_as_root("apt-get update; apt-get install -y git-core curl wget;")
+        GitPusshuTen::Log.message "Updating package list and installing #{y('RVM')} requirements."
+        Spinner.installing do
+          e.execute_as_root("apt-get update; apt-get install -y git-core curl wget;")
+        end
         
         ##
         # Install RVM (system wide)
-        puts "installing rvm system wide"
-        e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
+        GitPusshuTen::Log.message "Starting #{y('RVM')} installing."
+        Spinner.installing do
+          e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
+        end
         
         ##
         # Download Git Packages and add the rvm load snippet into /etc/profile
-        puts "downloading gitpusshuten packages, configuring /etc/profile"
-        e.download_packages!("$HOME", :root)
-        e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
-        e.clean_up_packages!("$HOME", :root)
+        if not e.execute_as_root("cat /etc/profile").include?('source "/usr/local/rvm/scripts/rvm"')
+          GitPusshuTen::Log.message "Downloading Gitプッシュ点 packages and configuring /etc/profile."
+          Spinner.installing do
+            e.download_packages!("$HOME", :root)
+            e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
+            e.clean_up_packages!("$HOME", :root)
+          end
+        end
         
         ##
         # Create a .bashrc in $HOME to load /etc/profile for non-interactive sessions
-        puts "Create or Append root's .bashrc file to load /etc/profile for non-interactive sessions"
-        e.execute_as_root("echo 'source /etc/profile' >> $HOME/.bashrc; source $HOME/.bashrc")
+        if not e.execute_as_root("cat $HOME/.bashrc").include?('source /etc/profile')
+          GitPusshuTen::Log.message "Configuring .bashrc file to load /etc/profile for non-interactive sessions."
+          Spinner.installing do
+            e.execute_as_root("echo 'source /etc/profile' >> $HOME/.bashrc; source $HOME/.bashrc")
+          end
+        end
         
         ##
         # Install required packages for installing Ruby
-        puts "installing ruby interpreter dependency packages with aptitude"
-        e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+        GitPusshuTen::Log.message "Instaling the Ruby Interpreter dependency packages."
+        Spinner.installing do
+          e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+        end
         
         ##
         # Install a Ruby version
-        puts "Installing ruby 1.9.2"
-        e.execute_as_root("rvm install 1.9.2")
+        GitPusshuTen::Log.message "Installing Ruby 1.9.2 with #{y('RVM')}."
+        Spinner.installing_a_while do
+          e.execute_as_root("rvm install 1.9.2")
+        end
         
         ##
         # Set the Ruby version as the default Ruby
-        puts "setting ruby 1.9.2 as the default ruby"
+        GitPusshuTen::Log.message "Making Ruby 1.9.2 the default system Ruby."
         e.execute_as_root("rvm use 1.9.2 --default")
+        
+        GitPusshuTen::Log.message "Finished!"
       end
       
     end
