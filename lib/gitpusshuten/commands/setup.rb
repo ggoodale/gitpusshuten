@@ -110,9 +110,41 @@ module GitPusshuTen
         end
         
         ##
+        # Install ssh key
+        if environment.has_ssh_key? and environment.ssh_key_installed?
+          GitPusshuTen::Log.message "Your ssh key is already installed for #{user_name} at #{ip_addr}."
+        else
+          if environment.has_ssh_key?
+            GitPusshuTen::Log.message "You seem to have a ssh key in #{environment.ssh_key_path}"
+            GitPusshuTen::Log.message "This key isn't installed for #{user_name} at #{ip_addr}. Would you like to install it?"
+            yes = choose do |menu|
+              menu.prompt = ''
+              menu.choice('Yes') { true  }
+              menu.choice('No')  { false }
+            end
+            if yes
+              GitPusshuTen::Log.message "Installing your ssh key for #{user_name} at #{ip_addr}."
+              environment.install_ssh_key!
+              GitPusshuTen::Log.message "Your ssh key has been installed!"
+            end
+          end
+        end
+        
+        ##
         # Add user to sudoers file
         if not environment.user_in_sudoers?
           environment.add_user_to_sudoers!
+        end
+        
+        ##
+        # Checks to see if the RVM group exists.
+        # If it does exist, perform RVM specific tasks.
+        if environment.directory?("/usr/local/rvm")          
+          if not environment.execute_as_root("cat #{File.join(environment.home_dir, '.bashrc')}").
+          include?("[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"")
+            GitPusshuTen::Log.message "Detected RVM, configuring #{user_name} for RVM."
+            setup_for_rvm!
+          end
         end
         
         ##
@@ -142,27 +174,6 @@ module GitPusshuTen
         # Add remote
         GitPusshuTen::Log.message "Adding #{environment_name} to your #{git_remote}."
         perform_remote!
-        
-        ##
-        # Install ssh key
-        if environment.has_ssh_key? and environment.ssh_key_installed?
-          GitPusshuTen::Log.message "Your ssh key is already installed for #{user_name} at #{ip_addr}."
-        else
-          if environment.has_ssh_key?
-            GitPusshuTen::Log.message "You seem to have a ssh key in #{environment.ssh_key_path}"
-            GitPusshuTen::Log.message "This key isn't installed for #{user_name} at #{ip_addr}. Would you like to install it?"
-            yes = choose do |menu|
-              menu.prompt = ''
-              menu.choice('Yes') { true  }
-              menu.choice('No')  { false }
-            end
-            if yes
-              GitPusshuTen::Log.message "Installing your ssh key for #{user_name} at #{ip_addr}."
-              environment.install_ssh_key!
-              GitPusshuTen::Log.message "Your ssh key has been installed!"
-            end
-          end
-        end
         
         GitPusshuTen::Log.message "Finished installation!"
         GitPusshuTen::Log.message "You should now be able to push your application to #{app_name} at #{ip_addr}."
@@ -199,6 +210,26 @@ module GitPusshuTen
         else
           GitPusshuTen::Log.message "Your ssh has already been installed for #{user_name} at #{ip_addr}."
         end
+      end
+
+      ##
+      # Adds the user to the "rvm" group, downloads the .bashrc file to do the needed
+      # configuration and then pushes the modified version back to the server.
+      def setup_for_rvm!
+        local.create_tmp_dir!
+        GitPusshuTen::Log.message "Adding #{user_name} to the #{'rvm'.color(:yellow)} group."
+        environment.execute_as_root("usermod -G rvm '#{configuration.user}'")
+        GitPusshuTen::Log.message "Configuring #{user_name}'s " + ".bashrc".color(:yellow) + " file for " + "rvm".color(:yellow) + "."
+        environment.scp_as_root(:download, File.join(environment.home_dir, '.bashrc'), File.join(local.tmp_dir, '.bashrc'))
+        contents = File.read(File.join(local.tmp_dir, '.bashrc'))
+        contents.sub!(/\[ \-z \"\$PS1\" \] \&\& return/, "# [ -z \"$PS1\" ] && return\n\nif [[ -n \"$PS1\" ]]; then")
+        File.open(File.join(local.tmp_dir, '.bashrc'), 'w') do |file|
+          file << contents
+          file << "\nfi\n\n[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"\n\n"
+        end
+        environment.scp_as_root(:upload, File.join(local.tmp_dir, '.bashrc'), File.join(environment.home_dir, '.bashrc'))
+        local.remove_tmp_dir!
+        GitPusshuTen::Log.message "Finished configuring #{user_name} for #{'rvm'.color(:yellow)}."
       end
 
     end
