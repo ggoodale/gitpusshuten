@@ -12,7 +12,7 @@ module GitPusshuTen
         ##
         # Cleans up the gitpusshuten-packages git repository
         def clean_up_packages!(path, user = 'user')
-          send("execute_as_#{user}", "rm -rf '#{File.join(path, 'gitpusshuten-packages')}'")
+          send("execute_as_#{user}", "cd #{path}; rm -rf gitpusshuten-packages")
         end
 
       end
