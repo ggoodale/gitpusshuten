@@ -1,9 +1,10 @@
 module GitPusshuTen
   module Commands
     class Passenger < GitPusshuTen::Commands::Base
-      description "Invoke various passenger commands on the remote server."
+      description "[Module] Phusion Passenger commands."
       usage       "passenger <command> for <environment>"
-      example     "passenger restart for staging"
+      example     "passenger install for staging    # Installs Passenger with the NginX web server"
+      example     "passenger restart for production # Restarts the Passenger instance for the specified environment"
 
       ##
       # Passenger specific attributes/arguments
