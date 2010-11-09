@@ -22,7 +22,7 @@ module GitPusshuTen
         
         @tag = cli.arguments.shift
         
-        help if tag.nil? or environment.name.nil?
+        help if tag.nil? or e.name.nil?
         
         confirm_remote!
       end
@@ -30,8 +30,8 @@ module GitPusshuTen
       ##
       # Performs the Tag command
       def perform!
-        GitPusshuTen::Log.message "Pushing tag #{tag.to_s.color(:yellow)} to the #{environment.name.to_s.color(:yellow)} environment."
-        git.push(:tag, tag).to(environment.name)
+        GitPusshuTen::Log.message "Pushing tag #{y(tag)} to the #{y(e.name)} environment."
+        git.push(:tag, tag).to(e.name)
       end
 
     end

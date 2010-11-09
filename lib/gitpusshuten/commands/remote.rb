@@ -11,11 +11,11 @@ module GitPusshuTen
       attr_accessor :command
 
       ##
-      # Initializes the Delete command
+      # Initializes the Remote command
       def initialize(*objects)
         super
         
-        help if cli.arguments.empty? or environment.name.nil?
+        help if cli.arguments.empty? or e.name.nil?
         
         @command = cli.arguments.join(' ')
       end
@@ -23,8 +23,8 @@ module GitPusshuTen
       ##
       # Performs the Delete command
       def perform!
-        GitPusshuTen::Log.message "Performing command on #{app_name} (#{environment_name}) at #{ip_addr}!"
-        puts environment.execute_as_user("cd #{environment.app_dir}; #{command}")
+        GitPusshuTen::Log.message "Performing command on #{y(c.application)} (#{y(e.name)}) at #{y(c.ip)}!"
+        puts environment.execute_as_user("cd #{e.app_dir}; #{command}")
       end
 
     end

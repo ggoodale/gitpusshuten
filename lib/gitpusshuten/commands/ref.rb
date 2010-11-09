@@ -22,7 +22,7 @@ module GitPusshuTen
         
         @ref = cli.arguments.shift
         
-        help if ref.nil? or environment.name.nil?
+        help if ref.nil? or e.name.nil?
         
         confirm_remote!
       end
@@ -30,8 +30,8 @@ module GitPusshuTen
       ##
       # Performs the Ref command
       def perform!
-        GitPusshuTen::Log.message "Pushing ref #{ref.to_s.color(:yellow)} to the #{environment.name.to_s.color(:yellow)} environment."
-        git.push(:ref, ref).to(environment.name)
+        GitPusshuTen::Log.message "Pushing ref #{y(ref)} to the #{y(e.name)} environment."
+        git.push(:ref, ref).to(e.name)
       end
 
     end

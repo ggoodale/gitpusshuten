@@ -32,9 +32,12 @@ def command_setup!(klass, argv)
   let(:environment)        { GitPusshuTen::Environment.new(configuration)                                               }
   let(:command)            { "GitPusshuTen::Commands::#{klass}".constantize.new(cli, configuration, hooks, environment) }
   let(:git)                { GitPusshuTen::Git.new                                                                      }
+  let(:local)              { GitPusshuTen::Local.new                                                                    }
   
   before do
     command.stubs(:git).returns(git)
     git.stubs(:git)
+    command.stubs(:local).returns(local)
+    git.stubs(:local)
   end
 end

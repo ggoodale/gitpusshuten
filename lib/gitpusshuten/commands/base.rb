@@ -93,20 +93,68 @@ module GitPusshuTen
       end
 
       ##
+      # Wrapper for the configuration object
+      def c
+        configuration
+      end
+
+      ##
+      # Wrapper for the environment object
+      def e
+        environment
+      end
+
+      ##
+      # Wrapper for coloring ANSI/CLI Green
+      def g(value)
+        value.to_s.color(:green)
+      end
+
+      ##
+      # Wrapper for coloring ANSI/CLI Yellow
+      def y(value)
+        value.to_s.color(:yellow)
+      end
+
+      ##
+      # Wrapper for coloring ANSI/CLI Red
+      def r(value)
+        value.to_s.color(:red)
+      end
+
+      ##
+      # Helper method for prompting the user
+      def yes?
+        choose do |menu|
+          menu.prompt = ''
+          menu.choice('yes') { true  }
+          menu.choice('no')  { false }
+        end
+      end
+
+      def initialize(cli, configuration, hooks, environment)
+        @cli           = cli
+        @configuration = configuration
+        @hooks         = hooks
+        @environment   = environment
+        @perform_hooks = false
+      end
+
+      ##
       # The Pre-perform command
       # It should be invoked before the #perform! command
       def pre_perform!
         return unless perform_hooks?
         unless hooks.pre_hooks.any?
-          GitPusshuTen::Log.message "No pre deploy hooks to pzerform."
+          GitPusshuTen::Log.message "No pre deploy hooks to perform."
           return
         end
         
         ##
         # Connect to the remote environment and perform the pre deploy hooks
         hooks.render_commands(hooks.pre_hooks).each do |name, commands|
-          GitPusshuTen::Log.message("Performing pre deploy hook: #{name.to_s.color(:yellow)}")
-          puts environment.execute_as_user("cd '#{environment.app_dir}'; #{commands}")
+          GitPusshuTen::Log.message("Performing pre deploy hook: #{y(name)}")
+          puts environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
         end
       end
 
@@ -123,61 +171,9 @@ module GitPusshuTen
         ##
         # Connect to the remote environment and perform the post deploy hooks
         hooks.render_commands(hooks.post_hooks).each do |name, commands|
-          GitPusshuTen::Log.message("Performing post deploy hook: #{name.to_s.color(:yellow)}")
-          puts environment.execute_as_user("cd '#{environment.app_dir}'; #{commands}")
+          GitPusshuTen::Log.message("Performing post deploy hook: #{y(name)}")
+          puts environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
         end
-      end
-
-      def initialize(cli, configuration, hooks, environment)
-        @cli           = cli
-        @configuration = configuration
-        @hooks         = hooks
-        @environment   = environment
-        @perform_hooks = false
-      end
-
-      private
-
-      ##
-      # Shorthand for the application name
-      def app_name
-        configuration.application.to_s.color(:yellow)
-      end
-
-      ##
-      # Shorthand for the server's ip
-      def ip_addr
-        configuration.ip.to_s.color(:yellow)
-      end
-
-      ##
-      # Shorthand for Git in yellow
-      def git_name
-        "Git".color(:yellow)
-      end
-
-      ##
-      # Shorthand for the user's name
-      def user_name
-        configuration.user.to_s.color(:yellow)
-      end
-
-      ##
-      # Shorthand for the environment name
-      def environment_name
-        configuration.environment.to_s.color(:yellow)
-      end
-
-      ##
-      # Shorthand for PushAnd name in yellow
-      def pushand_name
-        "PushAnd".color(:yellow)
-      end
-
-      ##
-      # Shorthand for git remote in yellow
-      def git_remote
-        "git remote".color(:yellow)
       end
 
     end

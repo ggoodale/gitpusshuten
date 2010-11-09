@@ -22,7 +22,7 @@ module GitPusshuTen
         
         @branch = cli.arguments.shift
         
-        help if branch.nil? or environment.name.nil?
+        help if branch.nil? or e.name.nil?
         
         confirm_remote!
       end
@@ -30,8 +30,8 @@ module GitPusshuTen
       ##
       # Performs the Branch command
       def perform!
-        GitPusshuTen::Log.message "Pushing branch #{branch.to_s.color(:yellow)} to the #{environment.name.to_s.color(:yellow)} environment."
-        git.push(:branch, branch).to(environment.name)
+        GitPusshuTen::Log.message "Pushing branch #{y(branch)} to the #{y(e.name)} environment."
+        git.push(:branch, branch).to(e.name)
       end
 
     end

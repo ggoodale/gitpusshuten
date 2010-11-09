@@ -11,23 +11,17 @@ module GitPusshuTen
       def initialize(*objects)
         super
         
-        help if environment.name.nil?
+        help if e.name.nil?
       end
 
       ##
       # Performs the Delete command
       def perform!
-        GitPusshuTen::Log.message "Are you sure you wish to delete #{app_name} from #{environment_name} environment?"
-        yes = choose do |menu|
-          menu.prompt = ''
-          menu.choice('Yes') { true  }
-          menu.choice('No')  { false }
-        end
-
-        if yes
-          GitPusshuTen::Log.message "Deleting application."
+        GitPusshuTen::Log.message "Are you sure you wish to delete #{y(c.application)} from the #{y(e.name)} environment (#{y(c.ip)})?"
+        if yes?
+          GitPusshuTen::Log.message "Deleting #{y(c.application)}."
           environment.delete!
-          GitPusshuTen::Log.message "Application deleted."
+          GitPusshuTen::Log.message "#{y(c.application)} deleted from #{y(e.name)} environment."
         end
       end
 

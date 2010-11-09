@@ -18,13 +18,13 @@ module GitPusshuTen
         
         @object = cli.arguments.shift
         
-        if not configuration.found?
-          GitPusshuTen::Log.error "Could not find any configuration for #{environment_name} in your #{".gitpusshuten/config.rb".color(:yellow)} file."
-          GitPusshuTen::Log.error "Please add it and run #{"gitpusshuten setup remote for #{environment.name}".color(:yellow)} to set it up with git remote."
+        if not c.found?
+          GitPusshuTen::Log.error "Could not find any configuration for #{y(e.name)} in your #{y(".gitpusshuten/config.rb")} file."
+          GitPusshuTen::Log.error "Please add it and run #{y("gitpusshuten setup remote for #{e.name}")} to set it up with git remote."
           exit
         end
         
-        help if object.nil? or environment.name.nil?
+        help if object.nil? or e.name.nil?
       end
 
       ##
@@ -33,30 +33,25 @@ module GitPusshuTen
         if respond_to?("perform_#{object}!")
           send("perform_#{object}!")
         else
-          GitPusshuTen::Log.error "Unknown setup command: <#{object}>"
-          GitPusshuTen::Log.error "Run " + "gitpusshuten help setup".color(:yellow) + " for a list setup commands."
+          GitPusshuTen::Log.error "Unknown setup command: <#{y(object)}>"
+          GitPusshuTen::Log.error "Run #{y("gitpusshuten help setup")} for a list setup commands."
         end
       end
       
       ##
       # Performs the "user" action
       def perform_user!
-        if not environment.installed?('git')
-          GitPusshuTen::Log.warning "It is required that you have #{git_name} installed at #{ip_addr}."
-          GitPusshuTen::Log.warning "Could not find #{git_name}, would you like to install it?"
-          install_git = choose do |menu|
-            menu.prompt = ''
-            menu.choice('Yes') { true  }
-            menu.choice('No')  { false }
-          end
+        if not e.installed?('git')
+          GitPusshuTen::Log.warning "It is required that you have #{y('Git')} installed at #{y(c.ip)}."
+          GitPusshuTen::Log.warning "Could not find #{y('Git')}, would you like to install it?"
           
-          if install_git
-            GitPusshuTen::Log.message "Installing #{git_name}!"
+          if yes?
+            GitPusshuTen::Log.message "Installing #{y('Git')}!"
             environment.install!('git-core')
             if environment.installed?('git')
-              GitPusshuTen::Log.message "#{git_name} has been successfully installed!"
+              GitPusshuTen::Log.message "#{y('Git')} has been successfully installed!"
             else
-              GitPusshuTen::Log.error "Unable to install #{git_name}."
+              GitPusshuTen::Log.error "Unable to install #{y('Git')}."
               exit
             end
           else
@@ -64,45 +59,35 @@ module GitPusshuTen
           end
         end
         
-        GitPusshuTen::Log.message "Confirming existence of user #{user_name} on the #{environment_name} environment."
+        GitPusshuTen::Log.message "Confirming existence of user #{y(c.user)} on the #{y(e.name)} environment."
         if environment.user_exists?
-          GitPusshuTen::Log.message "It looks like #{user_name} already exists at #{app_name} (#{ip_addr})."
-          GitPusshuTen::Log.message "Would you like to remove and re-add #{user_name}?"
-          yes = choose do |menu|
-            menu.prompt = ''
-            menu.choice('Yes') { true  }
-            menu.choice('No')  { false }
-          end
-          if yes
-            GitPusshuTen::Log.message "Removing user #{user_name} from #{app_name} (#{ip_addr})."
+          GitPusshuTen::Log.message "It looks like #{y(c.user)} already exists at #{y(c.application)} (#{y(c.ip)})."
+          GitPusshuTen::Log.message "Would you like to remove and re-add #{y(c.user)}?"
+          if yes?
+            GitPusshuTen::Log.message "Removing user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
             if environment.remove_user!
-              GitPusshuTen::Log.message "Re-adding user #{user_name} to #{app_name} (#{ip_addr})."
+              GitPusshuTen::Log.message "Re-adding user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
               if environment.add_user!
-                GitPusshuTen::Log.message "Successfully re-added #{user_name} to #{app_name} (#{ip_addr})!"
+                GitPusshuTen::Log.message "Successfully re-added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
               else
-                GitPusshuTen::Log.error "Failed to add user #{user_name} to #{app_name} (#{ip_addr})."
+                GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
                 GitPusshuTen::Log.error "An error occurred."
                 exit
               end
             else
-              GitPusshuTen::Log.error "Failed to remove user #{user_name} from #{app_name} (#{ip_addr})."
+              GitPusshuTen::Log.error "Failed to remove user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
               GitPusshuTen::Log.error "An error occurred."
               exit
             end
           end
         else
-          GitPusshuTen::Log.message "It looks like #{user_name} does not yet exist."
-          GitPusshuTen::Log.message "Would you like to add #{user_name} to #{app_name} (#{ip_addr})?"
-          yes = choose do |menu|
-            menu.prompt = ''
-            menu.choice('Yes') { true  }
-            menu.choice('No')  { false }
-          end
-          if yes
+          GitPusshuTen::Log.message "It looks like #{y(c.user)} does not yet exist."
+          GitPusshuTen::Log.message "Would you like to add #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})?"
+          if yes?
             if environment.add_user!
-              GitPusshuTen::Log.message "Successfully added #{user_name} to #{app_name} (#{ip_addr})!"
+              GitPusshuTen::Log.message "Successfully added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
             else
-              GitPusshuTen::Log.error "Failed to add user #{user_name} to #{app_name} (#{ip_addr})."
+              GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
               GitPusshuTen::Log.error "An error occurred."
               exit
             end
@@ -112,18 +97,13 @@ module GitPusshuTen
         ##
         # Install ssh key
         if environment.has_ssh_key? and environment.ssh_key_installed?
-          GitPusshuTen::Log.message "Your ssh key is already installed for #{user_name} at #{ip_addr}."
+          GitPusshuTen::Log.message "Your ssh key is already installed for #{y(c.user)} at #{y(c.ip)}."
         else
           if environment.has_ssh_key?
-            GitPusshuTen::Log.message "You seem to have a ssh key in #{environment.ssh_key_path}"
-            GitPusshuTen::Log.message "This key isn't installed for #{user_name} at #{ip_addr}. Would you like to install it?"
-            yes = choose do |menu|
-              menu.prompt = ''
-              menu.choice('Yes') { true  }
-              menu.choice('No')  { false }
-            end
-            if yes
-              GitPusshuTen::Log.message "Installing your ssh key for #{user_name} at #{ip_addr}."
+            GitPusshuTen::Log.message "You seem to have a ssh key in #{y(e.ssh_key_path)}"
+            GitPusshuTen::Log.message "This key isn't installed for #{y(c.user)} at #{y(c.ip)}. Would you like to install it?"
+            if yes?
+              GitPusshuTen::Log.message "Installing your ssh key for #{y(c.user)} at #{y(c.ip)}."
               environment.install_ssh_key!
               GitPusshuTen::Log.message "Your ssh key has been installed!"
             end
@@ -140,9 +120,9 @@ module GitPusshuTen
         # Checks to see if the RVM group exists.
         # If it does exist, perform RVM specific tasks.
         if environment.directory?("/usr/local/rvm")          
-          if not environment.execute_as_root("cat #{File.join(environment.home_dir, '.bashrc')}").
+          if not environment.execute_as_root("cat #{File.join(e.home_dir, '.bashrc')}").
           include?("[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"")
-            GitPusshuTen::Log.message "Detected RVM, configuring #{user_name} for RVM."
+            GitPusshuTen::Log.message "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
             setup_for_rvm!
           end
         end
@@ -151,32 +131,32 @@ module GitPusshuTen
         # Installs the .gitconfig and minimum configuration
         # if the configuration file does not exist.
         if not environment.file?(File.join(configuration.path, '.gitconfig'))
-          GitPusshuTen::Log.message "Configuring #{git_name} for #{user_name}."
+          GitPusshuTen::Log.message "Configuring #{y('Git')} for #{y(c.user)}."
           environment.install_gitconfig!
         else
-          GitPusshuTen::Log.message "#{git_name} already configured for #{user_name}."
+          GitPusshuTen::Log.message "#{y('Git')} already configured for #{y(c.user)}."
         end
         
         ##
         # Installs PushAnd if it has not yet been installed
         if not environment.directory?(File.join(configuration.path, 'pushand'))
-          GitPusshuTen::Log.message "Cloning and installing #{pushand_name} for #{user_name}."
+          GitPusshuTen::Log.message "Downloading and installing #{y('Push And')} for #{y(c.user)}."
           environment.install_pushand!
         else
-          GitPusshuTen::Log.message "#{pushand_name} already cloned and installed for #{user_name}."
+          GitPusshuTen::Log.message "#{y('Push And')} already cloned and installed for #{y(c.user)}."
         end
         
         ##
         # Finished adding user!
-        GitPusshuTen::Log.message "Finished adding and configuring #{user_name}!"
+        GitPusshuTen::Log.message "Finished adding and configuring #{y(c.user)}!"
         
         ##
         # Add remote
-        GitPusshuTen::Log.message "Adding #{environment_name} to your #{git_remote}."
+        GitPusshuTen::Log.message "Adding #{y(e.name)} to your #{y('git remote')}."
         perform_remote!
         
         GitPusshuTen::Log.message "Finished installation!"
-        GitPusshuTen::Log.message "You should now be able to push your application to #{app_name} at #{ip_addr}."
+        GitPusshuTen::Log.message "You should now be able to push your application to #{y(c.application)} at #{y(c.ip)}."
       end
 
       ##
@@ -189,7 +169,7 @@ module GitPusshuTen
           environment.name,
           configuration.user + '@' + configuration.ip + ':' + environment.app_dir
         )
-        GitPusshuTen::Log.message("The " + environment.name.to_s.color(:yellow) + " remote has been added:")
+        GitPusshuTen::Log.message("The #{y(e.name)} remote has been added:")
         GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.app_dir + "\n")
       end
 
@@ -197,18 +177,18 @@ module GitPusshuTen
       # Performs the "sshkey"
       def perform_sshkey!
         unless environment.has_ssh_key?
-          GitPusshuTen::Log.error "Could not find ssh key in #{environment.ssh_key_path}"
-          GitPusshuTen::Log.error "To create one, run: " + "ssh-keygen -t rsa".color(:yellow)
+          GitPusshuTen::Log.error "Could not find ssh key in #{y(e.ssh_key_path)}"
+          GitPusshuTen::Log.error "To create one, run: #{y('ssh-keygen -t rsa')}"
           exit
         end
         
         unless environment.ssh_key_installed?
-          GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{user_name} at #{ip_addr}."
+          GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
           GitPusshuTen::Log.message "Installing now."
           environment.install_ssh_key!
           GitPusshuTen::Log.message "Your ssh key has been installed!"
         else
-          GitPusshuTen::Log.message "Your ssh has already been installed for #{user_name} at #{ip_addr}."
+          GitPusshuTen::Log.message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
         end
       end
 
@@ -217,19 +197,19 @@ module GitPusshuTen
       # configuration and then pushes the modified version back to the server.
       def setup_for_rvm!
         local.create_tmp_dir!
-        GitPusshuTen::Log.message "Adding #{user_name} to the #{'rvm'.color(:yellow)} group."
-        environment.execute_as_root("usermod -G rvm '#{configuration.user}'")
-        GitPusshuTen::Log.message "Configuring #{user_name}'s " + ".bashrc".color(:yellow) + " file for " + "rvm".color(:yellow) + "."
-        environment.scp_as_root(:download, File.join(environment.home_dir, '.bashrc'), File.join(local.tmp_dir, '.bashrc'))
+        GitPusshuTen::Log.message "Adding #{y(c.user)} to the #{y('rvm')} group."
+        e.execute_as_root("usermod -G rvm '#{c.user}'")
+        GitPusshuTen::Log.message "Configuring #{y(c.user)}'s #{y('.bashrc')} file for #{y('rvm')}."
+        e.scp_as_root(:download, File.join(e.home_dir, '.bashrc'), File.join(local.tmp_dir, '.bashrc'))
         contents = File.read(File.join(local.tmp_dir, '.bashrc'))
         contents.sub!(/\[ \-z \"\$PS1\" \] \&\& return/, "# [ -z \"$PS1\" ] && return\n\nif [[ -n \"$PS1\" ]]; then")
         File.open(File.join(local.tmp_dir, '.bashrc'), 'w') do |file|
           file << contents
           file << "\nfi\n\n[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"\n\n"
         end
-        environment.scp_as_root(:upload, File.join(local.tmp_dir, '.bashrc'), File.join(environment.home_dir, '.bashrc'))
+        e.scp_as_root(:upload, File.join(local.tmp_dir, '.bashrc'), File.join(e.home_dir, '.bashrc'))
         local.remove_tmp_dir!
-        GitPusshuTen::Log.message "Finished configuring #{user_name} for #{'rvm'.color(:yellow)}."
+        GitPusshuTen::Log.message "Finished configuring #{y(c.user)} for #{y('rvm')}."
       end
 
     end
