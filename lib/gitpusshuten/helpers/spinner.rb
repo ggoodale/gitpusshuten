@@ -68,10 +68,22 @@ class Spinner
     if options[:return]
       print returned_value
     end
-  
+    
+    ##
+    # Add a new line
+    print "\n"
+    
     ##
     # Return the value from the dead thread
     returned_value
+  end
+
+  def self.installing(&code)
+    Spinner.new(:message => "Installing..", :complete => 'DONE'.color(:green), &code)
+  end
+
+  def self.installing_a_while(&code)
+    Spinner.new(:message => "Installing, this may take a while..", :complete => 'DONE'.color(:green), &code)
   end
 
 end
