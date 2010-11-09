@@ -56,7 +56,7 @@ describe GitPusshuTen::Environment do
   
   describe '#clean_up_packages!' do
     it "should delete them as root" do
-      environment.expects(:execute_as_user).with("rm -rf '/var/apps/gitpusshuten-packages'")
+      environment.expects(:execute_as_user).with("cd /var/apps; rm -rf gitpusshuten-packages")
       environment.clean_up_packages!('/var/apps')
     end
   end
