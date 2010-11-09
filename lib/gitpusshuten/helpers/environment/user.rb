@@ -7,7 +7,8 @@ module GitPusshuTen
         # Removes a user from the remote server but does not remove
         # the user's home directory since it might contain applications
         def remove_user!
-          return true if execute_as_root("userdel '#{c.user}'").nil?
+          response = execute_as_root("userdel -f '#{c.user}'")
+          return true if response.nil? or response =~ /userdel: user .+ is currently logged in/
           false
         end
 
