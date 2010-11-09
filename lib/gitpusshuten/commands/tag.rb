@@ -1,9 +1,9 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helpers', 'push'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helpers', 'commands', 'push'))
 
 module GitPusshuTen
   module Commands
     class Tag < GitPusshuTen::Commands::Base
-      include GitPusshuTen::Helpers::Push
+      include GitPusshuTen::Helpers::Commands::Push
 
       description "Pushes the specified tag to a remote environment."
       usage       "push tag <tag> to <environment>"

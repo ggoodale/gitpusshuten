@@ -1,9 +1,9 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helpers', 'push'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'helpers', 'commands', 'push'))
 
 module GitPusshuTen
   module Commands
     class Branch < GitPusshuTen::Commands::Base
-      include GitPusshuTen::Helpers::Push
+      include GitPusshuTen::Helpers::Commands::Push
       
       description "Pushes the specified branch to a remote environment."
       usage       "push branch <branch> to <environment>"
