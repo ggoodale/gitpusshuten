@@ -111,8 +111,16 @@ module GitPusshuTen
         end
         
         ##
+        # Configure .bashrc
+        if not environment.execute_as_user("cat '#{File.join(c.path, '.bashrc')}'").include?('source /etc/profile')
+          GitPusshuTen::Log.message "Configuring #{y('.bashrc')}."
+          environment.execute_as_user("echo -e \"export RAILS_ENV=production\nsource /etc/profile\" > '#{File.join(c.path, '.bashrc')}'")
+        end
+        
+        ##
         # Add user to sudoers file
         if not environment.user_in_sudoers?
+          GitPusshuTen::Log.message "Adding #{y(c.user)} to sudo-ers."
           environment.add_user_to_sudoers!
         end
         
@@ -120,11 +128,9 @@ module GitPusshuTen
         # Checks to see if the RVM group exists.
         # If it does exist, perform RVM specific tasks.
         if environment.directory?("/usr/local/rvm")          
-          if not environment.execute_as_root("cat #{File.join(e.home_dir, '.bashrc')}").
-          include?("[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"")
-            GitPusshuTen::Log.message "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
-            setup_for_rvm!
-          end
+          GitPusshuTen::Log.message "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
+          GitPusshuTen::Log.message "Adding #{y(c.user)} to the #{y('rvm')} group."
+          e.execute_as_root("usermod -G rvm '#{c.user}'")
         end
         
         ##
@@ -143,7 +149,7 @@ module GitPusshuTen
           GitPusshuTen::Log.message "Downloading and installing #{y('Push And')} for #{y(c.user)}."
           environment.install_pushand!
         else
-          GitPusshuTen::Log.message "#{y('Push And')} already cloned and installed for #{y(c.user)}."
+          GitPusshuTen::Log.message "#{y('Push And')} already downloaded and installed for #{y(c.user)}."
         end
         
         ##
@@ -190,26 +196,6 @@ module GitPusshuTen
         else
           GitPusshuTen::Log.message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
         end
-      end
-
-      ##
-      # Adds the user to the "rvm" group, downloads the .bashrc file to do the needed
-      # configuration and then pushes the modified version back to the server.
-      def setup_for_rvm!
-        local.create_tmp_dir!
-        GitPusshuTen::Log.message "Adding #{y(c.user)} to the #{y('rvm')} group."
-        e.execute_as_root("usermod -G rvm '#{c.user}'")
-        GitPusshuTen::Log.message "Configuring #{y(c.user)}'s #{y('.bashrc')} file for #{y('rvm')}."
-        e.scp_as_root(:download, File.join(e.home_dir, '.bashrc'), File.join(local.tmp_dir, '.bashrc'))
-        contents = File.read(File.join(local.tmp_dir, '.bashrc'))
-        contents.sub!(/\[ \-z \"\$PS1\" \] \&\& return/, "# [ -z \"$PS1\" ] && return\n\nif [[ -n \"$PS1\" ]]; then")
-        File.open(File.join(local.tmp_dir, '.bashrc'), 'w') do |file|
-          file << contents
-          file << "\nfi\n\n[[ -s \"/usr/local/lib/rvm\" ]] && source \"/usr/local/lib/rvm\"\n\n"
-        end
-        e.scp_as_root(:upload, File.join(local.tmp_dir, '.bashrc'), File.join(e.home_dir, '.bashrc'))
-        local.remove_tmp_dir!
-        GitPusshuTen::Log.message "Finished configuring #{y(c.user)} for #{y('rvm')}."
       end
 
     end
