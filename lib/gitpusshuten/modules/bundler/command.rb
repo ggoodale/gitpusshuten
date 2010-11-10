@@ -48,8 +48,8 @@ module GitPusshuTen
         
         exit if not installed
         
-        Spinner.installing :message => "Bundling Gems for #{y(c.application)}", :return => true do
-          puts e.execute_as_user('bundle install --without test development')
+        Spinner.return :message => "Bundling Gems for #{y(c.application)}", :put => true do
+          e.execute_as_user("cd '#{e.app_dir}'; bundle install --without test development")
         end
       end
 
