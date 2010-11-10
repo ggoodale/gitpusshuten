@@ -25,6 +25,8 @@ module GitPusshuTen
         @command = cli.arguments.shift
         
         help if command.nil? or e.name.nil?
+        
+        @command = @command.underscore
       end
 
       ##
@@ -119,11 +121,47 @@ module GitPusshuTen
       ##
       # Displays a list of installed gems
       def perform_list!
-        GitPusshuTen::Log.message "Fetching list of installed gems."
+        GitPusshuTen::Log.message "Getting a list of installed Rubies."
         Spinner.loading do
           puts e.execute_as_root("rvm list")
         end
-        GitPusshuTen::Log.message "The #{y("=>")} arrow indicates which Ruby version is currently being used."
+        GitPusshuTen::Log.message "The ( #{y("=>")} ) arrow indicates which Ruby version is currently being used."
+      end
+      
+      ##
+      # Installs a Ruby version with RVM
+      def perform_install_ruby!
+        perform_list!
+        
+        GitPusshuTen::Log.message "Which Ruby version would you like to install?"
+        ruby_version = choose_ruby_version!
+        
+        GitPusshuTen::Log.message "Would you like to make #{y(ruby_version)} your default Ruby?"
+        yes? ? make_default = true : make_default = false
+        
+        Spinner.installing do
+          e.execute_as_root("rvm install #{ruby_version}")
+        end
+        
+        if make_default
+          GitPusshuTen::Log.message "Setting #{y(ruby_version)} as the system wide default Ruby."
+          e.execute_as_root("rvm use #{ruby_version} --default")
+        end
+      end
+      
+      def perform_set_default_ruby!
+        perform_list!
+        
+        GitPusshuTen::Log.message "Which Ruby version would you like to make the system wide default?"
+        ruby_version = choose_ruby_version!
+        
+        Spinner.updating :complete => nil do
+          if not e.execute_as_root("rvm use #{ruby_version} --default") =~ /not installed/
+            g("Ruby version #{ruby_version} is now set as the system wide default.")
+          else
+            r("Could not set #{ruby_version} as default")
+          end
+        end
       end
       
       ##
