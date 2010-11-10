@@ -221,7 +221,7 @@ module GitPusshuTen
           GitPusshuTen::Log.message "Passenger isn't installed for the current Ruby"
           Spinner.return :message => "Installing latest Phusion Passenger Gem.." do
             e.execute_as_root('gem install passenger --no-ri --no-rdoc')
-            g("DONE")
+            g("Done!")
           end
         end
         
@@ -270,7 +270,7 @@ module GitPusshuTen
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed." do
               e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
-              g("DONE")
+              g("Done!")
             end
             
             GitPusshuTen::Log.message "Installing NginX with the Phusion Passenger Module."
@@ -289,7 +289,7 @@ module GitPusshuTen
         ##
         # Downloads the NGINX configuration file to tmp dir
         GitPusshuTen::Log.message "Updating NginX configuration file."
-        Spinner.configuring do
+        Spinner.return :message => "Configuring NginX.." do
           e.scp_as_root(:download, @configuration_file, local.tmp_dir)
           @configuration_file_name = @configuration_file.split('/').last
           
@@ -316,6 +316,8 @@ module GitPusshuTen
           ##
           # Remove the local tmp directory
           local.remove_tmp_dir!
+          
+          g("Done!")
         end
         
         GitPusshuTen::Log.message "NginX configuration file has been updated!"

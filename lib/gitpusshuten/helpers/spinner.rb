@@ -76,23 +76,23 @@ class Spinner
   end
 
   def self.installing(options = {}, &code)
-    Spinner.new({:message => "Installing..", :complete => 'DONE'.color(:green)}.merge(options), &code)
+    Spinner.new({:message => "Installing..", :complete => 'Done!'.color(:green)}.merge(options), &code)
   end
 
   def self.installing_a_while(options = {}, &code)
-    Spinner.new({:message => "Installing, this may take a while..", :complete => 'DONE'.color(:green)}.merge(options), &code)
+    Spinner.new({:message => "Installing, this may take a while..", :complete => 'Done!'.color(:green)}.merge(options), &code)
   end
 
   def self.configuring(options = {}, &code)
-    Spinner.new({:message => "Configuring..", :complete => 'DONE'.color(:green)}.merge(options), &code)
+    Spinner.new({:message => "Configuring..", :complete => 'Done!'.color(:green)}.merge(options), &code)
   end
 
   def self.updating(options = {}, &code)
-    Spinner.new({:message => "Updating..", :complete => 'DONE'.color(:green)}.merge(options), &code)
+    Spinner.new({:message => "Updating..", :complete => 'Done!'.color(:green)}.merge(options), &code)
   end
 
   def self.loading(options = {}, &code)
-    Spinner.new({:message => "Loading..", :complete => 'DONE'.color(:green)}.merge(options), &code)
+    Spinner.new({:message => "Loading..", :complete => 'Done!'.color(:green)}.merge(options), &code)
   end
 
 end

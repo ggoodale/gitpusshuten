@@ -41,7 +41,7 @@ module GitPusshuTen
             if not installed
               r("Unable to install Bundler.")
             else
-              g("DONE")
+              g("Done!")
             end
           end
         end
