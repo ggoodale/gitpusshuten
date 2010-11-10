@@ -52,21 +52,25 @@ class Spinner
       print " "
     end
   
-    if not options[:success].nil? and returned_value
-      print options[:success]
-      print " "
-    end
-  
-    if not options[:fail].nil? and not returned_value
-      print options[:fail]
-      print " "
-    end
+    # if not options[:success].nil? and returned_value
+    #   print options[:success]
+    #   print " "
+    # end
+    #   
+    # if not options[:fail].nil? and not returned_value
+    #   print options[:fail]
+    #   print " "
+    # end
   
     ##
     # Prints the returned value from the code block
     # that was executed if set to true
     if options[:return]
-      print returned_value
+      if options[:put]
+        puts "\n" + returned_value
+      else
+        print returned_value
+      end
     end
     
     ##
@@ -76,6 +80,10 @@ class Spinner
     ##
     # Return the value from the dead thread
     returned_value
+  end
+
+  def self.return(options = {}, &code)
+    Spinner.new({:return => true}.merge(options), &code)
   end
 
   def self.installing(options = {}, &code)
