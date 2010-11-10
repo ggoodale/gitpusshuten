@@ -3,13 +3,14 @@ module GitPusshuTen
     class Nginx < GitPusshuTen::Commands::Base
       description "[Module] NginX commands."
       usage       "nginx <command> for <environment>"
-      example     "nginx setup for staging"
-      example     "nginx update-vhost for staging"
-      example     "nginx delete-vhost for production"
-      example     "nginx start for staging"
-      example     "nginx stop for production"
-      example     "nginx restart for production"
-      example     "nginx reload for production"
+      example     "nginx setup for staging                  # Sets up a managable vhost environment."
+      example     "nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "nginx update-vhost for staging           # Pushes your local vhost to the server for the specified environment, and restarts NginX."
+      example     "nginx delete-vhost for production        # Deletes the remote vhost for the specified environment."
+      example     "nginx start for staging                  # Starts NginX."
+      example     "nginx stop for production                # Stops NginX."
+      example     "nginx restart for production             # Restarts NginX."
+      example     "nginx reload for production              # Reloads NginX."
 
       ##
       # Passenger specific attributes/arguments
