@@ -117,7 +117,7 @@ module GitPusshuTen
           ##
           # Make a backup of the old nginx.conf
           GitPusshuTen::Log.message "Creating a backup of old NGINX configuration file."
-          e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup'")
+          e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup.#{Time.now.to_i}'")
           
           ##
           # Upload the file back
@@ -208,11 +208,6 @@ module GitPusshuTen
       def perform_update_configuration!
         load_configuration!
         find_correct_paths!
-        
-        # if not e.file?("'#{@configuration_file}'")
-        #   GitPusshuTen::Log.error "Could not find configuration file in #{y(@configuration_file)}."
-        #   exit
-        # end
         
         GitPusshuTen::Log.message "Checking the #{y(@configuration_file)} for current Passenger configuration."
         config_contents = e.execute_as_root("cat '#{@configuration_file}'")
