@@ -2,6 +2,12 @@ module GitPusshuTen
   class Log
 
     ##
+    # Displays a regular message without prefix
+    def self.standard(message)
+      puts message
+    end
+    
+    ##
     # Displays a regular message
     def self.message(message)
       puts "[message] ".color(:green) + message
