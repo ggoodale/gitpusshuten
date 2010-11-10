@@ -34,6 +34,10 @@ module GitPusshuTen
       def perform_install!
         GitPusshuTen::Log.message "Installing Ruby Version Manager (#{y('RVM')})!"
         
+        GitPusshuTen::Log.message "Which Ruby would you like to install and use as your default Ruby Interpreter?"
+        ruby_version = choose_ruby_version!
+        GitPusshuTen::Log.message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
+        
         ##
         # Update apt-get and install git/curl/wget
         GitPusshuTen::Log.message "Updating package list and installing #{y('RVM')} requirements."
@@ -77,17 +81,33 @@ module GitPusshuTen
         
         ##
         # Install a Ruby version
-        GitPusshuTen::Log.message "Installing Ruby 1.9.2 with #{y('RVM')}."
+        GitPusshuTen::Log.message "Installing #{y(ruby_version)} with #{y('RVM')}."
         Spinner.installing_a_while do
-          e.execute_as_root("rvm install 1.9.2")
+          e.execute_as_root("rvm install #{ruby_version}")
         end
         
         ##
         # Set the Ruby version as the default Ruby
-        GitPusshuTen::Log.message "Making Ruby 1.9.2 the default system Ruby."
-        e.execute_as_root("rvm use 1.9.2 --default")
+        GitPusshuTen::Log.message "Making #{y(ruby_version)} the default Ruby."
+        e.execute_as_root("rvm use #{ruby_version} --default")
         
         GitPusshuTen::Log.message "Finished!"
+      end
+      
+      ##
+      # Prompts the user to choose a Ruby to install
+      def choose_ruby_version!
+        choose do |menu|
+          menu.prompt = ''
+          
+          %w[ruby-1.8.6 ruby-1.8.7 ruby-1.9.1 ruby-1.9.2 ].each do |mri|
+            menu.choice(mri)
+          end
+          
+          %w[ree-1.8.6 ree-1.8.7].each do |ree|
+            menu.choice(ree)
+          end
+        end
       end
       
     end
