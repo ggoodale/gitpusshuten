@@ -192,12 +192,20 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Which Ruby version would you like to make the system wide default?"
         ruby_version = choose_ruby_version!
         
-        Spinner.updating :complete => nil do
+        Spinner.return :message => "Changing system wide default Ruby to #{y(ruby_version)}" do
           if not e.execute_as_root("rvm use #{ruby_version} --default") =~ /not installed/
+            @succeeded = true
             g("Ruby version #{ruby_version} is now set as the system wide default.")
           else
             r("Could not set #{ruby_version} as default")
           end
+        end
+        
+        if @succeeded
+          GitPusshuTen::Log.message("If you want to use #{y(ruby_version)} for your Ruby applications with Passenger")
+          GitPusshuTen::Log.message("you must update your #{y('NginX')} configuration. To do this, run the following command:")
+          GitPusshuTen::Log.message(y("gitpusshuten nginx update-configuration for #{e.name}"))
+          GitPusshuTen::Log.message("And follow any further instructions given.")
         end
       end
       
