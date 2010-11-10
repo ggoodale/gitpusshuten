@@ -209,10 +209,10 @@ module GitPusshuTen
         load_configuration!
         find_correct_paths!
         
-        if not e.file?("'#{@configuration_file}'")
-          GitPusshuTen::Log.error "Could not find configuration file in #{y(@configuration_file)}."
-          exit
-        end
+        # if not e.file?("'#{@configuration_file}'")
+        #   GitPusshuTen::Log.error "Could not find configuration file in #{y(@configuration_file)}."
+        #   exit
+        # end
         
         GitPusshuTen::Log.message "Checking the #{y(@configuration_file)} for current Passenger configuration."
         config_contents = e.execute_as_root("cat '#{@configuration_file}'")
@@ -316,10 +316,10 @@ module GitPusshuTen
         
         GitPusshuTen::Log.message "NginX configuration file has been updated!"
         GitPusshuTen::Log.message y(@configuration_file)
-        
-        ##
-        # Restart the NginX web server so the changes take effect
-        perform_restart!
+         
+        GitPusshuTen::Log.message "If you changed Ruby versions, be sure that all the gems for your applications are installed."
+        GitPusshuTen::Log.message "Once that's done, restart NginX to have the applied changes take effect by running the following command:"
+        GitPusshuTen::Log.message y("gitpusshuten nginx restart for #{e.name}")
       end
 
       ##
