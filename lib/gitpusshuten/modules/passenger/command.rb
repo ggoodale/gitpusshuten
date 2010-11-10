@@ -55,7 +55,7 @@ module GitPusshuTen
         # Install dependencies for Passenger
         GitPusshuTen::Log.message "Installing dependencies for installing Passenger + NginX."
         Spinner.installing do
-          e.execute_as_root("apt-get update; apt-get install -y libcurl4-openssl-dev")
+          e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev")
         end
         
         ##

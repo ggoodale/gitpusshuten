@@ -39,10 +39,10 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
         
         ##
-        # Update apt-get and install git/curl/wget
+        # Update aptitude and install git/curl/wget
         GitPusshuTen::Log.message "Updating package list and installing #{y('RVM')} requirements."
         Spinner.installing do
-          e.execute_as_root("apt-get update; apt-get install -y git-core curl wget;")
+          e.execute_as_root("aptitude update; aptitude install -y git-core curl wget;")
         end
         
         ##
