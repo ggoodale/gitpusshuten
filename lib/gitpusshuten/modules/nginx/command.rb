@@ -254,17 +254,18 @@ module GitPusshuTen
           
         INFO
         
-        GitPusshuTen::Log.message "NginX's configuration will now be configured to work with the above versions."
+        GitPusshuTen::Log.message "NginX will now be configured to work with the above versions."
         
         ##
         # Checks to see if Passengers WatchDog is available in the current Passenger gem
         # If it is not, then Passenger needs to run the "passenger-install-nginx-module" so it gets installed
         if not e.directory?("/usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/agents")
-          GitPusshuTen::Log.message "Passenger has not yet been installed for this Ruby's Passenger Gem."
-          GitPusshuTen::Log.message "You need to reinstall Passenger to proceed with the configuration update."
-          GitPusshuTen::Log.message "Would you like to reinstall/update #{y('Passenger')} to #{y(passenger_version)} for Ruby #{y(ruby_version)}?"
-          GitPusshuTen::Log.message "NOTE: #{g('Your current NginX configuration will NOT be lost.')}"
-          if yes?            
+          GitPusshuTen::Log.message "\n\nPhusion Passenger has not yet been installed for this Ruby's Passenger Gem."
+          GitPusshuTen::Log.message "You need to reinstall/update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration."
+          GitPusshuTen::Log.message "\nWould you like to reinstall/update #{y('NginX')} and #{y('Phusion Passenger')} to #{y(passenger_version)} for Ruby #{y(ruby_version)}?"
+          GitPusshuTen::Log.message "NOTE: Your current NginX configuration will #{y('not')} be lost. This is a reinstall/update that #{y('does not')} remove your NginX configuration."
+          
+          if yes?
             GitPusshuTen::Log.message "Ensuring #{y('Phusion Passenger')} dependencies are installed."
             Spinner.installing do
               e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
