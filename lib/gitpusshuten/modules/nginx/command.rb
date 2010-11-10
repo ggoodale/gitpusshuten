@@ -201,10 +201,130 @@ module GitPusshuTen
       end
 
       ##
+      # Performs the Update Configuration command
+      # This is particularly used when you change Passenger or Ruby versions
+      # so these are updated in the nginx.conf file.
+      def perform_update_configuration!
+        load_configuration!
+        find_correct_paths!
+        
+        if not e.file?("'#{@configuration_file}'")
+          GitPusshuTen::Log.error "Could not find configuration file in #{y(@configuration_file)}."
+          exit
+        end
+        
+        GitPusshuTen::Log.message "Checking the #{y(@configuration_file)} for current Passenger configuration."
+        config_contents = e.execute_as_root("cat '#{@configuration_file}'")
+        if not config_contents.include? 'passenger_root' or not config_contents.include?('passenger_ruby')
+          GitPusshuTen::Log.error "Could not find Passenger configuration, has it ever been set up?"
+          exit
+        end
+        
+        GitPusshuTen::Log.message "Checking if Passenger is installed under the #{y('default')} Ruby."
+        if not e.installed?('passenger')
+          GitPusshuTen::Log.message "Passenger isn't installed for the current Ruby, installing latest version now."
+          Spinner.installing do
+            e.execute_as_root('gem install passenger --no-ri --no-rdoc')
+          end
+        end
+        
+        GitPusshuTen::Log.message "Finding current Passenger version."
+        if e.execute_as_root('passenger --version') =~ /Phusion Passenger version (\d+\.\d+\.\d+)/
+          passenger_version = $1.chomp.strip
+        else
+          GitPusshuTen::Log.error "Could not find the current Passenger version."
+          exit
+        end
+        
+        GitPusshuTen::Log.message "Finding current version for the default Ruby."
+        if e.execute_as_root('which ruby') =~ /\/usr\/local\/rvm\/rubies\/(.+)\/bin\/ruby/
+          ruby_version = $1.chomp.strip
+        else
+          GitPusshuTen::Log.error "Could not find the current Ruby version."
+          exit
+        end
+        
+        puts <<-INFO
+          
+          [Detected Versions]
+          
+            Ruby Version:       #{ruby_version}
+            Passenger Version:  #{passenger_version}
+          
+        INFO
+        
+        GitPusshuTen::Log.message "NginX's configuration will now be configured to work with the above versions."
+        
+        ##
+        # Checks to see if Passengers WatchDog is available in the current Passenger gem
+        # If it is not, then Passenger needs to run the "passenger-install-nginx-module" so it gets installed
+        if not e.directory?("/usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/agents")
+          GitPusshuTen::Log.message "Passenger has not yet been installed for this Ruby's Passenger Gem."
+          GitPusshuTen::Log.message "You need to reinstall Passenger to proceed with the configuration update."
+          GitPusshuTen::Log.message "Would you like to reinstall/update #{y('Passenger')} to #{y(passenger_version)} for Ruby #{y(ruby_version)}?"
+          GitPusshuTen::Log.message "NOTE: #{g('Your current NginX configuration will NOT be lost.')}"
+          if yes?            
+            GitPusshuTen::Log.message "Ensuring #{y('Phusion Passenger')} dependencies are installed."
+            Spinner.installing do
+              e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+            end
+            
+            GitPusshuTen::Log.message "Reinstalling/Updating #{y('Phusion Passenger')}."
+            Spinner.installing_a_while do
+              e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=#{@installation_dir}")
+            end
+          end
+        end
+        
+        ##
+        # Creates a tmp dir
+        local.create_tmp_dir!
+        
+        ##
+        # Downloads the NGINX configuration file to tmp dir
+        GitPusshuTen::Log.message "Updating NginX configuration file."
+        Spinner.configuring do
+          e.scp_as_root(:download, @configuration_file, local.tmp_dir)
+          @configuration_file_name = @configuration_file.split('/').last
+          
+          local_configuration_file = File.join(local.tmp_dir, @configuration_file_name)
+          update = File.read(local_configuration_file)
+          update.sub! /passenger_root \/usr\/local\/rvm\/gems\/(.+)\/gems\/passenger\-(.+)\;/,
+                      "passenger_root /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version};"
+          
+          update.sub! /passenger_ruby \/usr\/local\/rvm\/wrappers\/(.+)\/ruby\;/,
+                      "passenger_ruby /usr/local/rvm/wrappers/#{ruby_version}/ruby;"
+          
+          File.open(local_configuration_file, 'w') do |file|
+            file << update
+          end
+          
+          ##
+          # Create a backup of the current configuration file
+          e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup.#{Time.now.to_i}'")
+          
+          ##
+          # Upload the updated NginX configuration file
+          e.scp_as_root(:upload, local_configuration_file, @configuration_file)
+          
+          ##
+          # Remove the local tmp directory
+          local.remove_tmp_dir!
+        end
+        
+        GitPusshuTen::Log.message "NginX configuration file has been updated!"
+        GitPusshuTen::Log.message y(@configuration_file)
+        
+        ##
+        # Restart the NginX web server so the changes take effect
+        perform_restart!
+      end
+
+      ##
       # Installs the Nginx executable if it does not exist
       def ensure_nginx_executable_is_installed!
         if not environment.file?("/etc/init.d/nginx")
-          GitPusshuTen::Log.message "Installing Nginx executable for starting/stopping/restarting/reloading Nginx."
+          GitPusshuTen::Log.message "Installing NginX executable for starting/stopping/restarting/reloading Nginx."
           environment.download_packages!(e.home_dir, :root)
           environment.execute_as_root("cp '#{File.join(e.home_dir, 'gitpusshuten-packages', 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
           environment.clean_up_packages!(e.home_dir, :root)
