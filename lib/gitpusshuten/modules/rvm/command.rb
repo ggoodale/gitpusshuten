@@ -111,22 +111,22 @@ module GitPusshuTen
       def perform_update!
         GitPusshuTen::Log.message "Updating RVM."
         GitPusshuTen::Log.message "Would you like to get the latest stable, or bleeding edge version?"
-        options = choose do |menu|
+        option = choose do |menu|
           menu.prompt = ''
           menu.choice('latest stable') { nil      }
           menu.choice('bleeding edge') { '--head' }
         end
-        Spinner.updating do
-          puts e.execute_as_root("rvm update #{options}")
+        Spinner.return :message => "Updating #{y('rvm')} to the #{y(option.nil? ? 'latest stable' : 'bleeding edge')}." do
+          e.execute_as_root("rvm update #{option}")
+          g("Done!")
         end
       end
       
       ##
       # Displays a list of installed gems
       def perform_list!
-        GitPusshuTen::Log.message "Getting a list of installed Rubies."
-        Spinner.loading do
-          puts e.execute_as_root("rvm list")
+        Spinner.return :message => "Getting a list of installed Rubies.", :put => true do
+          e.execute_as_root("rvm list")
         end
         GitPusshuTen::Log.message "The ( #{y("=>")} ) arrow indicates which Ruby version is currently being used."
       end
@@ -142,13 +142,16 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Would you like to make #{y(ruby_version)} your default Ruby?"
         yes? ? make_default = true : make_default = false
         
-        Spinner.installing do
+        Spinner.return :message => "Installing #{y(ruby_version)}, this may take a while.." do
           e.execute_as_root("rvm install #{ruby_version}")
+          g("Done!")
         end
         
         if make_default
-          GitPusshuTen::Log.message "Setting #{y(ruby_version)} as the system wide default Ruby."
-          e.execute_as_root("rvm use #{ruby_version} --default")
+          Spinner.return :message => "Setting #{y(ruby_version)} as the system wide default Ruby." do
+            e.execute_as_root("rvm use #{ruby_version} --default")
+            g("Done!")
+          end
         end
       end
       
@@ -160,7 +163,7 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Which Ruby version would you like to uninstall?"
         ruby_version = choose_ruby_version!
         
-        Spinner.updating :complete => nil, :return => true do
+        Spinner.return :message => "Uninstalling #{y(ruby_version)}.." do
           if not e.execute_as_root("rvm uninstall #{ruby_version}") =~ /has already been removed/
             g("Ruby version #{ruby_version} has been uninstalled.")
           else
@@ -177,7 +180,7 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Which Ruby version would you like to remove?"
         ruby_version = choose_ruby_version!
         
-        Spinner.updating :complete => nil, :return => true do
+        Spinner.return :message => "Removing #{y(ruby_version)}.." do
           if not e.execute_as_root("rvm remove #{ruby_version}") =~ /is already non existent/
             g("Ruby version #{ruby_version} has been removed.")
           else

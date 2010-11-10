@@ -46,16 +46,16 @@ module GitPusshuTen
         
         ##
         # Install the latest Passenger Gem
-        GitPusshuTen::Log.message "Installing the latest Passenger gem."
-        Spinner.installing do
+        Spinner.return :message => "Installing latest Phusion Passenger Gem.." do
           e.execute_as_root("gem install passenger --no-ri --no-rdoc")
+          g("Done!")
         end
         
         ##
         # Install dependencies for Passenger
-        GitPusshuTen::Log.message "Installing dependencies for installing Passenger + NginX."
-        Spinner.installing do
+        Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed.." do
           e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev")
+          g("Done!")
         end
         
         ##
@@ -66,9 +66,10 @@ module GitPusshuTen
           @prefix = '/opt/nginx' if @prefix.empty?
         end
         
-        GitPusshuTen::Log.message "Installing #{y('Passenger')} with #{y('NginX')} (in #{y(@prefix)})"
-        Spinner.installing_a_while do
+        GitPusshuTen::Log.standard "Installing #{y('Passenger')} with #{y('NginX')} (in #{y(@prefix)})"
+        Spinner.return :message => "This may take a while.." do
           e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=#{@prefix}")
+          g("Done!")
         end
         
         GitPusshuTen::Log.message "#{y('Passenger')} and #{y('NginX')} installed!"
