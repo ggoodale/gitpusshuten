@@ -94,4 +94,8 @@ class Spinner
     Spinner.new(:message => "Updating..", :complete => 'DONE'.color(:green), &code)
   end
 
+  def self.loading(&code)
+    Spinner.new(:message => "Loading..", :complete => 'DONE'.color(:green), &code)
+  end
+
 end
