@@ -321,11 +321,15 @@ module GitPusshuTen
         end
         
         GitPusshuTen::Log.message "NginX configuration file has been updated!"
-        GitPusshuTen::Log.message y(@configuration_file)
-         
-        GitPusshuTen::Log.message "If you changed Ruby versions, be sure that all the gems for your applications are installed."
-        GitPusshuTen::Log.message "Once that's done, restart NginX to have the applied changes take effect by running the following command:"
-        GitPusshuTen::Log.message y("gitpusshuten nginx restart for #{e.name}")
+        GitPusshuTen::Log.message "#{y(@configuration_file)}\n\n"
+        
+        GitPusshuTen::Log.warning "If you changed Ruby versions, be sure that all the gems for your applications are installed.\n\n"
+        
+        GitPusshuTen::Log.warning "If you only updated #{y('Phusion Passenger')} and did not change #{y('Ruby versions')}"
+        GitPusshuTen::Log.warning "then you should be able to just restart #{y('NginX')} right away since all application gems should still be in tact.\n\n"
+        
+        GitPusshuTen::Log.message "Run the following command to restart #{y('NginX')} and have the applied updates take effect:"
+        GitPusshuTen::Log.message "#{y("gitpusshuten nginx restart for #{e.name}")}"
       end
 
       ##
