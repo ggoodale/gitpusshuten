@@ -117,6 +117,16 @@ module GitPusshuTen
       end
       
       ##
+      # Displays a list of installed gems
+      def perform_list!
+        GitPusshuTen::Log.message "Fetching list of installed gems."
+        Spinner.loading do
+          puts e.execute_as_root("rvm list")
+        end
+        GitPusshuTen::Log.message "The #{y("=>")} arrow indicates which Ruby version is currently being used."
+      end
+      
+      ##
       # Prompts the user to choose a Ruby to install
       def choose_ruby_version!
         choose do |menu|
