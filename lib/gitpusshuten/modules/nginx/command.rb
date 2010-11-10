@@ -218,58 +218,67 @@ module GitPusshuTen
         
         GitPusshuTen::Log.message "Checking if Passenger is installed under the #{y('default')} Ruby."
         if not e.installed?('passenger')
-          GitPusshuTen::Log.message "Passenger isn't installed for the current Ruby, installing latest version now."
-          Spinner.installing do
+          GitPusshuTen::Log.message "Passenger isn't installed for the current Ruby"
+          Spinner.return :message => "Installing latest Phusion Passenger Gem.." do
             e.execute_as_root('gem install passenger --no-ri --no-rdoc')
+            g("DONE")
           end
         end
         
-        GitPusshuTen::Log.message "Finding current Passenger version."
-        if e.execute_as_root('passenger --version') =~ /Phusion Passenger version (\d+\.\d+\.\d+)/
-          passenger_version = $1.chomp.strip
-        else
-          GitPusshuTen::Log.error "Could not find the current Passenger version."
-          exit
+        Spinner.return :message => "Finding current Phusion Passenger Gem version..." do
+          if e.execute_as_root('passenger-config --version') =~ /(\d+\.\d+\..+)/
+            @passenger_version = $1.chomp.strip
+            g('Found!')
+          else
+            r('Could not find the current Passenger version.')
+          end
         end
         
-        GitPusshuTen::Log.message "Finding current version for the default Ruby."
-        if e.execute_as_root('which ruby') =~ /\/usr\/local\/rvm\/rubies\/(.+)\/bin\/ruby/
-          ruby_version = $1.chomp.strip
-        else
-          GitPusshuTen::Log.error "Could not find the current Ruby version."
-          exit
+        exit if @passenger_version.nil?
+        
+        Spinner.return :message => "Finding current Ruby version for the current Phusion Passenger Gem.." do
+          if e.execute_as_root('passenger-config --root') =~ /\/usr\/local\/rvm\/gems\/(.+)\/gems\/passenger-.+/
+            @ruby_version = $1.chomp.strip
+            g('Found!')
+          else
+            r("Could not find the current Ruby version under which the Passenger Gem has been installed.")
+          end
         end
+        
+        exit if @ruby_version.nil?
         
         puts <<-INFO
           
           [Detected Versions]
           
-            Ruby Version:       #{ruby_version}
-            Passenger Version:  #{passenger_version}
+            Ruby Version:               #{@ruby_version}
+            Phusion Passenger Version:  #{@passenger_version}
           
         INFO
         
-        GitPusshuTen::Log.message "NginX will now be configured to work with the above versions."
+        GitPusshuTen::Log.message "NginX will now be configured to work with the above versions.\n\n"
         
         ##
         # Checks to see if Passengers WatchDog is available in the current Passenger gem
         # If it is not, then Passenger needs to run the "passenger-install-nginx-module" so it gets installed
-        if not e.directory?("/usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/agents")
-          GitPusshuTen::Log.message "\n\nPhusion Passenger has not yet been installed for this Ruby's Passenger Gem."
-          GitPusshuTen::Log.message "You need to reinstall/update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration."
-          GitPusshuTen::Log.message "\nWould you like to reinstall/update #{y('NginX')} and #{y('Phusion Passenger')} to #{y(passenger_version)} for Ruby #{y(ruby_version)}?"
-          GitPusshuTen::Log.message "NOTE: Your current NginX configuration will #{y('not')} be lost. This is a reinstall/update that #{y('does not')} remove your NginX configuration."
+        if not e.directory?("/usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version}/agents")
+          GitPusshuTen::Log.message "Phusion Passenger has not yet been installed for this Ruby's Passenger Gem."
+          GitPusshuTen::Log.message "You need to reinstall/update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration.\n\n"
+          GitPusshuTen::Log.message "Would you like to reinstall/update #{y('NginX')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
+          GitPusshuTen::Log.message "NOTE: Your current NginX configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your NginX configuration."
           
           if yes?
-            GitPusshuTen::Log.message "Ensuring #{y('Phusion Passenger')} dependencies are installed."
-            Spinner.installing do
+            Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed." do
               e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+              g("DONE")
             end
             
-            GitPusshuTen::Log.message "Reinstalling/Updating #{y('Phusion Passenger')}."
+            GitPusshuTen::Log.message "Installing NginX with the Phusion Passenger Module."
             Spinner.installing_a_while do
               e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=#{@installation_dir}")
             end
+          else
+            exit
           end
         end
         
@@ -287,10 +296,10 @@ module GitPusshuTen
           local_configuration_file = File.join(local.tmp_dir, @configuration_file_name)
           update = File.read(local_configuration_file)
           update.sub! /passenger_root \/usr\/local\/rvm\/gems\/(.+)\/gems\/passenger\-(.+)\;/,
-                      "passenger_root /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version};"
+                      "passenger_root /usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version};"
           
           update.sub! /passenger_ruby \/usr\/local\/rvm\/wrappers\/(.+)\/ruby\;/,
-                      "passenger_ruby /usr/local/rvm/wrappers/#{ruby_version}/ruby;"
+                      "passenger_ruby /usr/local/rvm/wrappers/#{@ruby_version}/ruby;"
           
           File.open(local_configuration_file, 'w') do |file|
             file << update
@@ -331,27 +340,27 @@ module GitPusshuTen
       ##
       # Attempts to find correct paths and prompts the user for them otherwise
       def find_correct_paths!
-        GitPusshuTen::Log.message "Confirming NGINX installation directory location."
+        GitPusshuTen::Log.message "Confirming NginX installation directory location."
         while not @installation_dir_found
           if not e.directory?(@installation_dir)
-            GitPusshuTen::Log.warning "Could not find NGINX in #{y(@installation_dir)}."
+            GitPusshuTen::Log.warning "Could not find NginX in #{y(@installation_dir)}."
             GitPusshuTen::Log.message "Please provide the path to the installation directory."
             @installation_dir = ask('')
           else
-            GitPusshuTen::Log.message "NGINX installation directory found in #{y(@installation_dir)}!"
+            GitPusshuTen::Log.message "NginX installation directory found in #{y(@installation_dir)}!"
             @installation_dir_found = true
           end
         end
         
-        GitPusshuTen::Log.message "Confirming NGINX configuration file location."
+        GitPusshuTen::Log.message "Confirming NginX configuration file location."
         @configuration_file = File.join(@installation_dir, "conf", "nginx.conf") if @configuration_file.nil?
         while not @configuration_file_found
           if not environment.file?(@configuration_file)
-            GitPusshuTen::Log.warning "Could not find the NGINX configuration file in #{y(@configuration_file)}."
-            GitPusshuTen::Log.message "Please provide the (full/absolute) path to the NGINX configuration file. (e.g. #{y(File.join(@installation_dir, "conf", "nginx.conf"))})"
+            GitPusshuTen::Log.warning "Could not find the NginX configuration file in #{y(@configuration_file)}."
+            GitPusshuTen::Log.message "Please provide the (full/absolute) path to the NginX configuration file. (e.g. #{y(File.join(@installation_dir, "conf", "nginx.conf"))})"
             @configuration_file = ask('')
           else
-            GitPusshuTen::Log.message "NGINX configuration file found in #{y(@configuration_file)}!"
+            GitPusshuTen::Log.message "NginX configuration file found in #{y(@configuration_file)}!"
             @configuration_file_found = true
           end
         end
