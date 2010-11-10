@@ -86,4 +86,8 @@ class Spinner
     Spinner.new(:message => "Installing, this may take a while..", :complete => 'DONE'.color(:green), &code)
   end
 
+  def self.configuring(&code)
+    Spinner.new(:message => "Configuring..", :complete => 'DONE'.color(:green), &code)
+  end
+
 end
