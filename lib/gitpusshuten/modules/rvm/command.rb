@@ -4,7 +4,14 @@ module GitPusshuTen
     class Rvm < GitPusshuTen::Commands::Base
       description "[Module] Ruby Version Manager (RVM) commands."
       usage       "rvm <command> for <environment>"
-      example     "rvm install for staging"
+      example     "rvm install for staging                # Installs RVM (system wide)."
+      example     "rvm update for staging                 # Updates RVM."
+      example     "rvm list for staging                   # Lists installed Rubies under RVM."
+      example     "rvm install-ruby for production        # Installs one of the available Ruby versions."
+      example     "rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
+      example     "rvm set-default-ruby for production    # Sets the system wide default Ruby."
+      example     "                                         This is required if you want to change the Ruby version"
+      example     "                                         for your Ruby applications running Passenger."
 
       ##
       # Passenger specific attributes/arguments
@@ -92,6 +99,21 @@ module GitPusshuTen
         e.execute_as_root("rvm use #{ruby_version} --default")
         
         GitPusshuTen::Log.message "Finished!"
+      end
+      
+      ##
+      # Performs an update for RVM
+      def perform_update!
+        GitPusshuTen::Log.message "Updating RVM."
+        GitPusshuTen::Log.message "Would you like to get the latest stable, or bleeding edge version?"
+        options = choose do |menu|
+          menu.prompt = ''
+          menu.choice('latest stable') { nil      }
+          menu.choice('bleeding edge') { '--head' }
+        end
+        Spinner.updating do
+          puts e.execute_as_root("rvm update #{options}")
+        end
       end
       
       ##
