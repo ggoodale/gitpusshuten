@@ -90,4 +90,8 @@ class Spinner
     Spinner.new(:message => "Configuring..", :complete => 'DONE'.color(:green), &code)
   end
 
+  def self.updating(&code)
+    Spinner.new(:message => "Updating..", :complete => 'DONE'.color(:green), &code)
+  end
+
 end
