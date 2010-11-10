@@ -35,7 +35,7 @@ module GitPusshuTen
         installed = e.installed?('bundle')
         if not installed
           GitPusshuTen::Log.message "Couldn't find Bundler, installing the gem."
-          Spinner.installing :message => nil, :return => true do
+          Spinner.return :message => "Installing Bundler.." do
             e.execute_as_user('gem install bundler --no-ri --no-rdoc')
             installed = e.installed?('bundle')
             if not installed
