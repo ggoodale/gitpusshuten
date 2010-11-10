@@ -9,6 +9,7 @@ module GitPusshuTen
       example     "rvm list for staging                   # Lists installed Rubies under RVM."
       example     "rvm install-ruby for production        # Installs one of the available Ruby versions."
       example     "rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
+      example     "rvm remove-ruby for production         # Uninstalls and removes the Ruby's complete source from RVM."
       example     "rvm set-default-ruby for production    # Sets the system wide default Ruby."
       example     "                                         This is required if you want to change the Ruby version"
       example     "                                         for your Ruby applications running Passenger."
@@ -149,6 +150,42 @@ module GitPusshuTen
         end
       end
       
+      ##
+      # Uninstalls a Ruby version
+      def perform_uninstall_ruby!
+        perform_list!
+        
+        GitPusshuTen::Log.message "Which Ruby version would you like to uninstall?"
+        ruby_version = choose_ruby_version!
+        
+        Spinner.updating :complete => nil, :return => true do
+          if not e.execute_as_root("rvm uninstall #{ruby_version}") =~ /has already been removed/
+            g("Ruby version #{ruby_version} has been uninstalled.")
+          else
+            r("Ruby version #{ruby_version} has already been removed.")
+          end
+        end
+      end
+      
+      ##
+      # Remove a Ruby version
+      def perform_remove_ruby!
+        perform_list!
+        
+        GitPusshuTen::Log.message "Which Ruby version would you like to remove?"
+        ruby_version = choose_ruby_version!
+        
+        Spinner.updating :complete => nil, :return => true do
+          if not e.execute_as_root("rvm remove #{ruby_version}") =~ /is already non existent/
+            g("Ruby version #{ruby_version} has been removed.")
+          else
+            r("Ruby version #{ruby_version} is already non existent.")
+          end
+        end
+      end
+      
+      ##
+      # Change the default Ruby on the server
       def perform_set_default_ruby!
         perform_list!
         
