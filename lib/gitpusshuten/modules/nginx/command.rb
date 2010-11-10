@@ -268,7 +268,7 @@ module GitPusshuTen
           GitPusshuTen::Log.message "NOTE: Your current NginX configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your NginX configuration."
           
           if yes?
-            Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed." do
+            Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed.." do
               e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
               g("Done!")
             end
