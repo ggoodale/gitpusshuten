@@ -50,56 +50,58 @@ module GitPusshuTen
         
         ##
         # Update aptitude and install git/curl/wget
-        GitPusshuTen::Log.message "Updating package list and installing #{y('RVM')} requirements."
-        Spinner.installing do
+        Spinner.return :message => "Updating package list and installing #{y('RVM')} requirements.." do
           e.execute_as_root("aptitude update; aptitude install -y git-core curl wget;")
+          g("Done!")
         end
         
         ##
         # Install RVM (system wide)
-        GitPusshuTen::Log.message "Starting #{y('RVM')} installation."
-        Spinner.installing do
+        Spinner.return :message => "Installing #{y('RVM')}.." do
           e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
+          g("Done!")
         end
         
         ##
         # Download Git Packages and add the rvm load snippet into /etc/profile
         if not e.execute_as_root("cat /etc/profile").include?('source "/usr/local/rvm/scripts/rvm"')
-          GitPusshuTen::Log.message "Downloading Gitプッシュ点 packages and configuring /etc/profile."
-          Spinner.installing do
+          Spinner.return :message => "Downloading Gitプッシュ点 packages and configuring /etc/profile.." do
             e.download_packages!("$HOME", :root)
             e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
             e.clean_up_packages!("$HOME", :root)
+            g("Done!")
           end
         end
         
         ##
         # Create a .bashrc in $HOME to load /etc/profile for non-interactive sessions
         if not e.execute_as_root("cat $HOME/.bashrc").include?('source /etc/profile')
-          GitPusshuTen::Log.message "Configuring .bashrc file to load /etc/profile for non-interactive sessions."
-          Spinner.installing do
+          Spinner.return :message => "Configuring .bashrc file to load /etc/profile for non-interactive sessions.." do
             e.execute_as_root("echo 'source /etc/profile' >> $HOME/.bashrc; source $HOME/.bashrc")
+            g("Done!")
           end
         end
         
         ##
         # Install required packages for installing Ruby
-        GitPusshuTen::Log.message "Instaling the Ruby Interpreter dependency packages."
-        Spinner.installing do
+        Spinner.return :message => "Instaling the Ruby Interpreter dependency packages.." do
           e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+          g("Done!")
         end
         
         ##
         # Install a Ruby version
-        GitPusshuTen::Log.message "Installing #{y(ruby_version)} with #{y('RVM')}."
-        Spinner.installing_a_while do
+        Spinner.return :message => "Installing #{y(ruby_version)} with #{y('rvm')}. This may take a while.." do
           e.execute_as_root("rvm install #{ruby_version}")
+          g("Done!")
         end
         
         ##
         # Set the Ruby version as the default Ruby
-        GitPusshuTen::Log.message "Making #{y(ruby_version)} the default Ruby."
-        e.execute_as_root("rvm use #{ruby_version} --default")
+        Spinner.return :message => "Making #{y(ruby_version)} the default Ruby.." do
+          e.execute_as_root("rvm use #{ruby_version} --default")
+          g("Done!")
+        end
         
         GitPusshuTen::Log.message "Finished!"
       end
