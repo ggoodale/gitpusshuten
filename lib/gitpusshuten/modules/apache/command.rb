@@ -3,7 +3,6 @@ module GitPusshuTen
     class Apache < GitPusshuTen::Commands::Base
       description "[Module] Apache commands."
       usage       "apache <command> for <environment>"
-      example     "apache setup for staging                  # Sets up a managable vhost environment."
       example     "apache update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
       example     "apache create-vhost for production        # Creates a local vhost template for the specified environment."
       example     "apache delete-vhost for production        # Deletes the remote vhost for the specified environment."
@@ -84,6 +83,7 @@ module GitPusshuTen
           exit
         end
         
+        local.execute("mkdir -p #{File.join(local.gitpusshuten_dir, 'apache')}")
         local_vhost = File.join(local.gitpusshuten_dir, 'apache', "#{e.name}.vhost")
         if File.exist?(local_vhost)
           GitPusshuTen::Log.warning "#{y(local_vhost)} already exists. Do you want to overwrite it?"
@@ -110,7 +110,7 @@ module GitPusshuTen
             g("Finished uploading!")
           end
           
-          perform_reload!
+          perform_restart!
         else
           GitPusshuTen::Log.error "Could not locate vhost file #{y(vhost_file)}."
           GitPusshuTen::Log.error "Download an existing one from your server with:"
@@ -123,7 +123,7 @@ module GitPusshuTen
 
       ##
       # Deletes a vhost
-      def perform_delete_vhost!        
+      def perform_delete_vhost!
         vhost_file = File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost")
         if environment.file?(vhost_file)
           GitPusshuTen::Log.message "Deleting #{y(vhost_file)}!"
@@ -225,18 +225,12 @@ module GitPusshuTen
         end
         
         ##
-        # LoadModule passenger_module /usr/local/rvm/gems/ruby-1.8.7-p302/gems/passenger-3.0.0/ext/apache2/mod_passenger.so
-        # PassengerRoot /usr/local/rvm/gems/ruby-1.8.7-p302/gems/passenger-3.0.0
-        # PassengerRuby /usr/local/rvm/wrappers/ruby-1.8.7-p302/ruby
-        # michael
-        
-        ##
         # Creates a tmp dir
         local.create_tmp_dir!
         
         ##
         # Downloads the Apache configuration file to tmp dir
-        GitPusshuTen::Log.message "Updating Apache configuration file."
+        GitPusshuTen::Log.message "Updating Phusion Passenger paths in the Apache Configuration."
         Spinner.return :message => "Configuring Apache.." do
           e.scp_as_root(:download, @configuration_file, local.tmp_dir)
           @configuration_file_name = @configuration_file.split('/').last
@@ -275,13 +269,12 @@ module GitPusshuTen
         GitPusshuTen::Log.message "Apache configuration file has been updated!"
         GitPusshuTen::Log.message "#{y(@configuration_file)}\n\n"
         
-        GitPusshuTen::Log.warning "If you changed Ruby versions, be sure that all the gems for your applications are installed.\n\n"
-        
+        GitPusshuTen::Log.warning "If you changed Ruby versions, be sure that all the gems for your applications are installed."
         GitPusshuTen::Log.warning "If you only updated #{y('Phusion Passenger')} and did not change #{y('Ruby versions')}"
         GitPusshuTen::Log.warning "then you should be able to just restart #{y('Apache')} right away since all application gems should still be in tact.\n\n"
         
         GitPusshuTen::Log.message "Run the following command to restart #{y('Apache')} and have the applied updates take effect:"
-        GitPusshuTen::Log.message "#{y("gitpusshuten apache restart for #{e.name}")}"
+        GitPusshuTen::Log.standard "\n\s\s#{y("gitpusshuten apache restart for #{e.name}")}"
       end
 
       ##
