@@ -74,7 +74,7 @@ module GitPusshuTen
         ##
         # Download Git Packages and add the rvm load snippet into /etc/profile.
         if not e.execute_as_root("cat /etc/profile").include?('source "/usr/local/rvm/scripts/rvm"')
-          Spinner.return :message => "Configuring /etc/profile.." do
+          Spinner.return :message => "Configuring #{y('/etc/profile')}.." do
             e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
             g("Done!")
           end
@@ -83,7 +83,7 @@ module GitPusshuTen
         ##
         # Add the gemrc into the root's home directory
         if not e.file?('/root/.gemrc')
-          Spinner.return :message => "Creating a .gemrc file.." do
+          Spinner.return :message => "Configuring #{y('.gemrc')} file.." do
             e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/gemrc > ~/.gemrc")
             g("Done!")
           end
@@ -92,7 +92,7 @@ module GitPusshuTen
         ##
         # Create a .bashrc in $HOME to load /etc/profile for non-interactive sessions
         if not e.execute_as_root("cat $HOME/.bashrc").include?('source /etc/profile')
-          Spinner.return :message => "Configuring .bashrc file to load /etc/profile for non-interactive sessions.." do
+          Spinner.return :message => "Configuring #{y('.bashrc')} file to load /etc/profile for non-interactive sessions.." do
             e.execute_as_root("echo 'source /etc/profile' >> $HOME/.bashrc; source $HOME/.bashrc")
             g("Done!")
           end
@@ -100,7 +100,7 @@ module GitPusshuTen
         
         ##
         # Install required packages for installing Ruby
-        Spinner.return :message => "Installing the Ruby Interpreter dependency packages.." do
+        Spinner.return :message => "Installing the Ruby Interpreter #{y('dependency packages')}.." do
           e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
           g("Done!")
         end
