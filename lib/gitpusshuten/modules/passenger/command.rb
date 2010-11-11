@@ -47,9 +47,10 @@ module GitPusshuTen
       ##
       # Installs Phusion Passenger
       def perform_install!
+        
         if not e.installed?('gem')
           GitPusshuTen::Log.error "Could not find RubyGems."
-          GitPusshuTen::Log.error "Please install RVM (Ruby Version Manager) and at least one Ruby version."
+          GitPusshuTen::Log.error "Install RVM (Ruby Version Manager) and at least one Ruby version."
           GitPusshuTen::Log.error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
           exit
         end
@@ -179,7 +180,7 @@ CONFIG
         end
         
         if not @rubygems_installed
-          GitPusshuTen::Log.error "Please install RVM (Ruby Version Manager) and at least one Ruby version."
+          GitPusshuTen::Log.error "Install RVM (Ruby Version Manager) and at least one Ruby version."
           GitPusshuTen::Log.error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
           exit
         end
