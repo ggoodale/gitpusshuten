@@ -4,7 +4,6 @@ module GitPusshuTen
   module Commands
     class Branch < GitPusshuTen::Commands::Base
       include GitPusshuTen::Helpers::Commands::Push
-      
       description "Pushes the specified branch to a remote environment."
       usage       "push branch <branch> to <environment>"
       example     "push branch develop to staging"

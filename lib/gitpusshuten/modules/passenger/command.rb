@@ -12,7 +12,7 @@ module GitPusshuTen
       attr_accessor :command
 
       ##
-      # Initializes the Tag command
+      # Initializes the Passenger command
       def initialize(*objects)
         super
         
@@ -32,11 +32,15 @@ module GitPusshuTen
         end
       end
       
+      ##
+      # Restarts a Passenger instance for the specified environment
       def perform_restart!
         GitPusshuTen::Log.message "Restarting Passenger for #{y(c.application)} (#{y(e.name)} environment)."
         environment.execute_as_user("cd #{e.app_dir}; mkdir -p tmp; touch tmp/restart.txt")
       end
       
+      ##
+      # Installs Phusion Passenger
       def perform_install!
         if not e.installed?('gem')
           GitPusshuTen::Log.error "Could not find RubyGems."

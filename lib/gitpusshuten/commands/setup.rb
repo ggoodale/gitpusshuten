@@ -127,7 +127,7 @@ module GitPusshuTen
         ##
         # Checks to see if the RVM group exists.
         # If it does exist, perform RVM specific tasks.
-        if environment.directory?("/usr/local/rvm")          
+        if environment.directory?("/usr/local/rvm")
           GitPusshuTen::Log.message "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
           GitPusshuTen::Log.message "Adding #{y(c.user)} to the #{y('rvm')} group."
           e.execute_as_root("usermod -G rvm '#{c.user}'")

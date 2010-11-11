@@ -6,7 +6,7 @@ module GitPusshuTen
       example     "bundler bundle for staging   # Bundles an application's gems for the specified environment."
 
       ##
-      # Passenger specific attributes/arguments
+      # Bundler specific attributes/arguments
       attr_accessor :command
 
       ##
@@ -30,6 +30,8 @@ module GitPusshuTen
         end
       end
       
+      ##
+      # Bundles gems
       def perform_bundle!
         GitPusshuTen::Log.message "Bundling Gems for #{y(c.application)} (#{y(e.name)} environment)."
         installed = e.installed?('bundle')

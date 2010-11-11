@@ -2,7 +2,7 @@
 module GitPusshuTen
   module Commands
     class Version < GitPusshuTen::Commands::Base
-      description "Displays the current version."
+      description "Displays the current version of Git Pusshu Ten (プッシュ点)."
 
       ##
       # Initializes the Version command

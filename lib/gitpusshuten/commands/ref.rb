@@ -4,7 +4,6 @@ module GitPusshuTen
   module Commands
     class Ref < GitPusshuTen::Commands::Base
       include GitPusshuTen::Helpers::Commands::Push
-      
       description "Pushes the specified ref to a remote environment."
       usage       "push ref <ref> to <environment>"
       example     "push ref 00cab0263ae565578f6b789c4d3bb8f1b8f8b932 to staging"

@@ -4,7 +4,6 @@ module GitPusshuTen
   module Commands
     class Tag < GitPusshuTen::Commands::Base
       include GitPusshuTen::Helpers::Commands::Push
-
       description "Pushes the specified tag to a remote environment."
       usage       "push tag <tag> to <environment>"
       example     "push tag 1.4.2 to staging"

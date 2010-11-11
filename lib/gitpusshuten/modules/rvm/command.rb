@@ -15,7 +15,7 @@ module GitPusshuTen
       example     "                                         for your Ruby applications running Passenger."
 
       ##
-      # Passenger specific attributes/arguments
+      # RVM specific attributes/arguments
       attr_accessor :command
 
       ##
@@ -41,6 +41,8 @@ module GitPusshuTen
         end
       end
 
+      ##
+      # Installs RVM (Ruby Version Manager)
       def perform_install!
         GitPusshuTen::Log.message "Installing Ruby Version Manager (#{y('RVM')})!"
         

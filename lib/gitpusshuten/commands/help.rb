@@ -3,7 +3,10 @@ module GitPusshuTen
     class Help < GitPusshuTen::Commands::Base
       description "Displays the command list, or the help screen for a specific command."
       usage       "gitpusshuten help | gitpusshuten help <command>"
-      example     "gitpusshuten help | gitpusshuten help tag"
+      example     "gitpusshuten help"
+      example     "gitpusshuten help initialize"
+      example     "gitpusshuten help setup"
+      example     "gitpusshuten help tag"
 
       ##
       # Help specific attributes/arguments
@@ -26,7 +29,7 @@ module GitPusshuTen
           if command_object.available_commands.include?(command)
             command_object.display_usage(command)
           else
-            GitPusshuTen::Log.error "Command <#{y(command)}> not found."
+            GitPusshuTen::Log.error "Command <#{r(command)}> not found."
           end
         end
       end

@@ -37,7 +37,7 @@ module GitPusshuTen
       end
 
       ##
-      # Performs the Passenger command
+      # Performs the NginX command
       def perform!
         if respond_to?("perform_#{command}!")
           send("perform_#{command}!")
