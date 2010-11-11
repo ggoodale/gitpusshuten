@@ -3,7 +3,7 @@ module GitPusshuTen
     class Bundler < GitPusshuTen::Commands::Base
       description "[Module] Bundler commands."
       usage       "bundler <command> for <environment>"
-      example     "bundler bundle for staging         # Installs Passenger with the NginX web server"
+      example     "bundler bundle for staging   # Bundles an application's gems for the specified environment."
 
       ##
       # Passenger specific attributes/arguments
