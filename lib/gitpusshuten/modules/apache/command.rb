@@ -99,9 +99,11 @@ module GitPusshuTen
       # Uploads a local vhost
       def perform_upload_vhost!        
         vhost_file = File.join(local.gitpusshuten_dir, 'apache', "#{e.name}.vhost")
-        if File.exist?(vhost_file) # prompts root
+        if File.exist?(vhost_file)
           GitPusshuTen::Log.message "Uploading #{y(vhost_file)} to " +
           y(File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
+          
+          prompt_for_root_password!
           
           Spinner.return :message => "Uploading vhost.." do
             e.scp_as_root(:upload, vhost_file, File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost"))

@@ -302,6 +302,7 @@ CONFIG
             @installation_dir = config[:installation_dir]
           end
         end
+        
         if apache?
           @installation_dir = '/etc/apache2'
           @path_found       = true

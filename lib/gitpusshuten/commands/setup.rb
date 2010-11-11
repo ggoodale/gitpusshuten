@@ -211,7 +211,7 @@ module GitPusshuTen
           exit
         end
         
-        unless e.ssh_key_installed?
+        unless e.ssh_key_installed? # prompts root
           GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
           Spinner.return :message => "Installing now.." do
             e.install_ssh_key!

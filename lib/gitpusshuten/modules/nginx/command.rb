@@ -166,6 +166,8 @@ module GitPusshuTen
           GitPusshuTen::Log.message "Uploading #{y(vhost_file)} to " +
           y(File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
           
+          prompt_for_root_password!
+          
           Spinner.return :message => "Uploading vhost.." do
             e.scp_as_root(:upload, vhost_file, File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost"))
             g("Finished uploading!")
@@ -186,9 +188,11 @@ module GitPusshuTen
         find_correct_paths!
         
         vhost_file = File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost")
-        if environment.file?(vhost_file)
-          GitPusshuTen::Log.message "Deleting #{y(vhost_file)}!"
-          environment.execute_as_root("rm #{vhost_file}")
+        if e.file?(vhost_file)
+          Spinner.return :message => "Deleting #{y(vhost_file)}!" do
+            e.execute_as_root("rm #{vhost_file}")
+            g('Done!')
+          end
           perform_reload!
         else
           GitPusshuTen::Log.message "#{y(vhost_file)} does not exist."
@@ -341,7 +345,7 @@ module GitPusshuTen
         find_correct_paths!
         
         remote_vhost = File.join(@configuration_directory, "vhosts", "#{e.sanitized_app_name}.#{e.name}.vhost")
-        if not e.file?(remote_vhost)
+        if not e.file?(remote_vhost) # prompts root
           GitPusshuTen::Log.error "There is no vhost currently present in #{y(remote_vhost)}."
           exit
         end
