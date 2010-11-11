@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = %x[git ls-files -- {spec}/*].split("\n")
   gem.require_path  = 'lib'
   
-  gem.executables   = ['gitpusshuten', 'pusshu', 'push']
+  gem.executables   = ['gitpusshuten', 'pusshuten', 'pusshu', 'push', 'ten']
   
   gem.add_dependency 'rainbow',       ['~> 1.1.0']
   gem.add_dependency 'highline',      ['~> 1.6.0']

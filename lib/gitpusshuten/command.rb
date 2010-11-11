@@ -104,30 +104,36 @@ module GitPusshuTen
     # Displays a list of available commands in the CLI
     def display_commands
       puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\n"
+      puts "[Aliases]\n\n"
+      puts "\s\s#{y 'push'}, #{y 'pusshu'}, #{y 'pusshuten'} and #{y 'ten'}\n\n"
       puts "[Commands]\n\n"
       available_commands.compact.sort.each do |command|
-        puts "\s\s" + command + (command.length < 6 ? "\t" : "") + "\t" + get_constant_for(command).description          
+        puts "\s\s" + y(command) + (command.length < 6 ? "\t" : "") + "\t" + get_constant_for(command).description          
       end
       puts "\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>\n".color(:yellow)
-      puts "For more information, visit: http://gitpusshuten.com/"
+      puts "For more information, visit: #{y 'http://gitpusshuten.com/'}"
     end
 
     ##
     # Displays command specific details in the CLI
     def display_usage(command)
       puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\n"
-      puts "[Command]\n\n\s\s#{command}\n\n"
+      puts "[Command]\n\n\s\s#{y(command)}\n\n"
       puts "[Description]\n\n\s\s#{get_constant_for(command).description}\n\n"
-      puts "[Usage]\n\n\s\s#{get_constant_for(command).usage}\n\n"
+      puts "[Usage]\n\n\s\s#{y get_constant_for(command).usage}\n\n"
       puts "[Examples]\n#{get_constant_for(command).example}\n\n"
-      puts "For a list of all commands: " + "gitpusshuten help".color(:yellow)
-      puts "For more information, visit: http://gitpusshuten.com/"
+      puts "For a list of all commands: #{y 'gitpusshuten help'}"
+      puts "For more information, visit: #{y 'http://gitpusshuten.com/'}"
     end
 
     ##
     # Returns the constant of a command
     def get_constant_for(command)
       "GitPusshuTen::Commands::#{command.classify}".constantize
+    end
+
+    def y(value)
+      value.to_s.color(:yellow)
     end
 
   end
