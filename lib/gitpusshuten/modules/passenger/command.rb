@@ -131,7 +131,7 @@ module GitPusshuTen
                 @ruby_version      = $1.chomp.strip
                 @passenger_version = e.execute_as_root('passenger-config --version').chomp.strip
               end
-            
+              
               e.execute_as_root <<-PASSENGER
 cat <<-CONFIG >> /etc/apache2/apache2.conf
 
@@ -142,6 +142,7 @@ PassengerRuby /usr/local/rvm/wrappers/#{@ruby_version}/ruby
 CONFIG
               PASSENGER
             end
+            g('Done!')
           end # spinner
         end
         
