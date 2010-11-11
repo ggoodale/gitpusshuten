@@ -5,8 +5,10 @@ module GitPusshuTen
       usage       "nginx <command> for <environment>"
       example     "nginx setup for staging                  # Sets up a managable vhost environment."
       example     "nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "nginx update-vhost for staging           # Pushes your local vhost to the server for the specified environment, and restarts NginX."
+      example     "nginx create-vhost for production        # Creates a local vhost template for the specified environment."
       example     "nginx delete-vhost for production        # Deletes the remote vhost for the specified environment."
+      example     "nginx upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
+      example     "nginx download-vhost for production      # Downloads the remote vhost from the specified environment."
       example     "nginx start for staging                  # Starts NginX."
       example     "nginx stop for production                # Stops NginX."
       example     "nginx restart for production             # Restarts NginX."
@@ -74,7 +76,7 @@ module GitPusshuTen
       # Reload Nginx
       def perform_reload!
         ensure_nginx_executable_is_installed!
-        GitPusshuTen::Log.message "Reloading Nginx."
+        GitPusshuTen::Log.message "Reloading Nginx Configuration."
         puts e.execute_as_root("/etc/init.d/nginx reload")
       end
 
@@ -95,8 +97,7 @@ module GitPusshuTen
         local.create_tmp_dir!
         
         ##
-        # Downloads the NGINX configuration file to tmp dir
-        GitPusshuTen::Log.message "Downloading NGINX configuration file to #{local.tmp_dir}."
+        # Downloads the NginX configuration file to tmp dir
         e.scp_as_root(:download, @configuration_file, local.tmp_dir)
         @configuration_file_name = @configuration_file.split('/').last
         
@@ -105,7 +106,7 @@ module GitPusshuTen
         local_file = File.join(local.tmp_dir, @configuration_file_name)
         
         if not File.read(local_file).include?('include vhosts/*;')
-          GitPusshuTen::Log.message "Configuring NGINX configuration file."
+          GitPusshuTen::Log.message "Configuring NginX configuration file."
           
           ##
           # Inject the 'include vhosts/*'
@@ -116,12 +117,12 @@ module GitPusshuTen
           
           ##
           # Make a backup of the old nginx.conf
-          GitPusshuTen::Log.message "Creating a backup of old NGINX configuration file."
+          GitPusshuTen::Log.message "Creating a backup of old NginX configuration file."
           e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup.#{Time.now.to_i}'")
           
           ##
           # Upload the file back
-          GitPusshuTen::Log.message "Updating NGINX configuration file."
+          GitPusshuTen::Log.message "Updating NginX configuration file."
           e.scp_as_root(:upload, local_file, @configuration_file)
           
           ##
@@ -137,24 +138,14 @@ module GitPusshuTen
         local.remove_tmp_dir!
         
         ##
-        # Create NGINX directory
-        # Create NGINX vhost file (if it doesn't already exist)
-        # Create or Overwrite NGINX config file that stores the vhosts directory
-        local.execute("mkdir -p '#{File.join(local.gitpusshuten_dir, 'nginx')}'")
-        vhost_file  = File.join(local.gitpusshuten_dir, 'nginx', "#{e.name}.vhost")
-        config_file = File.join(local.gitpusshuten_dir, 'nginx', "config.yml")
-
-        if not File.exist?(vhost_file)
-          File.open(vhost_file, 'w') do |file|
-            file << "server {\n"
-            file << "\s\slisten 80;\n"
-            file << "\s\sserver_name mydomain.com www.mydomain.com;\n"
-            file << "\s\sroot #{e.app_dir}/public;\n"
-            file << "\s\s# passenger_enabled on; # for rack (rails/sinatra/merb/etc users)\n"
-            file << "}\n"
-          end
-        end
+        # Create NginX directory
+        # Create NginX vhost file (if it doesn't already exist)
+        # Create or Overwrite NginX config file that stores the vhosts directory
+        create_vhost_template_file!
         
+        ##
+        # Writes the installation paths to a YAML file
+        config_file = File.join(local.gitpusshuten_dir, 'nginx', "config.yml")
         File.open(config_file, 'w') do |file|
           file << YAML::dump({
             :installation_dir         => @installation_dir,
@@ -166,7 +157,7 @@ module GitPusshuTen
 
       ##
       # Updates a local vhost
-      def perform_update_vhost!
+      def perform_upload_vhost!
         load_configuration!
         find_correct_paths!
         
@@ -174,9 +165,13 @@ module GitPusshuTen
         if File.exist?(vhost_file)
           GitPusshuTen::Log.message "Uploading #{y(vhost_file)} to " +
           y(File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
-
-          e.scp_as_root(:upload, vhost_file, File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost"))
-          perform_restart!
+          
+          Spinner.return :message => "Uploading vhost.." do
+            e.scp_as_root(:upload, vhost_file, File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost"))
+            g("Finished uploading!")
+          end
+          
+          perform_reload!
         else
           GitPusshuTen::Log.error "Could not locate vhost file #{y(vhost_file)}."
           GitPusshuTen::Log.error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
@@ -199,6 +194,12 @@ module GitPusshuTen
           GitPusshuTen::Log.message "#{y(vhost_file)} does not exist."
           exit
         end
+      end
+
+      ##
+      # Creates a vhost
+      def perform_create_vhost!
+        create_vhost_template_file!
       end
 
       ##
@@ -336,6 +337,29 @@ module GitPusshuTen
         GitPusshuTen::Log.message "#{y("gitpusshuten nginx restart for #{e.name}")}"
       end
 
+      def perform_download_vhost!
+        load_configuration!
+        find_correct_paths!
+        
+        remote_vhost = File.join(@configuration_directory, "vhosts", "#{e.sanitized_app_name}.#{e.name}.vhost")
+        if not e.file?(remote_vhost)
+          GitPusshuTen::Log.error "There is no vhost currently present in #{y(remote_vhost)}."
+          exit
+        end
+        
+        local_vhost = File.join(local.gitpusshuten_dir, 'nginx', "#{e.name}.vhost")
+        if File.exist?(local_vhost)
+          GitPusshuTen::Log.warning "#{y(local_vhost)} already exists. Do you want to overwrite it?"
+          exit unless yes?
+        end
+        
+        Spinner.return :message => "Downloading vhost.." do
+          e.scp_as_root(:download, remote_vhost, local_vhost)
+          g("Finished downloading!")
+        end
+        GitPusshuTen::Log.message "You can find the vhost in: #{y(local_vhost)}."
+      end
+
       ##
       # Installs the Nginx executable if it does not exist
       def ensure_nginx_executable_is_installed!
@@ -387,6 +411,32 @@ module GitPusshuTen
           @configuration_directory  = config[:configuration_directory]
           @configuration_file       = config[:configuration_file]
         end
+      end
+
+      ##
+      # Creates a vhost template file if it doesn't already exist.
+      def create_vhost_template_file!
+        local.execute("mkdir -p '#{File.join(local.gitpusshuten_dir, 'nginx')}'")
+        vhost_file  = File.join(local.gitpusshuten_dir, 'nginx', "#{e.name}.vhost")
+        
+        create_file = true
+        if File.exist?(vhost_file)
+          GitPusshuTen::Log.warning "#{y(vhost_file)} already exists, do you want to overwrite it?"
+          create_file = yes?
+        end
+        
+        if create_file
+          File.open(vhost_file, 'w') do |file|
+            file << "server {\n"
+            file << "\s\slisten 80;\n"
+            file << "\s\sserver_name mydomain.com www.mydomain.com;\n"
+            file << "\s\sroot #{e.app_dir}/public;\n"
+            file << "\s\s# passenger_enabled on; # For Phusion Passenger users\n"
+            file << "}\n"
+          end
+          GitPusshuTen::Log.message "The vhost has been created in #{y(vhost_file)}."
+        end
+        
       end
 
     end
