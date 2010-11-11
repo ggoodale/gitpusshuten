@@ -132,6 +132,8 @@ module GitPusshuTen
       "GitPusshuTen::Commands::#{command.classify}".constantize
     end
 
+    ##
+    # Wrapper for coloring text yellow
     def y(value)
       value.to_s.color(:yellow)
     end
