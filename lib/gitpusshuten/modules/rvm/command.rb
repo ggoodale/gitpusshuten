@@ -58,6 +58,13 @@ module GitPusshuTen
         end
         
         ##
+        # Download Packages
+        Spinner.return :message => "Downloading Git Pusshu Ten packages.." do
+          e.download_packages!("$HOME", :root)
+          g("Done!")
+        end
+        
+        ##
         # Install RVM (system wide)
         Spinner.return :message => "Installing #{y('RVM')}.." do
           e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
@@ -65,12 +72,21 @@ module GitPusshuTen
         end
         
         ##
-        # Download Git Packages and add the rvm load snippet into /etc/profile
+        # Download Git Packages and add the rvm load snippet into /etc/profile.
         if not e.execute_as_root("cat /etc/profile").include?('source "/usr/local/rvm/scripts/rvm"')
-          GitPusshuTen::Log.message "Downloading Gitプッシュ点 packages and configuring /etc/profile.."
-          e.download_packages!("$HOME", :root)
-          e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
-          e.clean_up_packages!("$HOME", :root)
+          Spinner.return :message => "Configuring /etc/profile.." do
+            e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
+            g("Done!")
+          end
+        end
+        
+        ##
+        # Add the gemrc into the root's home directory
+        if not e.file?('/root/.gemrc')
+          Spinner.return :message => "Creating a .gemrc file.." do
+            e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/gemrc > ~/.gemrc")
+            g("Done!")
+          end
         end
         
         ##
@@ -84,7 +100,7 @@ module GitPusshuTen
         
         ##
         # Install required packages for installing Ruby
-        Spinner.return :message => "Instaling the Ruby Interpreter dependency packages.." do
+        Spinner.return :message => "Installing the Ruby Interpreter dependency packages.." do
           e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
           g("Done!")
         end
@@ -100,6 +116,13 @@ module GitPusshuTen
         # Set the Ruby version as the default Ruby
         Spinner.return :message => "Making #{y(ruby_version)} the default Ruby.." do
           e.execute_as_root("rvm use #{ruby_version} --default")
+          g("Done!")
+        end
+        
+        ##
+        # Clean up Packages
+        Spinner.return :message => "Cleaning up Git Pusshu Ten packages.." do
+          e.clean_up_packages!("$HOME", :root)
           g("Done!")
         end
         

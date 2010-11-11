@@ -58,8 +58,11 @@ module GitPusshuTen
         # If no web server is specified, it'll prompt the user to
         # select one of the available (NginX or Apache)
         if webserver.nil?
+          GitPusshuTen::Log.message "For which web server would you like to install #{y('Phusion Passenger')}?"
           @webserver = webserver?
         end
+        
+        GitPusshuTen::Log.message "Starting #{y('Phusion Passenger')} installation for #{y(webserver)}!"
         
         ##
         # Install Passenger (NginX Module) and NginX itself
@@ -117,6 +120,29 @@ module GitPusshuTen
           end
           
           g("Done!")
+        end
+        
+        ##
+        # Inject the Passenger paths into the Apache2 configuration file
+        if apache?
+          Spinner.return :message => "Configuring Apache for Phusion Passenger.." do
+            if not e.execute_as_root('cat /etc/apache2/apache2.conf').include?("passenger_module")
+              if e.execute_as_root('passenger-config --root') =~ /\/usr\/local\/rvm\/gems\/(.+)\/gems\/passenger-.+/
+                @ruby_version      = $1.chomp.strip
+                @passenger_version = e.execute_as_root('passenger-config --version').chomp.strip
+              end
+            
+              e.execute_as_root <<-PASSENGER
+cat <<-CONFIG >> /etc/apache2/apache2.conf
+
+LoadModule passenger_module /usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version}/ext/apache2/mod_passenger.so
+PassengerRoot /usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version}
+PassengerRuby /usr/local/rvm/wrappers/#{@ruby_version}/ruby
+
+CONFIG
+              PASSENGER
+            end
+          end # spinner
         end
         
         if not @updating
