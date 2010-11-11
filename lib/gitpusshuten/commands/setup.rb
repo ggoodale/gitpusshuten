@@ -49,7 +49,7 @@ module GitPusshuTen
             Spinner.return :message => "Installing #{y('Git')}!" do
               environment.install!('git-core')
             end
-            if environment.installed?('git')
+            if e.installed?('git')
               GitPusshuTen::Log.message "#{y('Git')} has been successfully installed!"
             else
               GitPusshuTen::Log.error "Unable to install #{y('Git')}."
@@ -61,14 +61,14 @@ module GitPusshuTen
         end
         
         GitPusshuTen::Log.message "Confirming existence of user #{y(c.user)} on the #{y(e.name)} environment."
-        if environment.user_exists?
+        if e.user_exists?
           GitPusshuTen::Log.message "It looks like #{y(c.user)} already exists at #{y(c.application)} (#{y(c.ip)})."
           GitPusshuTen::Log.message "Would you like to remove and re-add #{y(c.user)}?"
           if yes?
             GitPusshuTen::Log.message "Removing user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
-            if environment.remove_user!
+            if e.remove_user!
               GitPusshuTen::Log.message "Re-adding user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
-              if environment.add_user!
+              if e.add_user!
                 GitPusshuTen::Log.message "Successfully re-added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
               else
                 GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
@@ -85,7 +85,7 @@ module GitPusshuTen
           GitPusshuTen::Log.message "It looks like #{y(c.user)} does not yet exist."
           GitPusshuTen::Log.message "Would you like to add #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})?"
           if yes?
-            if environment.add_user!
+            if e.add_user!
               GitPusshuTen::Log.message "Successfully added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
             else
               GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
@@ -97,15 +97,15 @@ module GitPusshuTen
         
         ##
         # Install ssh key
-        if environment.has_ssh_key? and environment.ssh_key_installed?
+        if e.has_ssh_key? and e.ssh_key_installed?
           GitPusshuTen::Log.message "Your ssh key is already installed for #{y(c.user)} at #{y(c.ip)}."
         else
-          if environment.has_ssh_key?
+          if e.has_ssh_key?
             GitPusshuTen::Log.message "You seem to have a ssh key in #{y(e.ssh_key_path)}"
             GitPusshuTen::Log.message "This key isn't installed for #{y(c.user)} at #{y(c.ip)}. Would you like to install it?"
             if yes?
               Spinner.return :message => "Installing your ssh key for #{y(c.user)} at #{y(c.ip)}.", :put => true do
-                environment.install_ssh_key!
+                e.install_ssh_key!
                 g("Your ssh key has been installed!")
               end
             end
@@ -114,42 +114,63 @@ module GitPusshuTen
         
         ##
         # Configure .bashrc
-        if not environment.execute_as_user("cat '#{File.join(c.path, '.bashrc')}'").include?('source /etc/profile')
-          GitPusshuTen::Log.message "Configuring #{y('.bashrc')}."
-          environment.execute_as_user("echo -e \"export RAILS_ENV=production\nsource /etc/profile\" > '#{File.join(c.path, '.bashrc')}'")
+        if not e.execute_as_user("cat '#{File.join(c.path, '.bashrc')}'").include?('source /etc/profile')
+          Spinner.return :message => "Configuring #{y('.bashrc')}.." do
+            e.execute_as_user("echo -e \"export RAILS_ENV=production\nsource /etc/profile\" > '#{File.join(c.path, '.bashrc')}'")
+            g('Done!')
+          end
+        end
+        
+        ##
+        # Creating .gemrc
+        if not e.file?(File.join(e.home_dir, '.gemrc'))
+          Spinner.return :message => "Configuring #{y('.gemrc')}.." do
+            e.download_packages!(e.home_dir)
+            e.execute_as_user("cd #{e.home_dir}; cat gitpusshuten-packages/modules/rvm/gemrc > .gemrc")
+            e.clean_up_packages!(e.home_dir)
+            g('Done!')
+          end
         end
         
         ##
         # Add user to sudoers file
-        if not environment.user_in_sudoers?
-          GitPusshuTen::Log.message "Adding #{y(c.user)} to sudo-ers."
-          environment.add_user_to_sudoers!
+        if not e.user_in_sudoers?
+          Spinner.return :message => "Adding #{y(c.user)} to sudo-ers.." do
+            e.add_user_to_sudoers!
+            g('Done!')
+          end
         end
         
         ##
         # Checks to see if the RVM group exists.
         # If it does exist, perform RVM specific tasks.
-        if environment.directory?("/usr/local/rvm")
-          GitPusshuTen::Log.message "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
-          GitPusshuTen::Log.message "Adding #{y(c.user)} to the #{y('rvm')} group."
-          e.execute_as_root("usermod -G rvm '#{c.user}'")
+        if e.directory?("/usr/local/rvm")
+          GitPusshuTen::Log.standard "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
+          Spinner.return :message => "Adding #{y(c.user)} to the #{y('rvm')} group.." do
+            e.execute_as_root("usermod -G rvm '#{c.user}'")
+            g('Done!')
+          end
         end
         
         ##
         # Installs the .gitconfig and minimum configuration
         # if the configuration file does not exist.
-        if not environment.file?(File.join(configuration.path, '.gitconfig'))
-          GitPusshuTen::Log.message "Configuring #{y('Git')} for #{y(c.user)}."
-          environment.install_gitconfig!
+        if not e.file?(File.join(configuration.path, '.gitconfig'))
+          Spinner.return :message => "Configuring #{y('Git')} for #{y(c.user)}." do
+            e.install_gitconfig!
+            g('Done!')
+          end
         else
           GitPusshuTen::Log.message "#{y('Git')} already configured for #{y(c.user)}."
         end
         
         ##
         # Installs PushAnd if it has not yet been installed
-        if not environment.directory?(File.join(configuration.path, 'pushand'))
-          GitPusshuTen::Log.message "Downloading and installing #{y('Push And')} for #{y(c.user)}."
-          environment.install_pushand!
+        if not e.directory?(File.join(configuration.path, 'pushand'))
+          Spinner.return :message => "Downloading and installing #{y('Push And')} for #{y(c.user)}." do
+            e.install_pushand!
+            g('Done!')
+          end
         else
           GitPusshuTen::Log.message "#{y('Push And')} already downloaded and installed for #{y(c.user)}."
         end
