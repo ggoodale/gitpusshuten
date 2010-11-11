@@ -32,15 +32,15 @@ module GitPusshuTen
         if respond_to?("perform_#{command}!")
           send("perform_#{command}!")
         else
-          GitPusshuTen::Log.error "Unknown RVM command: <#{y(command)}>"
-          GitPusshuTen::Log.error "Run #{y('gitpusshuten help passenger')} for a list rvm commands."
+          error "Unknown RVM command: <#{y(command)}>"
+          error "Run #{y('gitpusshuten help passenger')} for a list rvm commands."
         end
       end
       
       ##
       # Restarts a Passenger instance for the specified environment
       def perform_restart!
-        GitPusshuTen::Log.message "Restarting Passenger for #{y(c.application)} (#{y(e.name)} environment)."
+        message "Restarting Passenger for #{y(c.application)} (#{y(e.name)} environment)."
         e.execute_as_user("cd #{e.app_dir}; mkdir -p tmp; touch tmp/restart.txt")
       end
       
@@ -49,9 +49,9 @@ module GitPusshuTen
       def perform_install!
         
         if not e.installed?('gem')
-          GitPusshuTen::Log.error "Could not find RubyGems."
-          GitPusshuTen::Log.error "Install RVM (Ruby Version Manager) and at least one Ruby version."
-          GitPusshuTen::Log.error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
+          error "Could not find RubyGems."
+          error "Install RVM (Ruby Version Manager) and at least one Ruby version."
+          error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
           exit
         end
         
@@ -59,17 +59,17 @@ module GitPusshuTen
         # If no web server is specified, it'll prompt the user to
         # select one of the available (NginX or Apache)
         if webserver.nil?
-          GitPusshuTen::Log.message "For which web server would you like to install #{y('Phusion Passenger')}?"
+          message "For which web server would you like to install #{y('Phusion Passenger')}?"
           @webserver = webserver?
         end
         
-        GitPusshuTen::Log.message "Starting #{y('Phusion Passenger')} installation for #{y(webserver)}!"
+        message "Starting #{y('Phusion Passenger')} installation for #{y(webserver)}!"
         
         ##
         # Install Passenger (NginX Module) and NginX itself
         if nginx? and not @updating
           while @prefix_path.nil? or not @prefix_path =~ /^\//
-            GitPusshuTen::Log.message "Where would you like to install NginX? Provide an #{y('absolute')} path."
+            message "Where would you like to install NginX? Provide an #{y('absolute')} path."
             @prefix_path = ask("Leave empty if you want to use the default: /opt/nginx")
             @prefix_path = '/opt/nginx' if @prefix_path.empty?
           end
@@ -102,9 +102,9 @@ module GitPusshuTen
         end
         
         if not @updating
-          GitPusshuTen::Log.standard "Installing #{y('Phusion Passenger')} and #{y(webserver)}."
+          standard "Installing #{y('Phusion Passenger')} and #{y(webserver)}."
         else
-          GitPusshuTen::Log.standard "Updating #{y('Phusion Passenger')} and #{y(webserver)}."
+          standard "Updating #{y('Phusion Passenger')} and #{y(webserver)}."
         end
         
         Spinner.return :message => "This may take a while.." do
@@ -148,9 +148,9 @@ CONFIG
         end
         
         if not @updating
-          GitPusshuTen::Log.message "#{y('Phusion Passenger')} and #{y(webserver)} have been installed!"
+          message "#{y('Phusion Passenger')} and #{y(webserver)} have been installed!"
         else
-          GitPusshuTen::Log.message "#{y('Phusion Passenger')} and #{y(webserver)} have been updated!"
+          message "#{y('Phusion Passenger')} and #{y(webserver)} have been updated!"
         end
       end
 
@@ -181,8 +181,8 @@ CONFIG
         end
         
         if not @rubygems_installed
-          GitPusshuTen::Log.error "Install RVM (Ruby Version Manager) and at least one Ruby version."
-          GitPusshuTen::Log.error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
+          error "Install RVM (Ruby Version Manager) and at least one Ruby version."
+          error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
           exit
         end
         
@@ -199,9 +199,9 @@ CONFIG
         end
         
         if not @passenger_installed
-          GitPusshuTen::Log.error "Passenger has not been installed for #{y(@ruby_version)}"
-          GitPusshuTen::Log.error "If you want to install Passenger, please run the following command:"
-          GitPusshuTen::Log.error y("gitpusshuten passenger install for #{e.name}")
+          error "Passenger has not been installed for #{y(@ruby_version)}"
+          error "If you want to install Passenger, please run the following command:"
+          error y("gitpusshuten passenger install for #{e.name}")
           exit
         end
         
@@ -220,10 +220,10 @@ CONFIG
         
         exit unless @new_passenger_version_available
         
-        GitPusshuTen::Log.message "Phusion Passenger #{y(@latest_passenger_version)} is out!"
-        GitPusshuTen::Log.message "You are currently using version #{y(@current_passenger_version)}.\n\n"
-        GitPusshuTen::Log.message "Would you like to update Phusion Passenger?"
-        GitPusshuTen::Log.message "This will update the #{y('Phusion Passenger Gem')} as well as #{y(webserver)} and #{y("Phusion Passenger's #{webserver} Module")}."
+        message "Phusion Passenger #{y(@latest_passenger_version)} is out!"
+        message "You are currently using version #{y(@current_passenger_version)}.\n\n"
+        message "Would you like to update Phusion Passenger?"
+        message "This will update the #{y('Phusion Passenger Gem')} as well as #{y(webserver)} and #{y("Phusion Passenger's #{webserver} Module")}."
         
         ##
         # Prompt user for confirmation for the update
@@ -246,7 +246,7 @@ CONFIG
           if nginx?
             while not @path_found
               if not e.file?(File.join(@prefix_path, 'conf', 'nginx.conf'))
-                GitPusshuTen::Log.warning "Could not find the #{y('NginX')} installation directory."
+                warning "Could not find the #{y('NginX')} installation directory."
                 @prefix_path = ask("Please provide the absolute path to the direction in which you've previously installed #{y('NginX')}.")
               else
                 @path_found = true
@@ -258,14 +258,14 @@ CONFIG
           # Ensures the Apache2 configuration file exists
           if apache?
             if not e.file?(File.join(@prefix_path, 'apache2.conf'))
-              GitPusshuTen::Log.error "Could not find Apache configuration file in #{y(File.join(@prefix_path, 'apache2.conf'))}."
+              error "Could not find Apache configuration file in #{y(File.join(@prefix_path, 'apache2.conf'))}."
               exit
             end
           end
           
           ##
           # Installation directory has been found
-          GitPusshuTen::Log.message "#{y(webserver)} installation found in #{y(@prefix_path)}."
+          message "#{y(webserver)} installation found in #{y(@prefix_path)}."
           
           ##
           # Write local webserver configuration file
@@ -285,8 +285,8 @@ CONFIG
           
           ##
           # Update the webserver configuration file
-          GitPusshuTen::Log.message "The #{y(webserver)} configuration file needs to be updated with the new #{y('Passenger')} version."
-          GitPusshuTen::Log.message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+          message "The #{y(webserver)} configuration file needs to be updated with the new #{y('Passenger')} version."
+          message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
           GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
         end
       end
@@ -297,7 +297,7 @@ CONFIG
         if nginx?
           config_file_path = File.join(local.gitpusshuten_dir, webserver.downcase, 'config.yml')
           if File.exist?(config_file_path)
-            GitPusshuTen::Log.message "Loading configuration from #{y(File.join(local.gitpusshuten_dir, webserver, 'config.yml'))}."
+            message "Loading configuration from #{y(File.join(local.gitpusshuten_dir, webserver, 'config.yml'))}."
             config = YAML::load(File.read(config_file_path))
             @installation_dir = config[:installation_dir]
           end

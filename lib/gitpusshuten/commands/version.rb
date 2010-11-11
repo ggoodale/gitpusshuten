@@ -13,7 +13,7 @@ module GitPusshuTen
       ##
       # Performs the Version command
       def perform!
-        puts "Git Pusshu Ten (プッシュ点) version #{GitPusshuTen::VERSION}"
+        standard "Git Pusshu Ten (プッシュ点) version #{GitPusshuTen::VERSION}"
       end
 
     end

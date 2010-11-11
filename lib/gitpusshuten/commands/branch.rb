@@ -29,7 +29,7 @@ module GitPusshuTen
       ##
       # Performs the Branch command
       def perform!
-        GitPusshuTen::Log.message "Pushing branch #{y(branch)} to the #{y(e.name)} environment."
+        message "Pushing branch #{y(branch)} to the #{y(e.name)} environment."
         git.push(:branch, branch).to(e.name)
       end
 

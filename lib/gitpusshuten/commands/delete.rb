@@ -17,9 +17,9 @@ module GitPusshuTen
       ##
       # Performs the Delete command
       def perform!
-        GitPusshuTen::Log.message "Are you sure you wish to delete #{y(c.application)} from the #{y(e.name)} environment (#{y(c.ip)})?"
+        message "Are you sure you wish to delete #{y(c.application)} from the #{y(e.name)} environment (#{y(c.ip)})?"
         if yes?
-          GitPusshuTen::Log.message "Deleting #{y(c.application)}."
+          message "Deleting #{y(c.application)}."
           e.delete!
         end
       end

@@ -26,14 +26,14 @@ module GitPusshuTen
       ##
       # Performs the Initialize command
       def perform!
-        GitPusshuTen::Log.message "Would you like to initialize Git Pusshu Ten (プッシュ点) with #{working_directory}?"
+        message "Would you like to initialize Git Pusshu Ten (プッシュ点) with #{working_directory}?"
         if yes?
           copy_templates!
           if not git.initialized?
             git.initialize!
           end
         else
-          GitPusshuTen::Log.message "If you wish to initialize it elsewhere, please move into that directory and run #{y("gitpusshuten initialize")} again."
+          message "If you wish to initialize it elsewhere, please move into that directory and run #{y("gitpusshuten initialize")} again."
         end
       end
 
@@ -42,9 +42,9 @@ module GitPusshuTen
       # to the .gitpusshuten inside the working directory
       def copy_templates!
         if File.directory?(File.join(working_directory, '.gitpusshuten'))
-          GitPusshuTen::Log.warning "Git Pusshu Ten (プッシュ点) is already initialized in #{y(working_directory)}."
-          GitPusshuTen::Log.warning "Re-initializing it will cause it to overwrite the current #{y("config.rb")} and #{y("hooks.rb")} files."
-          GitPusshuTen::Log.warning "Are you sure you wish to continue?"
+          warning "Git Pusshu Ten (プッシュ点) is already initialized in #{y(working_directory)}."
+          warning "Re-initializing it will cause it to overwrite the current #{y("config.rb")} and #{y("hooks.rb")} files."
+          warning "Are you sure you wish to continue?"
           @confirm_perform = yes?
         end
         
@@ -53,7 +53,7 @@ module GitPusshuTen
           Dir[File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'templates', '*.rb'))].each do |template|
             local.execute("cp '#{template}' '#{working_directory}/.gitpusshuten/#{template.split('/').last}'")
           end
-          GitPusshuTen::Log.message "Git Pusshu Ten (プッシュ点) initialized in: #{y(working_directory)}!"
+          message "Git Pusshu Ten (プッシュ点) initialized in: #{y(working_directory)}!"
         end
       end
 

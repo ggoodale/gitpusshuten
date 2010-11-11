@@ -29,7 +29,7 @@ module GitPusshuTen
       ##
       # Performs the Tag command
       def perform!
-        GitPusshuTen::Log.message "Pushing tag #{y(tag)} to the #{y(e.name)} environment."
+        message "Pushing tag #{y(tag)} to the #{y(e.name)} environment."
         git.push(:tag, tag).to(e.name)
       end
 

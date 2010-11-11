@@ -19,8 +19,8 @@ module GitPusshuTen
         @object = cli.arguments.shift
         
         if not c.found?
-          GitPusshuTen::Log.error "Could not find any configuration for #{y(e.name)} in your #{y(".gitpusshuten/config.rb")} file."
-          GitPusshuTen::Log.error "Please add it and run #{y("gitpusshuten setup remote for #{e.name}")} to set it up with git remote."
+          error "Could not find any configuration for #{y(e.name)} in your #{y(".gitpusshuten/config.rb")} file."
+          error "Please add it and run #{y("gitpusshuten setup remote for #{e.name}")} to set it up with git remote."
           exit
         end
         
@@ -33,8 +33,8 @@ module GitPusshuTen
         if respond_to?("perform_#{object}!")
           send("perform_#{object}!")
         else
-          GitPusshuTen::Log.error "Unknown setup command: <#{y(object)}>"
-          GitPusshuTen::Log.error "Run #{y("gitpusshuten help setup")} for a list setup commands."
+          error "Unknown setup command: <#{y(object)}>"
+          error "Run #{y("gitpusshuten help setup")} for a list setup commands."
         end
       end
       
@@ -42,17 +42,17 @@ module GitPusshuTen
       # Performs the "user" action
       def perform_user!
         if not e.installed?('git') #prompts root
-          GitPusshuTen::Log.warning "It is required that you have #{y('Git')} installed at #{y(c.ip)}."
-          GitPusshuTen::Log.warning "Could not find #{y('Git')}, would you like to install it?"
+          warning "It is required that you have #{y('Git')} installed at #{y(c.ip)}."
+          warning "Could not find #{y('Git')}, would you like to install it?"
           
           if yes?
             Spinner.return :message => "Installing #{y('Git')}!" do
               e.install!('git-core')
             end
             if e.installed?('git')
-              GitPusshuTen::Log.message "#{y('Git')} has been successfully installed!"
+              message "#{y('Git')} has been successfully installed!"
             else
-              GitPusshuTen::Log.error "Unable to install #{y('Git')}."
+              error "Unable to install #{y('Git')}."
               exit
             end
           else
@@ -60,36 +60,36 @@ module GitPusshuTen
           end
         end
         
-        GitPusshuTen::Log.message "Confirming existence of user #{y(c.user)} on the #{y(e.name)} environment."
+        message "Confirming existence of user #{y(c.user)} on the #{y(e.name)} environment."
         if e.user_exists?
-          GitPusshuTen::Log.message "It looks like #{y(c.user)} already exists at #{y(c.application)} (#{y(c.ip)})."
-          GitPusshuTen::Log.message "Would you like to remove and re-add #{y(c.user)}?"
+          message "It looks like #{y(c.user)} already exists at #{y(c.application)} (#{y(c.ip)})."
+          message "Would you like to remove and re-add #{y(c.user)}?"
           if yes?
-            GitPusshuTen::Log.message "Removing user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
+            message "Removing user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
             if e.remove_user!
-              GitPusshuTen::Log.message "Re-adding user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
+              message "Re-adding user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
               if e.add_user!
-                GitPusshuTen::Log.message "Successfully re-added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
+                message "Successfully re-added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
               else
-                GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
-                GitPusshuTen::Log.error "An error occurred."
+                error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
+                error "An error occurred."
                 exit
               end
             else
-              GitPusshuTen::Log.error "Failed to remove user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
-              GitPusshuTen::Log.error "An error occurred."
+              error "Failed to remove user #{y(c.user)} from #{y(c.application)} (#{y(c.ip)})."
+              error "An error occurred."
               exit
             end
           end
         else
-          GitPusshuTen::Log.message "It looks like #{y(c.user)} does not yet exist."
-          GitPusshuTen::Log.message "Would you like to add #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})?"
+          message "It looks like #{y(c.user)} does not yet exist."
+          message "Would you like to add #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})?"
           if yes?
             if e.add_user!
-              GitPusshuTen::Log.message "Successfully added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
+              message "Successfully added #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})!"
             else
-              GitPusshuTen::Log.error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
-              GitPusshuTen::Log.error "An error occurred."
+              error "Failed to add user #{y(c.user)} to #{y(c.application)} (#{y(c.ip)})."
+              error "An error occurred."
               exit
             end
           end
@@ -98,11 +98,11 @@ module GitPusshuTen
         ##
         # Install ssh key
         if e.has_ssh_key? and e.ssh_key_installed?
-          GitPusshuTen::Log.message "Your ssh key is already installed for #{y(c.user)} at #{y(c.ip)}."
+          message "Your ssh key is already installed for #{y(c.user)} at #{y(c.ip)}."
         else
           if e.has_ssh_key?
-            GitPusshuTen::Log.message "You seem to have a ssh key in #{y(e.ssh_key_path)}"
-            GitPusshuTen::Log.message "This key isn't installed for #{y(c.user)} at #{y(c.ip)}. Would you like to install it?"
+            message "You seem to have a ssh key in #{y(e.ssh_key_path)}"
+            message "This key isn't installed for #{y(c.user)} at #{y(c.ip)}. Would you like to install it?"
             if yes?
               Spinner.return :message => "Installing your ssh key for #{y(c.user)} at #{y(c.ip)}.", :put => true do
                 e.install_ssh_key!
@@ -145,7 +145,7 @@ module GitPusshuTen
         # Checks to see if the RVM group exists.
         # If it does exist, perform RVM specific tasks.
         if e.directory?("/usr/local/rvm")
-          GitPusshuTen::Log.standard "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
+          standard "Detected #{y('rvm')} (Ruby Version Manager), configuring #{y(c.user)} for #{y('rvm')}."
           Spinner.return :message => "Adding #{y(c.user)} to the #{y('rvm')} group.." do
             e.execute_as_root("usermod -G rvm '#{c.user}'")
             g('Done!')
@@ -161,7 +161,7 @@ module GitPusshuTen
             g('Done!')
           end
         else
-          GitPusshuTen::Log.message "#{y('Git')} already configured for #{y(c.user)}."
+          message "#{y('Git')} already configured for #{y(c.user)}."
         end
         
         ##
@@ -172,20 +172,20 @@ module GitPusshuTen
             g('Done!')
           end
         else
-          GitPusshuTen::Log.message "#{y('Push And')} already downloaded and installed for #{y(c.user)}."
+          message "#{y('Push And')} already downloaded and installed for #{y(c.user)}."
         end
         
         ##
         # Finished adding user!
-        GitPusshuTen::Log.message "Finished adding and configuring #{y(c.user)}!"
+        message "Finished adding and configuring #{y(c.user)}!"
         
         ##
         # Add remote
-        GitPusshuTen::Log.message "Adding #{y(e.name)} to your #{y('git remote')}."
+        message "Adding #{y(e.name)} to your #{y('git remote')}."
         perform_remote!
         
-        GitPusshuTen::Log.message "Finished installation!"
-        GitPusshuTen::Log.message "You should now be able to push your application to #{y(c.application)} at #{y(c.ip)}."
+        message "Finished installation!"
+        message "You should now be able to push your application to #{y(c.application)} at #{y(c.ip)}."
       end
 
       ##
@@ -198,28 +198,28 @@ module GitPusshuTen
           environment.name,
           configuration.user + '@' + configuration.ip + ':' + environment.app_dir
         )
-        GitPusshuTen::Log.message("The #{y(e.name)} remote has been added:")
-        GitPusshuTen::Log.message(configuration.user + '@' + configuration.ip + ':' + environment.app_dir + "\n")
+        message("The #{y(e.name)} remote has been added:")
+        message(configuration.user + '@' + configuration.ip + ':' + environment.app_dir + "\n")
       end
 
       ##
       # Performs the "sshkey"
       def perform_sshkey!
         unless e.has_ssh_key?
-          GitPusshuTen::Log.error "Could not find ssh key in #{y(e.ssh_key_path)}"
-          GitPusshuTen::Log.error "To create one, run: #{y('ssh-keygen -t rsa')}"
+          error "Could not find ssh key in #{y(e.ssh_key_path)}"
+          error "To create one, run: #{y('ssh-keygen -t rsa')}"
           exit
         end
         
         unless e.ssh_key_installed? # prompts root
-          GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
+          message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
           Spinner.return :message => "Installing now.." do
             e.install_ssh_key!
             g('Done!')
           end
-          GitPusshuTen::Log.message "Your ssh key has been installed!"
+          message "Your ssh key has been installed!"
         else
-          GitPusshuTen::Log.message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
+          message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
         end
       end
 

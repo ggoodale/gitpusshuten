@@ -36,8 +36,8 @@ module GitPusshuTen
         if respond_to?("perform_#{command}!")
           send("perform_#{command}!")
         else
-          GitPusshuTen::Log.error "Unknown RVM command: <#{y(command)}>"
-          GitPusshuTen::Log.error "Run #{y('gitpusshuten help rvm')} for a list rvm commands."
+          error "Unknown RVM command: <#{y(command)}>"
+          error "Run #{y('gitpusshuten help rvm')} for a list rvm commands."
         end
       end
 
@@ -46,11 +46,11 @@ module GitPusshuTen
       def perform_install!
         prompt_for_root_password!
         
-        GitPusshuTen::Log.message "Installing Ruby Version Manager (#{y('RVM')})!"
+        message "Installing Ruby Version Manager (#{y('RVM')})!"
         
-        GitPusshuTen::Log.message "Which Ruby would you like to install and use as your default Ruby Interpreter?"
+        message "Which Ruby would you like to install and use as your default Ruby Interpreter?"
         ruby_version = choose_ruby_version!
-        GitPusshuTen::Log.message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
+        message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
         
         ##
         # Update aptitude and install git/curl/wget
@@ -128,7 +128,7 @@ module GitPusshuTen
           g("Done!")
         end
         
-        GitPusshuTen::Log.message "Finished!"
+        message "Finished!"
       end
       
       ##
@@ -136,8 +136,8 @@ module GitPusshuTen
       def perform_update!
         prompt_for_root_password!
         
-        GitPusshuTen::Log.message "Updating RVM."
-        GitPusshuTen::Log.message "Would you like to get the latest stable, or bleeding edge version?"
+        message "Updating RVM."
+        message "Would you like to get the latest stable, or bleeding edge version?"
         option = rvm_version?
         Spinner.return :message => "Updating #{y('rvm')} to the #{y(option.nil? ? 'latest stable' : 'bleeding edge')}." do
           e.execute_as_root("rvm update #{option}")
@@ -153,7 +153,7 @@ module GitPusshuTen
         Spinner.return :message => "Getting a list of installed Rubies.", :put => true do
           e.execute_as_root("rvm list")
         end
-        GitPusshuTen::Log.message "The ( #{y("=>")} ) arrow indicates which Ruby version is currently being used."
+        message "The ( #{y("=>")} ) arrow indicates which Ruby version is currently being used."
       end
       
       ##
@@ -161,10 +161,10 @@ module GitPusshuTen
       def perform_install_ruby!
         perform_list! # prompts root
         
-        GitPusshuTen::Log.message "Which Ruby version would you like to install?"
+        message "Which Ruby version would you like to install?"
         ruby_version = choose_ruby_version!
         
-        GitPusshuTen::Log.message "Would you like to make #{y(ruby_version)} your default Ruby?"
+        message "Would you like to make #{y(ruby_version)} your default Ruby?"
         yes? ? make_default = true : make_default = false
         
         Spinner.return :message => "Installing #{y(ruby_version)}, this may take a while.." do
@@ -185,7 +185,7 @@ module GitPusshuTen
       def perform_uninstall_ruby!
         perform_list! # prompts root
         
-        GitPusshuTen::Log.message "Which Ruby version would you like to uninstall?"
+        message "Which Ruby version would you like to uninstall?"
         ruby_version = choose_ruby_version!
         
         Spinner.return :message => "Uninstalling #{y(ruby_version)}.." do
@@ -202,7 +202,7 @@ module GitPusshuTen
       def perform_remove_ruby!
         perform_list! # prompts root
         
-        GitPusshuTen::Log.message "Which Ruby version would you like to remove?"
+        message "Which Ruby version would you like to remove?"
         ruby_version = choose_ruby_version!
         
         Spinner.return :message => "Removing #{y(ruby_version)}.." do
@@ -219,7 +219,7 @@ module GitPusshuTen
       def perform_set_default_ruby!
         perform_list! # prompts root
         
-        GitPusshuTen::Log.message "Which Ruby version would you like to make the system wide default?"
+        message "Which Ruby version would you like to make the system wide default?"
         ruby_version = choose_ruby_version!
         
         Spinner.return :message => "Changing system wide default Ruby to #{y(ruby_version)}" do
@@ -232,15 +232,15 @@ module GitPusshuTen
         end
         
         if @succeeded
-          GitPusshuTen::Log.message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
-          GitPusshuTen::Log.message("you must update your #{y("webserver's")} configuration file.\n\n")
-          GitPusshuTen::Log.message("Would you like to do this now?\n\n")
+          message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
+          message("you must update your #{y("webserver's")} configuration file.\n\n")
+          message("Would you like to do this now?\n\n")
           
           if yes?
-            GitPusshuTen::Log.message "Which webserver are you using?"
+            message "Which webserver are you using?"
             webserver = webserver?
             
-            GitPusshuTen::Log.message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+            message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
             GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
           end
         end

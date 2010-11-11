@@ -29,7 +29,7 @@ module GitPusshuTen
           if command_object.available_commands.include?(command)
             command_object.display_usage(command)
           else
-            GitPusshuTen::Log.error "Command <#{r(command)}> not found."
+            error "Command <#{r(command)}> not found."
           end
         end
       end

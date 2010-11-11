@@ -41,50 +41,50 @@ module GitPusshuTen
         if respond_to?("perform_#{command}!")
           send("perform_#{command}!")
         else
-          GitPusshuTen::Log.error "Unknown Apache command: <#{y(command)}>"
-          GitPusshuTen::Log.error "Run #{y('gitpusshuten help apache')} for a list apache commands."
+          error "Unknown Apache command: <#{y(command)}>"
+          error "Run #{y('gitpusshuten help apache')} for a list apache commands."
         end
       end
 
       ##
       # Starts Apache
       def perform_start!
-        GitPusshuTen::Log.message "Starting Apache."
+        message "Starting Apache."
         puts e.execute_as_root("/etc/init.d/apache2 start")
       end
 
       ##
       # Stops Apache
       def perform_stop!
-        GitPusshuTen::Log.message "Stopping Apache."
+        message "Stopping Apache."
         puts e.execute_as_root("/etc/init.d/apache2 stop")
       end
 
       ##
       # Restarts Apache
       def perform_restart!
-        GitPusshuTen::Log.message "Restarting Apache."
+        message "Restarting Apache."
         puts e.execute_as_root("/etc/init.d/apache2 restart")
       end
 
       ##
       # Reload Apache
       def perform_reload!
-        GitPusshuTen::Log.message "Reloading Apache Configuration."
+        message "Reloading Apache Configuration."
         puts e.execute_as_root("/etc/init.d/apache2 reload")
       end
 
       def perform_download_vhost!
         remote_vhost = File.join(@configuration_directory, "sites-enabled", "#{e.sanitized_app_name}.#{e.name}.vhost")
         if not e.file?(remote_vhost) #prompts root
-          GitPusshuTen::Log.error "There is no vhost currently present in #{y(remote_vhost)}."
+          error "There is no vhost currently present in #{y(remote_vhost)}."
           exit
         end
         
         local.execute("mkdir -p #{File.join(local.gitpusshuten_dir, 'apache')}")
         local_vhost = File.join(local.gitpusshuten_dir, 'apache', "#{e.name}.vhost")
         if File.exist?(local_vhost)
-          GitPusshuTen::Log.warning "#{y(local_vhost)} already exists. Do you want to overwrite it?"
+          warning "#{y(local_vhost)} already exists. Do you want to overwrite it?"
           exit unless yes?
         end
         
@@ -92,7 +92,7 @@ module GitPusshuTen
           e.scp_as_root(:download, remote_vhost, local_vhost)
           g("Finished downloading!")
         end
-        GitPusshuTen::Log.message "You can find the vhost in: #{y(local_vhost)}."
+        message "You can find the vhost in: #{y(local_vhost)}."
       end
 
       ##
@@ -100,7 +100,7 @@ module GitPusshuTen
       def perform_upload_vhost!        
         vhost_file = File.join(local.gitpusshuten_dir, 'apache', "#{e.name}.vhost")
         if File.exist?(vhost_file)
-          GitPusshuTen::Log.message "Uploading #{y(vhost_file)} to " +
+          message "Uploading #{y(vhost_file)} to " +
           y(File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
           
           prompt_for_root_password!
@@ -112,11 +112,11 @@ module GitPusshuTen
           
           perform_restart!
         else
-          GitPusshuTen::Log.error "Could not locate vhost file #{y(vhost_file)}."
-          GitPusshuTen::Log.error "Download an existing one from your server with:"
-          GitPusshuTen::Log.standard "\n\s\s#{y("gitpusshuten apache download-vhost for #{e.name}")}\n\n"
-          GitPusshuTen::Log.error "Or create a new template by running:"
-          GitPusshuTen::Log.standard "\n\s\s#{y("gitpusshuten apache create-vhost for #{e.name}")}\n\n"
+          error "Could not locate vhost file #{y(vhost_file)}."
+          error "Download an existing one from your server with:"
+          standard "\n\s\s#{y("gitpusshuten apache download-vhost for #{e.name}")}\n\n"
+          error "Or create a new template by running:"
+          standard "\n\s\s#{y("gitpusshuten apache create-vhost for #{e.name}")}\n\n"
           exit
         end
       end
@@ -126,11 +126,11 @@ module GitPusshuTen
       def perform_delete_vhost!
         vhost_file = File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost")
         if e.file?(vhost_file) # prompts root
-          GitPusshuTen::Log.message "Deleting #{y(vhost_file)}!"
+          message "Deleting #{y(vhost_file)}!"
           e.execute_as_root("rm #{vhost_file}")
           perform_reload!
         else
-          GitPusshuTen::Log.message "#{y(vhost_file)} does not exist."
+          message "#{y(vhost_file)} does not exist."
           exit
         end
       end
@@ -146,16 +146,16 @@ module GitPusshuTen
       # This is particularly used when you change Passenger or Ruby versions
       # so these are updated in the apache2.conf file.
       def perform_update_configuration!
-        GitPusshuTen::Log.message "Checking the #{y(@configuration_file)} for current Passenger configuration."
+        message "Checking the #{y(@configuration_file)} for current Passenger configuration."
         config_contents = e.execute_as_root("cat '#{@configuration_file}'") # prompts root
         if not config_contents.include? 'PassengerRoot' or not config_contents.include?('PassengerRuby') or not config_contents.include?('passenger_module')
-          GitPusshuTen::Log.error "Could not find Passenger configuration, has it ever been set up?"
+          error "Could not find Passenger configuration, has it ever been set up?"
           exit
         end
         
-        GitPusshuTen::Log.message "Checking if Passenger is installed under the #{y('default')} Ruby."
+        message "Checking if Passenger is installed under the #{y('default')} Ruby."
         if not e.installed?('passenger')
-          GitPusshuTen::Log.message "Passenger isn't installed for the current Ruby"
+          message "Passenger isn't installed for the current Ruby"
           Spinner.return :message => "Installing latest Phusion Passenger Gem.." do
             e.execute_as_root('gem install passenger --no-ri --no-rdoc')
             g("Done!")
@@ -195,17 +195,17 @@ module GitPusshuTen
 
         INFO
         
-        GitPusshuTen::Log.message "Apache will now be configured to work with the above versions. Is this correct?"
+        message "Apache will now be configured to work with the above versions. Is this correct?"
         exit unless yes?
         
         ##
         # Checks to see if Passengers WatchDog is available in the current Passenger gem
         # If it is not, then Passenger needs to run the "passenger-install-nginx-module" so it gets installed
         if not e.directory?("/usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version}/agents")
-          GitPusshuTen::Log.message "Phusion Passenger has not yet been installed for this Ruby's Passenger Gem."
-          GitPusshuTen::Log.message "You need to reinstall/update #{y('Apache')} and #{y('Passenger')} to proceed with the configuration.\n\n"
-          GitPusshuTen::Log.message "Would you like to reinstall/update #{y('Apache')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
-          GitPusshuTen::Log.message "NOTE: Your current #{y('Apache')} configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your #{y('Apache')} configuration."
+          message "Phusion Passenger has not yet been installed for this Ruby's Passenger Gem."
+          message "You need to reinstall/update #{y('Apache')} and #{y('Passenger')} to proceed with the configuration.\n\n"
+          message "Would you like to reinstall/update #{y('Apache')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
+          message "NOTE: Your current #{y('Apache')} configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your #{y('Apache')} configuration."
           
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('Apache')} dependencies are installed.." do
@@ -214,7 +214,7 @@ module GitPusshuTen
               g("Done!")
             end
             
-            GitPusshuTen::Log.message "Installing Apache with the Phusion Passenger Module."
+            message "Installing Apache with the Phusion Passenger Module."
             Spinner.return :message => "Installing, this may take a while.." do
               e.execute_as_root("passenger-install-apache2-module --auto")
               g("Done!")
@@ -230,7 +230,7 @@ module GitPusshuTen
         
         ##
         # Downloads the Apache configuration file to tmp dir
-        GitPusshuTen::Log.message "Updating Phusion Passenger paths in the Apache Configuration."
+        message "Updating Phusion Passenger paths in the Apache Configuration."
         Spinner.return :message => "Configuring Apache.." do
           e.scp_as_root(:download, @configuration_file, local.tmp_dir)
           @configuration_file_name = @configuration_file.split('/').last
@@ -266,15 +266,15 @@ module GitPusshuTen
           g("Done!")
         end
         
-        GitPusshuTen::Log.message "Apache configuration file has been updated!"
-        GitPusshuTen::Log.message "#{y(@configuration_file)}\n\n"
+        message "Apache configuration file has been updated!"
+        message "#{y(@configuration_file)}\n\n"
         
-        GitPusshuTen::Log.warning "If you changed Ruby versions, be sure that all the gems for your applications are installed."
-        GitPusshuTen::Log.warning "If you only updated #{y('Phusion Passenger')} and did not change #{y('Ruby versions')}"
-        GitPusshuTen::Log.warning "then you should be able to just restart #{y('Apache')} right away since all application gems should still be in tact.\n\n"
+        warning "If you changed Ruby versions, be sure that all the gems for your applications are installed."
+        warning "If you only updated #{y('Phusion Passenger')} and did not change #{y('Ruby versions')}"
+        warning "then you should be able to just restart #{y('Apache')} right away since all application gems should still be in tact.\n\n"
         
-        GitPusshuTen::Log.message "Run the following command to restart #{y('Apache')} and have the applied updates take effect:"
-        GitPusshuTen::Log.standard "\n\s\s#{y("gitpusshuten apache restart for #{e.name}")}"
+        message "Run the following command to restart #{y('Apache')} and have the applied updates take effect:"
+        standard "\n\s\s#{y("gitpusshuten apache restart for #{e.name}")}"
       end
 
       ##
@@ -285,7 +285,7 @@ module GitPusshuTen
         
         create_file = true
         if File.exist?(vhost_file)
-          GitPusshuTen::Log.warning "#{y(vhost_file)} already exists, do you want to overwrite it?"
+          warning "#{y(vhost_file)} already exists, do you want to overwrite it?"
           create_file = yes?
         end
         
@@ -301,7 +301,7 @@ module GitPusshuTen
             file << "\s\s</Directory>\n"
             file << "</VirtualHost>\n"
           end
-          GitPusshuTen::Log.message "The vhost has been created in #{y(vhost_file)}."
+          message "The vhost has been created in #{y(vhost_file)}."
         end
       end
 

@@ -29,7 +29,7 @@ module GitPusshuTen
       ##
       # Performs the Ref command
       def perform!
-        GitPusshuTen::Log.message "Pushing ref #{y(ref)} to the #{y(e.name)} environment."
+        message "Pushing ref #{y(ref)} to the #{y(e.name)} environment."
         git.push(:ref, ref).to(e.name)
       end
 
