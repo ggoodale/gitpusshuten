@@ -10,7 +10,7 @@ describe GitPusshuTen::Commands::Tag do
   end
 
   it "should display the version" do
-    command.expects(:puts).with("Git Pusshu Ten (プッシュ点) version #{GitPusshuTen::VERSION}")
+    command.expects(:standard).with("Git Pusshu Ten (プッシュ点) version #{GitPusshuTen::VERSION}")
     command.perform!
   end
 
