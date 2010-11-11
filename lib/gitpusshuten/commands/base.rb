@@ -132,6 +132,32 @@ module GitPusshuTen
         end
       end
 
+      ##
+      # Shorthand for creating standard messages
+      def standard(text)
+        GitPusshuTen::Log.standard(text)
+      end
+
+      ##
+      # Shorthand for creating normal messages
+      def message(text)
+        GitPusshuTen::Log.message(text)
+      end
+
+      ##
+      # Shorthand for creating warning messages
+      def warning(text)
+        GitPusshuTen::Log.warning(text)
+      end
+
+      ##
+      # Shorthand for creating error messages
+      def error(text)
+        GitPusshuTen::Log.error(text)
+      end
+
+      ##
+      # Initialize a new command
       def initialize(cli, configuration, hooks, environment)
         @cli           = cli
         @configuration = configuration
