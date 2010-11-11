@@ -69,7 +69,7 @@ module GitPusshuTen
         ##
         # Install dependencies for Passenger
         Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed.." do
-          e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev")
+          e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev libcurl4-gnutls-dev")
           g("Done!")
         end
         
