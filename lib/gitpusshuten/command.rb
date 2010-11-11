@@ -34,8 +34,13 @@ module GitPusshuTen
       @hooks         = hooks
       @environment   = environment
       
+      if cli.command.nil?
+        display_commands
+        exit
+      end
+      
       unless available_commands.include?(cli.command)
-        GitPusshuTen::Log.error "Command <#{cli.command}> not found."
+        GitPusshuTen::Log.error "Command <#{cli.command.color(:red)}> not found."
         exit
       end
     end

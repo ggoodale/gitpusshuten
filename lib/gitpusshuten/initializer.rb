@@ -76,7 +76,7 @@ module GitPusshuTen
       ##
       # Initializes the help command by default if there aren't any arguments
       if args.empty?
-        GitPusshuTen::Command.new(cli, configuration, nil, nil).display_commands
+        GitPusshuTen::Command.new(cli, configuration, nil, nil)
         exit
       end
       
