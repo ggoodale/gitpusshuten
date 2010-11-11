@@ -207,10 +207,16 @@ module GitPusshuTen
         end
         
         if @succeeded
-          GitPusshuTen::Log.message("If you want to use #{y(ruby_version)} for your Ruby applications with Passenger")
-          GitPusshuTen::Log.message("you must update your #{y('NginX')} configuration. To do this, run the following command:")
-          GitPusshuTen::Log.message(y("gitpusshuten nginx update-configuration for #{e.name}"))
-          GitPusshuTen::Log.message("And follow any further instructions given.")
+          GitPusshuTen::Log.message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
+          GitPusshuTen::Log.message("you must update your #{y('NginX')} configuration. To do this, run the following command:\n\n")
+          
+          GitPusshuTen::Log.standard(y("\s\sgitpusshuten nginx update-configuration for #{e.name}\n"))
+          
+          GitPusshuTen::Log.message("Would you like to run #{y("gitpusshuten nginx update-configuration for #{e.name}")} now?\n\n")
+          if yes?
+            GitPusshuTen::Log.message "Invoking #{y("gitpusshuten nginx update-configuration for #{e.name}")} for you..\n\n\n"
+            GitPusshuTen::Initializer.new(['nginx', 'update-configuration', 'for', "#{e.name}"])
+          end
         end
       end
       

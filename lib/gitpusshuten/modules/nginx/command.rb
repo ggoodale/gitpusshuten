@@ -258,7 +258,8 @@ module GitPusshuTen
 
         INFO
         
-        GitPusshuTen::Log.message "NginX will now be configured to work with the above versions.\n\n"
+        GitPusshuTen::Log.message "NginX will now be configured to work with the above versions. Is this correct?"
+        exit unless yes?
         
         ##
         # Checks to see if Passengers WatchDog is available in the current Passenger gem

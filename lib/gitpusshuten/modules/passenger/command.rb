@@ -195,7 +195,7 @@ module GitPusshuTen
           ##
           # Update the NginX configuration file
           GitPusshuTen::Log.message "NginX configuration file needs to be updated with the new #{y('Passenger')} version."
-          GitPusshuTen::Log.message "Invoking #{y("gitpusshuten nginx update-configuration for #{e.name}")} for you.. Please wait.\n\n\n"
+          GitPusshuTen::Log.message "Invoking #{y("gitpusshuten nginx update-configuration for #{e.name}")} for you..\n\n\n"
           GitPusshuTen::Initializer.new(['nginx', 'update-configuration', 'for', "#{e.name}"])
         end
       end
