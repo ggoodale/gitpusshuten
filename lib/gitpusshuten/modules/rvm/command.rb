@@ -67,12 +67,10 @@ module GitPusshuTen
         ##
         # Download Git Packages and add the rvm load snippet into /etc/profile
         if not e.execute_as_root("cat /etc/profile").include?('source "/usr/local/rvm/scripts/rvm"')
-          Spinner.return :message => "Downloading Gitプッシュ点 packages and configuring /etc/profile.." do
-            e.download_packages!("$HOME", :root)
-            e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
-            e.clean_up_packages!("$HOME", :root)
-            g("Done!")
-          end
+          GitPusshuTen::Log.message "Downloading Gitプッシュ点 packages and configuring /etc/profile.."
+          e.download_packages!("$HOME", :root)
+          e.execute_as_root("cd $HOME; cat gitpusshuten-packages/modules/rvm/profile >> /etc/profile")
+          e.clean_up_packages!("$HOME", :root)
         end
         
         ##
