@@ -46,8 +46,9 @@ module GitPusshuTen
           GitPusshuTen::Log.warning "Could not find #{y('Git')}, would you like to install it?"
           
           if yes?
-            GitPusshuTen::Log.message "Installing #{y('Git')}!"
-            environment.install!('git-core')
+            Spinner.return :message => "Installing #{y('Git')}!" do
+              environment.install!('git-core')
+            end
             if environment.installed?('git')
               GitPusshuTen::Log.message "#{y('Git')} has been successfully installed!"
             else
@@ -103,9 +104,10 @@ module GitPusshuTen
             GitPusshuTen::Log.message "You seem to have a ssh key in #{y(e.ssh_key_path)}"
             GitPusshuTen::Log.message "This key isn't installed for #{y(c.user)} at #{y(c.ip)}. Would you like to install it?"
             if yes?
-              GitPusshuTen::Log.message "Installing your ssh key for #{y(c.user)} at #{y(c.ip)}."
-              environment.install_ssh_key!
-              GitPusshuTen::Log.message "Your ssh key has been installed!"
+              Spinner.return :message => "Installing your ssh key for #{y(c.user)} at #{y(c.ip)}.", :put => true do
+                environment.install_ssh_key!
+                g("Your ssh key has been installed!")
+              end
             end
           end
         end

@@ -19,9 +19,10 @@ module GitPusshuTen
       def perform!
         GitPusshuTen::Log.message "Are you sure you wish to delete #{y(c.application)} from the #{y(e.name)} environment (#{y(c.ip)})?"
         if yes?
-          GitPusshuTen::Log.message "Deleting #{y(c.application)}."
-          environment.delete!
-          GitPusshuTen::Log.message "#{y(c.application)} deleted from #{y(e.name)} environment."
+          Spinner.return :message => "Deleting #{y(c.application)}.", :put => true do
+            environment.delete!
+            g("#{y(c.application)} deleted from #{y(e.name)} environment.")
+          end
         end
       end
 
