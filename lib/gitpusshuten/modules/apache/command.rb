@@ -216,7 +216,7 @@ module GitPusshuTen
             
             GitPusshuTen::Log.message "Installing Apache with the Phusion Passenger Module."
             Spinner.return :message => "Installing, this may take a while.." do
-              e.execute_as_root("passenger-install-apache-module --auto")
+              e.execute_as_root("passenger-install-apache2-module --auto")
               g("Done!")
             end
           else
