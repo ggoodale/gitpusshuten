@@ -111,11 +111,7 @@ module GitPusshuTen
       def perform_update!
         GitPusshuTen::Log.message "Updating RVM."
         GitPusshuTen::Log.message "Would you like to get the latest stable, or bleeding edge version?"
-        option = choose do |menu|
-          menu.prompt = ''
-          menu.choice('latest stable') { nil      }
-          menu.choice('bleeding edge') { '--head' }
-        end
+        option = rvm_version?
         Spinner.return :message => "Updating #{y('rvm')} to the #{y(option.nil? ? 'latest stable' : 'bleeding edge')}." do
           e.execute_as_root("rvm update #{option}")
           g("Done!")
@@ -208,14 +204,15 @@ module GitPusshuTen
         
         if @succeeded
           GitPusshuTen::Log.message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
-          GitPusshuTen::Log.message("you must update your #{y('NginX')} configuration. To do this, run the following command:\n\n")
+          GitPusshuTen::Log.message("you must update your #{y("webserver's")} configuration file.\n\n")
+          GitPusshuTen::Log.message("Would you like to do this now?\n\n")
           
-          GitPusshuTen::Log.standard(y("\s\sgitpusshuten nginx update-configuration for #{e.name}\n"))
-          
-          GitPusshuTen::Log.message("Would you like to run #{y("gitpusshuten nginx update-configuration for #{e.name}")} now?\n\n")
           if yes?
-            GitPusshuTen::Log.message "Invoking #{y("gitpusshuten nginx update-configuration for #{e.name}")} for you..\n\n\n"
-            GitPusshuTen::Initializer.new(['nginx', 'update-configuration', 'for', "#{e.name}"])
+            GitPusshuTen::Log.message "Which webserver are you using?"
+            webserver = webserver?
+            
+            GitPusshuTen::Log.message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+            GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
           end
         end
       end
@@ -233,6 +230,26 @@ module GitPusshuTen
           %w[ree-1.8.6 ree-1.8.7].each do |ree|
             menu.choice(ree)
           end
+        end
+      end
+      
+      ##
+      # Prompts the user to choose a RVM version to install
+      def rvm_version?
+        choose do |menu|
+          menu.prompt = ''
+          menu.choice('latest stable') { nil      }
+          menu.choice('bleeding edge') { '--head' }
+        end
+      end
+      
+      ##
+      # Prompts the user to select a webserver
+      def webserver?
+        choose do |menu|
+          menu.prompt = ''
+          menu.choice('NginX')
+          menu.choice('Apache')
         end
       end
       

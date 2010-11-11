@@ -15,7 +15,7 @@ module GitPusshuTen
       example     "nginx reload for production              # Reloads NginX."
 
       ##
-      # Passenger specific attributes/arguments
+      # NginX specific attributes/arguments
       attr_accessor :command
 
       ##
@@ -43,7 +43,7 @@ module GitPusshuTen
           send("perform_#{command}!")
         else
           GitPusshuTen::Log.error "Unknown Nginx command: <#{y(command)}>"
-          GitPusshuTen::Log.error "Run #{y('gitpusshuten help nginx')} for a list setup commands."
+          GitPusshuTen::Log.error "Run #{y('gitpusshuten help nginx')} for a list nginx commands."
         end
       end
 
@@ -189,7 +189,7 @@ module GitPusshuTen
         if environment.file?(vhost_file)
           GitPusshuTen::Log.message "Deleting #{y(vhost_file)}!"
           environment.execute_as_root("rm #{vhost_file}")
-          perform_restart!
+          perform_reload!
         else
           GitPusshuTen::Log.message "#{y(vhost_file)} does not exist."
           exit
@@ -269,11 +269,11 @@ module GitPusshuTen
           GitPusshuTen::Log.message "Phusion Passenger has not yet been installed for this Ruby's Passenger Gem."
           GitPusshuTen::Log.message "You need to reinstall/update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration.\n\n"
           GitPusshuTen::Log.message "Would you like to reinstall/update #{y('NginX')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
-          GitPusshuTen::Log.message "NOTE: Your current NginX configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your NginX configuration."
+          GitPusshuTen::Log.message "NOTE: Your current #{y('NginX')} configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your NginX configuration."
           
           if yes?
-            Spinner.return :message => "Ensuring #{y('Phusion Passenger')} dependencies are installed.." do
-              e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+            Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('NginX')} dependencies are installed.." do
+              e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev libcurl4-gnutls-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
               g("Done!")
             end
             
