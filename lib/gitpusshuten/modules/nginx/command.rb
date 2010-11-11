@@ -365,9 +365,9 @@ module GitPusshuTen
       def ensure_nginx_executable_is_installed!
         if not environment.file?("/etc/init.d/nginx")
           GitPusshuTen::Log.message "Installing NginX executable for starting/stopping/restarting/reloading Nginx."
-          environment.download_packages!(e.home_dir, :root)
-          environment.execute_as_root("cp '#{File.join(e.home_dir, 'gitpusshuten-packages', 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
-          environment.clean_up_packages!(e.home_dir, :root)
+          e.download_packages!(e.home_dir, :root)
+          e.execute_as_root("cp '#{File.join(e.home_dir, 'gitpusshuten-packages', 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
+          e.clean_up_packages!(e.home_dir, :root)
         end
       end
 

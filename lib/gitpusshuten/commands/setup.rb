@@ -41,13 +41,13 @@ module GitPusshuTen
       ##
       # Performs the "user" action
       def perform_user!
-        if not e.installed?('git')
+        if not e.installed?('git') #prompts root
           GitPusshuTen::Log.warning "It is required that you have #{y('Git')} installed at #{y(c.ip)}."
           GitPusshuTen::Log.warning "Could not find #{y('Git')}, would you like to install it?"
           
           if yes?
             Spinner.return :message => "Installing #{y('Git')}!" do
-              environment.install!('git-core')
+              e.install!('git-core')
             end
             if e.installed?('git')
               GitPusshuTen::Log.message "#{y('Git')} has been successfully installed!"
@@ -205,16 +205,18 @@ module GitPusshuTen
       ##
       # Performs the "sshkey"
       def perform_sshkey!
-        unless environment.has_ssh_key?
+        unless e.has_ssh_key?
           GitPusshuTen::Log.error "Could not find ssh key in #{y(e.ssh_key_path)}"
           GitPusshuTen::Log.error "To create one, run: #{y('ssh-keygen -t rsa')}"
           exit
         end
         
-        unless environment.ssh_key_installed?
+        unless e.ssh_key_installed?
           GitPusshuTen::Log.message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
-          GitPusshuTen::Log.message "Installing now."
-          environment.install_ssh_key!
+          Spinner.return :message => "Installing now.." do
+            e.install_ssh_key!
+            g('Done!')
+          end
           GitPusshuTen::Log.message "Your ssh key has been installed!"
         else
           GitPusshuTen::Log.message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."

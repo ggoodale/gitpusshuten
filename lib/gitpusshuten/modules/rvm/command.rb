@@ -44,6 +44,8 @@ module GitPusshuTen
       ##
       # Installs RVM (Ruby Version Manager)
       def perform_install!
+        prompt_for_root_password!
+        
         GitPusshuTen::Log.message "Installing Ruby Version Manager (#{y('RVM')})!"
         
         GitPusshuTen::Log.message "Which Ruby would you like to install and use as your default Ruby Interpreter?"
@@ -59,7 +61,7 @@ module GitPusshuTen
         
         ##
         # Download Packages
-        Spinner.return :message => "Downloading Git Pusshu Ten packages.." do
+        Spinner.return :message => "Downloading Git Pusshu Ten #{y('packages')}.." do
           e.download_packages!("$HOME", :root)
           g("Done!")
         end
@@ -92,8 +94,8 @@ module GitPusshuTen
         ##
         # Create a .bashrc in $HOME to load /etc/profile for non-interactive sessions
         if not e.execute_as_root("cat $HOME/.bashrc").include?('source /etc/profile')
-          Spinner.return :message => "Configuring #{y('.bashrc')} file to load /etc/profile for non-interactive sessions.." do
-            e.execute_as_root("echo 'source /etc/profile' >> $HOME/.bashrc; source $HOME/.bashrc")
+          Spinner.return :message => "Configuring #{y('.bashrc')}.." do
+            e.execute_as_root("echo 'source /etc/profile' > $HOME/.bashrc; source $HOME/.bashrc")
             g("Done!")
           end
         end
@@ -121,7 +123,7 @@ module GitPusshuTen
         
         ##
         # Clean up Packages
-        Spinner.return :message => "Cleaning up Git Pusshu Ten packages.." do
+        Spinner.return :message => "Cleaning up Git Pusshu Ten #{y('packages')}.." do
           e.clean_up_packages!("$HOME", :root)
           g("Done!")
         end
@@ -132,6 +134,8 @@ module GitPusshuTen
       ##
       # Performs an update for RVM
       def perform_update!
+        prompt_for_root_password!
+        
         GitPusshuTen::Log.message "Updating RVM."
         GitPusshuTen::Log.message "Would you like to get the latest stable, or bleeding edge version?"
         option = rvm_version?
@@ -144,6 +148,8 @@ module GitPusshuTen
       ##
       # Displays a list of installed gems
       def perform_list!
+        prompt_for_root_password!
+        
         Spinner.return :message => "Getting a list of installed Rubies.", :put => true do
           e.execute_as_root("rvm list")
         end
@@ -153,7 +159,7 @@ module GitPusshuTen
       ##
       # Installs a Ruby version with RVM
       def perform_install_ruby!
-        perform_list!
+        perform_list! # prompts root
         
         GitPusshuTen::Log.message "Which Ruby version would you like to install?"
         ruby_version = choose_ruby_version!
@@ -177,7 +183,7 @@ module GitPusshuTen
       ##
       # Uninstalls a Ruby version
       def perform_uninstall_ruby!
-        perform_list!
+        perform_list! # prompts root
         
         GitPusshuTen::Log.message "Which Ruby version would you like to uninstall?"
         ruby_version = choose_ruby_version!
@@ -194,7 +200,7 @@ module GitPusshuTen
       ##
       # Remove a Ruby version
       def perform_remove_ruby!
-        perform_list!
+        perform_list! # prompts root
         
         GitPusshuTen::Log.message "Which Ruby version would you like to remove?"
         ruby_version = choose_ruby_version!
@@ -211,7 +217,7 @@ module GitPusshuTen
       ##
       # Change the default Ruby on the server
       def perform_set_default_ruby!
-        perform_list!
+        perform_list! # prompts root
         
         GitPusshuTen::Log.message "Which Ruby version would you like to make the system wide default?"
         ruby_version = choose_ruby_version!

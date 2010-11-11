@@ -41,7 +41,7 @@ module GitPusshuTen
       # Restarts a Passenger instance for the specified environment
       def perform_restart!
         GitPusshuTen::Log.message "Restarting Passenger for #{y(c.application)} (#{y(e.name)} environment)."
-        environment.execute_as_user("cd #{e.app_dir}; mkdir -p tmp; touch tmp/restart.txt")
+        e.execute_as_user("cd #{e.app_dir}; mkdir -p tmp; touch tmp/restart.txt")
       end
       
       ##
@@ -160,6 +160,7 @@ CONFIG
       # on RubyGems.org to see if anything newer than the current version is out.
       # If there is, then it will continue to update NginX using Phussions's NginX installation module.
       def perform_update!
+        prompt_for_root_password!
         
         ##
         # If no web server is specified, it'll prompt the user to
@@ -208,7 +209,7 @@ CONFIG
         # Check if a newer version of Phusion Passenger Gem is available
         Spinner.return :message => "Checking if there's a newer (stable) Phusion Passenger available.." do
           @latest_passenger_version  = GitPusshuTen::Gem.new(:passenger).latest_version
-          @current_passenger_version = e.execute_as_user("passenger-config --version").chomp.strip
+          @current_passenger_version = e.execute_as_root("passenger-config --version").chomp.strip
           if @latest_passenger_version > @current_passenger_version
             @new_passenger_version_available = true
             y("There appears to be a newer version of Phusion Passenger available!")

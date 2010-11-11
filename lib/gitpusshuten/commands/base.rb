@@ -176,6 +176,18 @@ module GitPusshuTen
         end
       end
 
+      ##
+      # Makes the user authenticate itself as root
+      def prompt_for_root_password!
+        e.execute_as_root('')
+      end
+
+      ##
+      # Makes the user authenticate itself as a user
+      def prompt_for_user_password!
+        e.execute_as_user('')
+      end
+
     end
   end
 end

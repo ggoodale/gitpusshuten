@@ -33,8 +33,6 @@ module GitPusshuTen
         @installation_dir         = "/etc/apache2"
         @configuration_directory = @installation_dir
         @configuration_file      = File.join(@configuration_directory, 'apache2.conf')
-        # @installation_dir_found   = true
-        # @configuration_file_found = true
       end
 
       ##
@@ -78,7 +76,7 @@ module GitPusshuTen
 
       def perform_download_vhost!
         remote_vhost = File.join(@configuration_directory, "sites-enabled", "#{e.sanitized_app_name}.#{e.name}.vhost")
-        if not e.file?(remote_vhost)
+        if not e.file?(remote_vhost) #prompts root
           GitPusshuTen::Log.error "There is no vhost currently present in #{y(remote_vhost)}."
           exit
         end
@@ -101,7 +99,7 @@ module GitPusshuTen
       # Uploads a local vhost
       def perform_upload_vhost!        
         vhost_file = File.join(local.gitpusshuten_dir, 'apache', "#{e.name}.vhost")
-        if File.exist?(vhost_file)
+        if File.exist?(vhost_file) # prompts root
           GitPusshuTen::Log.message "Uploading #{y(vhost_file)} to " +
           y(File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
           
@@ -125,9 +123,9 @@ module GitPusshuTen
       # Deletes a vhost
       def perform_delete_vhost!
         vhost_file = File.join(@configuration_directory, 'sites-enabled', "#{e.sanitized_app_name}.#{e.name}.vhost")
-        if environment.file?(vhost_file)
+        if e.file?(vhost_file) # prompts root
           GitPusshuTen::Log.message "Deleting #{y(vhost_file)}!"
-          environment.execute_as_root("rm #{vhost_file}")
+          e.execute_as_root("rm #{vhost_file}")
           perform_reload!
         else
           GitPusshuTen::Log.message "#{y(vhost_file)} does not exist."
@@ -147,7 +145,7 @@ module GitPusshuTen
       # so these are updated in the apache2.conf file.
       def perform_update_configuration!
         GitPusshuTen::Log.message "Checking the #{y(@configuration_file)} for current Passenger configuration."
-        config_contents = e.execute_as_root("cat '#{@configuration_file}'")
+        config_contents = e.execute_as_root("cat '#{@configuration_file}'") # prompts root
         if not config_contents.include? 'PassengerRoot' or not config_contents.include?('PassengerRuby') or not config_contents.include?('passenger_module')
           GitPusshuTen::Log.error "Could not find Passenger configuration, has it ever been set up?"
           exit
