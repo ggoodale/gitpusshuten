@@ -48,10 +48,10 @@ module GitPusshuTen
         ##
         # Install Passenger (NginX Module) and NginX itself 
         if not @updating
-          while @prefix.nil? or not @prefix =~ /^\//
+          while @prefix_path.nil? or not @prefix_path =~ /^\//
             GitPusshuTen::Log.message "Where would you like to install NginX? Provide an #{y('absolute')} path."
-            @prefix = ask("Leave empty if you want to use the default: /opt/nginx")
-            @prefix = '/opt/nginx' if @prefix.empty?
+            @prefix_path = ask("Leave empty if you want to use the default: /opt/nginx")
+            @prefix_path = '/opt/nginx' if @prefix_path.empty?
           end
         end
                 
@@ -70,12 +70,12 @@ module GitPusshuTen
         end
         
         if not @updating
-          GitPusshuTen::Log.standard "Installing #{y('Phusion Passenger')} with #{y('NginX')} (in #{y(@prefix)})."
+          GitPusshuTen::Log.standard "Installing #{y('Phusion Passenger')} with #{y('NginX')} (in #{y(@prefix_path)})."
         else
           GitPusshuTen::Log.standard "Updating #{y('Phusion Passenger')} and #{y('NginX')}."
         end
         Spinner.return :message => "This may take a while.." do
-          e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=#{@prefix}")
+          e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix='#{@prefix_path}'")
           g("Done!")
         end
         
@@ -134,9 +134,7 @@ module GitPusshuTen
         Spinner.return :message => "Checking if there's a newer (stable) Phusion Passenger available.." do
           @latest_passenger_version  = GitPusshuTen::Gem.new(:passenger).latest_version
           @current_passenger_version = e.execute_as_user("passenger-config --version").chomp.strip
-          # if @latest_passenger_version > @current_passenger_version
-          if '3.0.1' > @current_passenger_version
-            
+          if @latest_passenger_version > @current_passenger_version
             @new_passenger_version_available = true
             y("There appears to be a newer version of Phusion Passenger available!")
           else
@@ -196,6 +194,8 @@ module GitPusshuTen
           
           ##
           # Update the NginX configuration file
+          GitPusshuTen::Log.message "NginX configuration file needs to be updated with the new #{y('Passenger')} version."
+          GitPusshuTen::Log.message "Invoking #{y("gitpusshuten nginx update-configuration for #{e.name}")} for you.. Please wait.\n\n\n"
           GitPusshuTen::Initializer.new(['nginx', 'update-configuration', 'for', "#{e.name}"])
         end
       end

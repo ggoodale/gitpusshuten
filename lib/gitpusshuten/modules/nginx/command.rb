@@ -248,12 +248,14 @@ module GitPusshuTen
         exit if @ruby_version.nil?
         
         puts <<-INFO
-          
-          [Detected Versions]
-          
-            Ruby Version:               #{@ruby_version}
-            Phusion Passenger Version:  #{@passenger_version}
-          
+
+
+  [Detected Versions]
+
+    Ruby Version:               #{@ruby_version}
+    Phusion Passenger Version:  #{@passenger_version}
+
+
         INFO
         
         GitPusshuTen::Log.message "NginX will now be configured to work with the above versions.\n\n"
@@ -274,8 +276,9 @@ module GitPusshuTen
             end
             
             GitPusshuTen::Log.message "Installing NginX with the Phusion Passenger Module."
-            Spinner.installing_a_while do
-              e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=#{@installation_dir}")
+            Spinner.return :message => "Installing, this may take a while.." do
+              e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix='#{@installation_dir}'")
+              g("Done!")
             end
           else
             exit
