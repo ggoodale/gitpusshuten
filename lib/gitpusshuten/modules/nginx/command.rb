@@ -171,7 +171,7 @@ module GitPusshuTen
             g("Finished uploading!")
           end
           
-          perform_reload!
+          perform_restart!
         else
           GitPusshuTen::Log.error "Could not locate vhost file #{y(vhost_file)}."
           GitPusshuTen::Log.error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
@@ -293,7 +293,7 @@ module GitPusshuTen
         
         ##
         # Downloads the NGINX configuration file to tmp dir
-        GitPusshuTen::Log.message "Updating NginX configuration file."
+        GitPusshuTen::Log.message "Updating Phusion Passenger paths in the NginX Configuration."
         Spinner.return :message => "Configuring NginX.." do
           e.scp_as_root(:download, @configuration_file, local.tmp_dir)
           @configuration_file_name = @configuration_file.split('/').last
@@ -353,6 +353,7 @@ module GitPusshuTen
           exit unless yes?
         end
         
+        local.execute("mkdir -p #{File.join(local.gitpusshuten_dir, 'nginx')}")
         Spinner.return :message => "Downloading vhost.." do
           e.scp_as_root(:download, remote_vhost, local_vhost)
           g("Finished downloading!")
