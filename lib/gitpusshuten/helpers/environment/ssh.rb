@@ -35,7 +35,7 @@ module GitPusshuTen
               if @user_attempted
                 GitPusshuTen::Log.error "Password incorrect. Please retry."
               else
-                GitPusshuTen::Log.message "Please provide the password for #{c.user.to_s.color(:yellow)}."
+                GitPusshuTen::Log.message "Please provide the password for #{c.user.to_s.color(:yellow)} (#{c.ip.color(:yellow)})."
                 @user_attempted = true
               end
               @user_password = ask('') { |q| q.echo = false }
@@ -59,7 +59,7 @@ module GitPusshuTen
               if @root_attempted
                 GitPusshuTen::Log.error "Password incorrect. Please retry."
               else
-                GitPusshuTen::Log.message "Please provide the password for #{'root'.color(:yellow)}."
+                GitPusshuTen::Log.message "Please provide the password for #{'root'.color(:yellow)} (#{c.ip.color(:yellow)})."
                 @root_attempted = true
               end
               @root_password = ask('') { |q| q.echo = false }
