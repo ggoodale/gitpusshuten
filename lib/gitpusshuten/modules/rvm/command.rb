@@ -177,6 +177,8 @@ module GitPusshuTen
             e.execute_as_root("rvm use #{ruby_version} --default")
             g("Done!")
           end
+          
+          ask_to_use_default_ruby_with_passenger!(ruby_version)
         end
       end
       
@@ -232,17 +234,7 @@ module GitPusshuTen
         end
         
         if @succeeded
-          message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
-          message("you must update your #{y("webserver's")} configuration file.\n\n")
-          message("Would you like to do this now?\n\n")
-          
-          if yes?
-            message "Which webserver are you using?"
-            webserver = webserver?
-            
-            message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
-            GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
-          end
+          ask_to_use_default_ruby_with_passenger!(ruby_version)
         end
       end
       
@@ -279,6 +271,23 @@ module GitPusshuTen
           menu.prompt = ''
           menu.choice('NginX')
           menu.choice('Apache')
+        end
+      end
+      
+      ##
+      # Asks the user if he intends to make the newly set default ruby version
+      # as the ruby version for the passenger driven ruby applications
+      def ask_to_use_default_ruby_with_passenger!(ruby_version)
+        message("If you want to use #{y(ruby_version)} for your Ruby applications with Phusion Passenger")
+        message("you must update your #{y("webserver's")} configuration file.\n\n")
+        message("Would you like to do this now?\n\n")
+        
+        if yes?
+          message "Which webserver are you using?"
+          webserver = webserver?
+          
+          message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+          GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
         end
       end
       
