@@ -44,6 +44,18 @@ module GitPusshuTen
     end
 
     ##
+    # Adds ignore line to the gitignore.
+    def ignore!
+      if File.exist?('.gitignore')
+        if not File.read('.gitignore').include?('.gitpusshuten/**/*')
+          %x[echo '.gitpusshuten/**/*' >> .gitignore]
+        end
+      else
+        %x[echo '.gitpusshuten/**/*' >> .gitignore]
+      end
+    end
+
+    ##
     # Push
     # Begin of the push(type, value).to(remote) chain
     # Pass in the type ("tag", "branch" or "ref") as the first argument

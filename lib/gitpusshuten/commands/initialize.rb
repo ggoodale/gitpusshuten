@@ -32,6 +32,7 @@ module GitPusshuTen
           if not git.initialized?
             git.initialize!
           end
+          git.ignore!
         else
           message "If you wish to initialize it elsewhere, please move into that directory and run #{y("gitpusshuten initialize")} again."
         end
