@@ -213,11 +213,10 @@ module GitPusshuTen
         
         unless e.ssh_key_installed? # prompts root
           message "Your ssh key has not yet been installed for #{y(c.user)} at #{y(c.ip)}."
-          Spinner.return :message => "Installing now.." do
+          Spinner.return :message => "Installing SSH Key.." do
             e.install_ssh_key!
             g("Your ssh key has been installed!")
           end
-          message "Your ssh key has been installed!"
         else
           message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
         end
