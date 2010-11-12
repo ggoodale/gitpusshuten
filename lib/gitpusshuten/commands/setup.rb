@@ -3,9 +3,10 @@ module GitPusshuTen
     class Setup < GitPusshuTen::Commands::Base
       description "Setups up various things for you, based on the .gitpusshuten/config.rb file."
       usage       "gitpusshuten setup <object> for <environment>"
-      example     "gitpusshuten setup remote for staging      # Sets up the git remote for staging"
-      example     "gitpusshuten setup user for production     # Sets up the user on the remote server for production"
-      example     "gitpusshuten setup sshkey for staging      # Installs your ssh key on the remote server for staging"
+      example     "gitpusshuten setup remote for staging        # Sets up the git remote for staging"
+      example     "gitpusshuten setup user for production       # Sets up the user on the remote server for production"
+      example     "gitpusshuten setup user-sshkey for staging   # Installs your ssh key on the remote server for the staging application user"
+      example     "gitpusshuten setup root-sshkey for staging   # Installs your ssh key on the remote server for the staging root user"
 
       ##
       # Setup specific attributes/arguments
@@ -25,6 +26,8 @@ module GitPusshuTen
         end
         
         help if object.nil? or e.name.nil?
+        
+        @object = object.underscore
       end
 
       ##
@@ -39,7 +42,7 @@ module GitPusshuTen
       end
       
       ##
-      # Performs the "user" action
+      # Sets up a new UNIX user and configures it accordingly
       def perform_user!
         if not e.installed?('git') #prompts root
           warning "It is required that you have #{y('Git')} installed at #{y(c.ip)}."
@@ -96,7 +99,7 @@ module GitPusshuTen
         end
         
         ##
-        # Install ssh key
+        # Ask if user wants to install SSH Key already if it's locally available
         if e.has_ssh_key? and e.ssh_key_installed?
           message "Your ssh key is already installed for #{y(c.user)} at #{y(c.ip)}."
         else
@@ -189,7 +192,7 @@ module GitPusshuTen
       end
 
       ##
-      # Performs the "remote" action
+      # Adds the git remote to the git repository
       def perform_remote!
         if git.has_remote?(environment.name)
           git.remove_remote(environment.name)
@@ -203,8 +206,8 @@ module GitPusshuTen
       end
 
       ##
-      # Performs the "sshkey"
-      def perform_sshkey!
+      # Installs the ssh key for the application user
+      def perform_user_sshkey!
         unless e.has_ssh_key?
           error "Could not find ssh key in #{y(e.ssh_key_path)}"
           error "To create one, run: #{y('ssh-keygen -t rsa')}"
@@ -219,6 +222,26 @@ module GitPusshuTen
           end
         else
           message "Your ssh has already been installed for #{y(c.user)} at #{y(c.ip)}."
+        end
+      end
+
+      ##
+      # Installs the ssh key for the root user
+      def perform_root_sshkey!
+        unless e.has_ssh_key?
+          error "Could not find ssh key in #{y(e.ssh_key_path)}"
+          error "To create one, run: #{y('ssh-keygen -t rsa')}"
+          exit
+        end
+        
+        unless e.root_ssh_key_installed? # prompts root
+          message "Your ssh key has not yet been installed for #{y('root')} at #{y(c.ip)}."
+          Spinner.return :message => "Installing SSH Key.." do
+            e.install_root_ssh_key!
+            g("Your ssh key has been installed!")
+          end
+        else
+          message "Your ssh has already been installed for #{y('root')} at #{y(c.ip)}."
         end
       end
 
