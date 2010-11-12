@@ -283,7 +283,7 @@ module GitPusshuTen
           
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('NginX')} dependencies are installed.." do
-              e.execute_as_root("aptitude update; aptitude install -y build-essential libcurl4-openssl-dev libcurl4-gnutls-dev bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+              e.execute_as_root("apt-get update; apt-get install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
               g("Done!")
             end
             
@@ -373,11 +373,11 @@ module GitPusshuTen
       ##
       # Installs the Nginx executable if it does not exist
       def ensure_nginx_executable_is_installed!
-        if not environment.file?("/etc/init.d/nginx")
+        if not e.file?("/etc/init.d/nginx")
           message "Installing NginX executable for starting/stopping/restarting/reloading Nginx."
-          e.download_packages!(e.home_dir, :root)
-          e.execute_as_root("cp '#{File.join(e.home_dir, 'gitpusshuten-packages', 'modules', 'nginx', 'nginx')}' /etc/init.d/nginx")
-          e.clean_up_packages!(e.home_dir, :root)
+          e.download_packages!('$HOME', :root)
+          e.execute_as_root("cp $HOME/gitpusshuten-packages/modules/nginx/nginx /etc/init.d/nginx")
+          e.clean_up_packages!('$HOME', :root)
         end
       end
 

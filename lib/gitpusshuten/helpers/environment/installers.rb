@@ -6,7 +6,7 @@ module GitPusshuTen
         ##
         # Installs Git
         def install!(utility)
-          execute_as_root("aptitude install -y #{utility}")
+          execute_as_root("apt-get install -y #{utility}")
         end
 
         ##

@@ -53,9 +53,9 @@ module GitPusshuTen
         message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
         
         ##
-        # Update aptitude and install git/curl/wget
+        # Update apt-get package list and install git/curl/wget
         Spinner.return :message => "Updating package list and installing #{y('RVM')} requirements.." do
-          e.execute_as_root("aptitude update; aptitude install -y git-core curl wget;")
+          e.execute_as_root("apt-get update; apt-get install -y git-core curl wget;")
           g("Done!")
         end
         
@@ -69,7 +69,7 @@ module GitPusshuTen
         ##
         # Install RVM (system wide)
         Spinner.return :message => "Installing #{y('RVM')}.." do
-          e.execute_as_root("bash < <( curl -L http://bit.ly/rvm-install-system-wide )")
+          e.execute_as_root("cd $HOME; wget -O rvm-install-system-wide --no-check-certificate http://bit.ly/rvm-install-system-wide; bash rvm-install-system-wide; rm rvm-install-system-wide;")
           g("Done!")
         end
         
@@ -103,7 +103,7 @@ module GitPusshuTen
         ##
         # Install required packages for installing Ruby
         Spinner.return :message => "Installing the Ruby Interpreter #{y('dependency packages')}.." do
-          e.execute_as_root("aptitude install -y build-essential bison openssl libreadline5 libreadline5-dev curl git zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+          e.execute_as_root("apt-get install -y build-essential bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
           g("Done!")
         end
         

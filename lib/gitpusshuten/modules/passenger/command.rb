@@ -89,13 +89,13 @@ module GitPusshuTen
           ##
           # Install dependencies for installing NginX
           if nginx?
-            e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev libcurl4-gnutls-dev")
+            e.execute_as_root("apt-get update; apt-get install -y libcurl4-openssl-dev")
           end
           
           ##
           # Install dependencies for installing Apache
           if apache?
-            e.execute_as_root("aptitude update; aptitude install -y libcurl4-openssl-dev libcurl4-gnutls-dev apache2-mpm-prefork apache2-prefork-dev libapr1-dev libaprutil1-dev")
+            e.execute_as_root("apt-get update; apt-get install -y libcurl4-openssl-dev apache2-mpm-prefork apache2-prefork-dev libapr1-dev libaprutil1-dev")
           end
           
           g("Done!")
