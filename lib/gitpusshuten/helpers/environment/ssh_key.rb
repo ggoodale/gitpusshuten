@@ -41,7 +41,8 @@ module GitPusshuTen
         def install_ssh_key!
           command  = "mkdir -p '#{File.join(home_dir, '.ssh')}';"
           command += "echo '#{ssh_key}' >> '#{File.join(home_dir, '.ssh', 'authorized_keys')}';"
-          command += "chown -R #{c.user}:#{c.user} '#{File.join(home_dir, '.ssh')}'"
+          command += "chown -R #{c.user}:#{c.user} '#{File.join(home_dir, '.ssh')}';"
+          command += "chmod 700 '#{File.join(home_dir, '.ssh')}'; chmod 600 '#{File.join(home_dir, '.ssh', 'authorized_keys')}'"
           execute_as_root(command)
         end
 
