@@ -161,6 +161,12 @@ module GitPusshuTen
         load_configuration!
         find_correct_paths!
         
+        if not e.directory?(File.join(@configuration_directory, 'vhosts'))
+          error "Could not upload your vhost because the vhost directory does not exist on the server."
+          error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
+          exit
+        end
+        
         vhost_file = File.join(local.gitpusshuten_dir, 'nginx', "#{e.name}.vhost")
         if File.exist?(vhost_file)
           message "Uploading #{y(vhost_file)} to " +
