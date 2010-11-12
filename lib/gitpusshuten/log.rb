@@ -1,3 +1,4 @@
+# encoding: utf-8
 module GitPusshuTen
   class Log
 
@@ -5,24 +6,66 @@ module GitPusshuTen
     # Displays a regular message without prefix
     def self.standard(message)
       puts message
+      to_file message
     end
     
     ##
     # Displays a regular message
     def self.message(message)
-      puts "[message] ".color(:green) + message
+      message = "[message] ".color(:green) + message
+      puts message
+      to_file message
     end
 
     ##
     # Displays a warning message
     def self.warning(message)
-      puts "[warning] ".color(:yellow) + message
+      message = "[warning] ".color(:yellow) + message
+      puts message
+      to_file message
     end
 
     ##
     # Displays an error message
     def self.error(message)
-      puts "[error] ".color(:red) + message
+      message = "[error] ".color(:red) + message
+      puts message
+      to_file message
+    end
+
+    ##
+    # Logs the message to the log file
+    def self.to_file(message)
+      
+      ##
+      # Don't log if we're not working within the Gitpusshuten directory
+      if File.directory?(gitpusshuten_dir)
+        
+        ##
+        # Create the log directory if it doesn't exist
+        if not File.directory?(log_dir)
+          %x[mkdir -p '#{log_dir}']
+        end
+        
+        ##
+        # Log the message to the file (append)
+        File.open(File.join(log_dir, 'gitpusshuten.log'), 'a') do |file|
+          file << "\n#{message}"
+        end
+        
+      end
+    end
+
+    ##
+    # Returns the Gitpusshuten directory path
+    def self.gitpusshuten_dir
+      File.join(Dir.pwd, '.gitpusshuten')
+    end
+
+    ##
+    # Returns the Gitpusshuten log directory path
+    def self.log_dir
+      File.join(gitpusshuten_dir, 'log')
     end
 
   end
