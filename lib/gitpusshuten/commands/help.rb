@@ -2,7 +2,7 @@ module GitPusshuTen
   module Commands
     class Help < GitPusshuTen::Commands::Base
       description "Displays the command list, or the help screen for a specific command."
-      usage       "gitpusshuten help | gitpusshuten help <command>"
+      usage       "help | help <command>"
       example     "gitpusshuten help"
       example     "gitpusshuten help initialize"
       example     "gitpusshuten help setup"

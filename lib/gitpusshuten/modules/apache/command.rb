@@ -3,15 +3,15 @@ module GitPusshuTen
     class Apache < GitPusshuTen::Commands::Base
       description "[Module] Apache commands."
       usage       "apache <command> for <environment>"
-      example     "apache update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "apache create-vhost for production        # Creates a local vhost template for the specified environment."
-      example     "apache delete-vhost for production        # Deletes the remote vhost for the specified environment."
-      example     "apache upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
-      example     "apache download-vhost for production      # Downloads the remote vhost from the specified environment."
-      example     "apache start for staging                  # Starts Apache."
-      example     "apache stop for production                # Stops Apache."
-      example     "apache restart for production             # Restarts Apache."
-      example     "apache reload for production              # Reloads Apache."
+      example     "gitpusshuten apache update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "gitpusshuten apache create-vhost for production        # Creates a local vhost template for the specified environment."
+      example     "gitpusshuten apache delete-vhost for production        # Deletes the remote vhost for the specified environment."
+      example     "gitpusshuten apache upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
+      example     "gitpusshuten apache download-vhost for production      # Downloads the remote vhost from the specified environment."
+      example     "gitpusshuten apache start for staging                  # Starts Apache."
+      example     "gitpusshuten apache stop for production                # Stops Apache."
+      example     "gitpusshuten apache restart for production             # Restarts Apache."
+      example     "gitpusshuten apache reload for production              # Reloads Apache."
 
       ##
       # Apache specific attributes/arguments

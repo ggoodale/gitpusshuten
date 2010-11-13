@@ -3,7 +3,7 @@ module GitPusshuTen
     class Bundler < GitPusshuTen::Commands::Base
       description "[Module] Bundler commands."
       usage       "bundler <command> for <environment>"
-      example     "bundler bundle for staging   # Bundles an application's gems for the specified environment."
+      example     "gitpusshuten bundler bundle for staging   # Bundles an application's gems for the specified environment."
 
       ##
       # Bundler specific attributes/arguments

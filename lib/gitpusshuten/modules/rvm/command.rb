@@ -4,15 +4,15 @@ module GitPusshuTen
     class Rvm < GitPusshuTen::Commands::Base
       description "[Module] Ruby Version Manager (RVM) commands."
       usage       "rvm <command> for <environment>"
-      example     "rvm install for staging                # Installs RVM (system wide)."
-      example     "rvm update for staging                 # Updates RVM."
-      example     "rvm list for staging                   # Lists installed Rubies under RVM."
-      example     "rvm install-ruby for production        # Installs one of the available Ruby versions."
-      example     "rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
-      example     "rvm remove-ruby for production         # Uninstalls and removes the Ruby's complete source from RVM."
-      example     "rvm set-default-ruby for production    # Sets the system wide default Ruby."
-      example     "                                         This is required if you want to change the Ruby version"
-      example     "                                         for your Ruby applications running Passenger."
+      example     "gitpusshuten rvm install for staging                # Installs RVM (system wide)."
+      example     "gitpusshuten rvm update for staging                 # Updates RVM."
+      example     "gitpusshuten rvm list for staging                   # Lists installed Rubies under RVM."
+      example     "gitpusshuten rvm install-ruby for production        # Installs one of the available Ruby versions."
+      example     "gitpusshuten rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
+      example     "gitpusshuten rvm remove-ruby for production         # Uninstalls and removes the Ruby's complete source from RVM."
+      example     "gitpusshuten rvm set-default-ruby for production    # Sets the system wide default Ruby."
+      example     "                                                      This is required if you want to change the Ruby version"
+      example     "                                                      for your Ruby applications running Passenger."
 
       ##
       # RVM specific attributes/arguments

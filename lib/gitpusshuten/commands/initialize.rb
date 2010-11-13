@@ -3,7 +3,7 @@ module GitPusshuTen
   module Commands
     class Initialize < GitPusshuTen::Commands::Base
       description "Initializes Git Pusshu Ten (プッシュ点) with the working directory."
-      usage       "gitpusshuten initialize"
+      usage       "initialize"
       example     "gitpusshuten initialize"
 
       ##

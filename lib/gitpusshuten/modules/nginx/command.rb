@@ -3,16 +3,16 @@ module GitPusshuTen
     class Nginx < GitPusshuTen::Commands::Base
       description "[Module] NginX commands."
       usage       "nginx <command> for <environment>"
-      example     "nginx setup for staging                  # Sets up a managable vhost environment."
-      example     "nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "nginx create-vhost for production        # Creates a local vhost template for the specified environment."
-      example     "nginx delete-vhost for production        # Deletes the remote vhost for the specified environment."
-      example     "nginx upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
-      example     "nginx download-vhost for production      # Downloads the remote vhost from the specified environment."
-      example     "nginx start for staging                  # Starts NginX."
-      example     "nginx stop for production                # Stops NginX."
-      example     "nginx restart for production             # Restarts NginX."
-      example     "nginx reload for production              # Reloads NginX."
+      example     "gitpusshuten nginx setup for staging                  # Sets up a managable vhost environment."
+      example     "gitpusshuten nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "gitpusshuten nginx create-vhost for production        # Creates a local vhost template for the specified environment."
+      example     "gitpusshuten nginx delete-vhost for production        # Deletes the remote vhost for the specified environment."
+      example     "gitpusshuten nginx upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
+      example     "gitpusshuten nginx download-vhost for production      # Downloads the remote vhost from the specified environment."
+      example     "gitpusshuten nginx start for staging                  # Starts NginX."
+      example     "gitpusshuten nginx stop for production                # Stops NginX."
+      example     "gitpusshuten nginx restart for production             # Restarts NginX."
+      example     "gitpusshuten nginx reload for production              # Reloads NginX."
 
       ##
       # NginX specific attributes/arguments

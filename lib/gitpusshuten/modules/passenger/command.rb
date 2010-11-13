@@ -3,9 +3,9 @@ module GitPusshuTen
     class Passenger < GitPusshuTen::Commands::Base
       description "[Module] Phusion Passenger commands."
       usage       "passenger <command> for <environment>"
-      example     "passenger install for staging      # Installs Phusion Passenger with the NginX web server"
-      example     "passenger update for staging       # Updates Phusion Passenger and the NginX web server if a new version is available"
-      example     "passenger restart for production   # Restarts the Passenger instance for the specified environment"
+      example     "gitpusshuten passenger install for staging      # Installs Phusion Passenger with the NginX web server"
+      example     "gitpusshuten passenger update for staging       # Updates Phusion Passenger and the NginX web server if a new version is available"
+      example     "gitpusshuten passenger restart for production   # Restarts the Passenger instance for the specified environment"
 
       ##
       # Passenger specific attributes/arguments
