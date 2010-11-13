@@ -21,14 +21,14 @@ module GitPusshuTen
 
       ##
       # Extract Environment
-      if @arguments.join(' ') =~ /(to (\w+)|(\w+) environment|for (\w+))/
+      if @arguments.join(' ') =~ /((\w+) environment|(for|from|on|to) (\w+))/
         [$2, $3, $4].each do |match|
           unless match.nil?
             @environment = match.to_sym
             @arguments.delete(match)
           end
         end
-        %w[to for environment].each do |argument|
+        %w[to for from on environment].each do |argument|
           @arguments.delete(argument) if @arguments.include?(argument)
         end
       end
