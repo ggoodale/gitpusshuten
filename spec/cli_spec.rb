@@ -21,23 +21,38 @@ describe GitPusshuTen::CLI do
     end
     
     it "should return the environment" do
-      cli = GitPusshuTen::CLI.new(%w[maintenance on for production environment])
+      cli = GitPusshuTen::CLI.new(%w[maintenance enable for production environment])
       cli.environment.should == :production
     end
     
     it "should return the environment" do
-      cli = GitPusshuTen::CLI.new(%w[maintenance on production environment])
+      cli = GitPusshuTen::CLI.new(%w[maintenance enable production environment])
       cli.environment.should == :production
     end
     
     it "should return the environment" do
-      cli = GitPusshuTen::CLI.new(%w[maintenance on for production])
+      cli = GitPusshuTen::CLI.new(%w[maintenance enable for production])
       cli.environment.should == :production
     end
     
     it "should return the environment" do
-      cli = GitPusshuTen::CLI.new(%w[maintenance on for pr0duct10n])
+      cli = GitPusshuTen::CLI.new(%w[maintenance enable for pr0duct10n])
       cli.environment.should == :pr0duct10n
+    end
+    
+    it "should return the environment" do
+      cli = GitPusshuTen::CLI.new(%w[nginx upload-vhost to production])
+      cli.environment.should == :production
+    end
+    
+    it "should return the environment" do
+      cli = GitPusshuTen::CLI.new(%w[nginx download-vhost from production])
+      cli.environment.should == :production
+    end
+
+    it "should return the environment" do
+      cli = GitPusshuTen::CLI.new(%w[user install-ssh-key on staging])
+      cli.environment.should == :staging
     end
   end
   
@@ -48,8 +63,20 @@ describe GitPusshuTen::CLI do
     end
 
     it "should make underscores from dashes for commands" do
-      cli = GitPusshuTen::CLI.new(%w[remote-command on pr0duct10n])
-      cli.command.should == 'remote_command'
+      cli = GitPusshuTen::CLI.new(%w[remote command on pr0duct10n ls -la])
+      cli.command.should == 'remote'
+    end
+  end
+  
+  describe '#arguments' do
+    it do
+      cli = GitPusshuTen::CLI.new(%w[nginx upload-vhost to production])
+      cli.arguments.should == ['upload-vhost']
+    end
+    
+    it do
+      cli = GitPusshuTen::CLI.new(%w[remote command on staging ls -la])
+      cli.arguments.should == ['command', 'ls', '-la']
     end
   end
   

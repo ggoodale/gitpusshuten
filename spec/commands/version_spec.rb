@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe GitPusshuTen::Commands::Tag do
+describe GitPusshuTen::Commands::Version do
 
   command_setup!('Version', %w[version])
 

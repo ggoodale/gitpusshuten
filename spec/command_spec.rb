@@ -57,6 +57,7 @@ describe GitPusshuTen::Command do
     before do
       GitPusshuTen::Command.any_instance.stubs(:exit)
       GitPusshuTen::Log.stubs(:error)
+      command.stubs(:validate!)
     end
     
     it "should invoke a pre-perform hook" do

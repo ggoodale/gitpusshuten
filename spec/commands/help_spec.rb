@@ -34,7 +34,7 @@ describe GitPusshuTen::Commands::Help do
     end
 
     it do
-      command.command.should == 'tag'
+      command.command_name.should == 'tag'
     end
     
     context "when the command exists" do

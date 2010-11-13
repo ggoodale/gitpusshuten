@@ -41,7 +41,7 @@ describe GitPusshuTen::Environment do
     describe '#install_ssh_key!' do
       it do
         environment.expects(:ssh_key).returns('mysshkey')
-        environment.expects(:execute_as_root).with("mkdir -p '/var/apps/.ssh';echo 'mysshkey' >> '/var/apps/.ssh/authorized_keys';chown -R git:git '/var/apps/.ssh'")
+        environment.expects(:execute_as_root).with("mkdir -p '/var/apps/.ssh';echo 'mysshkey' >> '/var/apps/.ssh/authorized_keys';chown -R git:git '/var/apps/.ssh';chmod 700 '/var/apps/.ssh'; chmod 600 '/var/apps/.ssh/authorized_keys'")
         environment.install_ssh_key!
       end
     end
