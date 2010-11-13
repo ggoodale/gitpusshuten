@@ -2,15 +2,9 @@ module GitPusshuTen
   module Commands
     class Bundler < GitPusshuTen::Commands::Base
       description "[Module] Bundler commands."
-      usage       "bundler <command> for <environment>"
-      example     "gitpusshuten bundler bundle for staging   # Bundles an application's gems for the specified environment."
+      usage       "bundler <command> <environment> environment"
+      example     "gitpusshuten bundler bundle staging environment   # Bundles an application's gems for the specified environment."
 
-      ##
-      # Bundler specific attributes/arguments
-      attr_accessor :command
-
-      ##
-      # Initializes the Bundler command
       def initialize(*objects)
         super
         
@@ -19,17 +13,6 @@ module GitPusshuTen
         help if command.nil? or e.name.nil?
       end
 
-      ##
-      # Performs the Bundler command
-      def perform!
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          GitPusshuTen::Log.error "Unknown RVM command: <#{y(command)}>"
-          GitPusshuTen::Log.error "Run #{y('gitpusshuten help bundler')} for a list bundler commands."
-        end
-      end
-      
       ##
       # Bundles gems
       def perform_bundle!

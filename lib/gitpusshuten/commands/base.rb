@@ -19,6 +19,10 @@ module GitPusshuTen
       attr_accessor :environment
 
       ##
+      # Contains the invoked command
+      attr_accessor :command
+
+      ##
       # This is a flag, that, when set to true, will invoke the
       # potentially specified deployment hooks. When "perform_hooks"
       # is set to false, deployment hooks will not be invoked. This is the default
@@ -164,6 +168,23 @@ module GitPusshuTen
         @hooks         = hooks
         @environment   = environment
         @perform_hooks = false
+      end
+
+      ##
+      # Performs one of the commands inside a command class
+      def perform!
+        send("perform_#{command}!")
+      end
+
+      ##
+      # Validates if the method that's about to be invoked actually exists
+      def validate!
+        if not respond_to?("perform_#{command}!")
+          type = self.class.to_s.split("::").last.downcase
+          error "Unknown #{y(type)} command: <#{r(command)}>"
+          error "Run #{y("gitpusshuten help #{type}")} for a list #{y(type)} commands."
+          exit
+        end
       end
 
       ##

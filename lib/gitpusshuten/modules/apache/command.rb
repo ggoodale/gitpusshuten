@@ -2,23 +2,17 @@ module GitPusshuTen
   module Commands
     class Apache < GitPusshuTen::Commands::Base
       description "[Module] Apache commands."
-      usage       "apache <command> for <environment>"
+      usage       "apache <command> <for|from|to> <environment> (environment)"
       example     "gitpusshuten apache update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
       example     "gitpusshuten apache create-vhost for production        # Creates a local vhost template for the specified environment."
-      example     "gitpusshuten apache delete-vhost for production        # Deletes the remote vhost for the specified environment."
-      example     "gitpusshuten apache upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
-      example     "gitpusshuten apache download-vhost for production      # Downloads the remote vhost from the specified environment."
-      example     "gitpusshuten apache start for staging                  # Starts Apache."
-      example     "gitpusshuten apache stop for production                # Stops Apache."
-      example     "gitpusshuten apache restart for production             # Restarts Apache."
-      example     "gitpusshuten apache reload for production              # Reloads Apache."
+      example     "gitpusshuten apache delete-vhost from production       # Deletes the remote vhost for the specified environment."
+      example     "gitpusshuten apache upload-vhost to staging            # Uploads your local vhost to the server for the specified environment."
+      example     "gitpusshuten apache download-vhost from production     # Downloads the remote vhost from the specified environment."
+      example     "gitpusshuten apache start staging environment          # Starts the Apache webserver."
+      example     "gitpusshuten apache stop production environment        # Stops the Apache webserver."
+      example     "gitpusshuten apache restart production environment     # Restarts the Apache webserver."
+      example     "gitpusshuten apache reload production environment      # Reloads the Apache webserver."
 
-      ##
-      # Apache specific attributes/arguments
-      attr_accessor :command
-
-      ##
-      # Initializes the Nginx command
       def initialize(*objects)
         super
         
@@ -33,17 +27,6 @@ module GitPusshuTen
         @installation_dir         = "/etc/apache2"
         @configuration_directory = @installation_dir
         @configuration_file      = File.join(@configuration_directory, 'apache2.conf')
-      end
-
-      ##
-      # Performs the Apache command
-      def perform!
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          error "Unknown Apache command: <#{y(command)}>"
-          error "Run #{y('gitpusshuten help apache')} for a list apache commands."
-        end
       end
 
       ##

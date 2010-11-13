@@ -14,12 +14,6 @@ module GitPusshuTen
       example     "                                                      This is required if you want to change the Ruby version"
       example     "                                                      for your Ruby applications running Passenger."
 
-      ##
-      # RVM specific attributes/arguments
-      attr_accessor :command
-
-      ##
-      # Initializes the RVM command
       def initialize(*objects)
         super
         
@@ -31,22 +25,9 @@ module GitPusshuTen
       end
 
       ##
-      # Performs the RVM command
-      def perform!
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          error "Unknown RVM command: <#{y(command)}>"
-          error "Run #{y('gitpusshuten help rvm')} for a list rvm commands."
-        end
-      end
-
-      ##
       # Installs RVM (Ruby Version Manager)
       def perform_install!
         prompt_for_root_password!
-        
-        message "Installing Ruby Version Manager (#{y('RVM')})!"
         
         message "Which Ruby would you like to install and use as your default Ruby Interpreter?"
         ruby_version = choose_ruby_version!

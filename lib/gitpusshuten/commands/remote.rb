@@ -2,29 +2,26 @@ module GitPusshuTen
   module Commands
     class Remote < GitPusshuTen::Commands::Base
       description "Performs a command on the remote server for the specified environment from the application root."
-      usage       "remote for <environment> '<command>'"
-      example     "gitpusshuten remote for staging 'cat log/production.log'"
-      example     "gitpusshuten remote for production 'mkdir tmp; touch tmp/restart.txt'"
+      usage       "remote command on <environment> '<command>'"
+      example     "gitpusshuten remote command on staging 'cat log/production.log'                # Invokes 'cat log/production.log' in the staging environment."
+      example     "gitpusshuten remote command on production 'mkdir tmp; touch tmp/restart.txt'   # Invokes 'mkdir tmp; touch tmp/restart.txt' in the production environment."
 
-      ##
-      # Setup specific attributes/arguments
-      attr_accessor :command
+      attr_accessor :command_to_execute
 
-      ##
-      # Initializes the Remote command
       def initialize(*objects)
         super
+                
+        @command = cli.arguments.shift if cli.arguments.any?
+        @command_to_execute = cli.arguments.join(' ') if cli.arguments.any?
         
-        help if cli.arguments.empty? or e.name.nil?
-        
-        @command = cli.arguments.join(' ')
+        help if command.nil? or command_to_execute.nil? or e.name.nil?
       end
 
       ##
-      # Performs the Delete command
-      def perform!
+      # Performs a unix command on the remote server
+      def perform_command!
         message "Performing command on #{y(c.application)} (#{y(e.name)}) at #{y(c.ip)}!"
-        puts e.execute_as_user("cd #{e.app_dir}; #{command}")
+        puts e.execute_as_user("cd #{e.app_dir}; #{command_to_execute}")
       end
 
     end

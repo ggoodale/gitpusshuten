@@ -48,7 +48,7 @@ module GitPusshuTen
     ##
     # Performs the target command, based on the CLI and Configuration
     def perform!
-      %w[pre_perform! perform! post_perform!].each do |action|
+      %w[validate! pre_perform! perform! post_perform!].each do |action|
         command.send(action)
       end
     end

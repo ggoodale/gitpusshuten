@@ -2,12 +2,12 @@ module GitPusshuTen
   module Commands
     class Push < GitPusshuTen::Commands::Base
       description "Pushes a branch, tag or ref to the specified environment."
-      usage       "push <branch|tag|ref> to <environment>"
-      example     "gitpusshuten push branch develop to staging"
-      example     "gitpusshuten push tag develop to staging"
-      example     "gitpusshuten push ref master to production"
+      usage       "push <command> <type> to <environment>"
+      example     "gitpusshuten push branch develop to staging                                    # Pushes the specified branch to the staging environment."
+      example     "gitpusshuten push tag 1.0.3 to staging                                         # Pushes the specified tag to the staging environment."
+      example     "gitpusshuten push ref 2dbec02aa0b8604b8512e2fcbb8aac582c7f6a73 to production   # Pushes the specified ref to the production environment."
 
-      attr_accessor :command, :type
+      attr_accessor :type
 
       def initialize(*objects)
         super
@@ -19,15 +19,6 @@ module GitPusshuTen
         help if type.nil? or e.name.nil?
         
         set_remote!
-      end
-
-      def perform!        
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          error "Unknown setup command: <#{y(command)}>"
-          error "Run #{y("gitpusshuten help push")} for a list push commands."
-        end
       end
 
       ##

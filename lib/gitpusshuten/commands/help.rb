@@ -3,33 +3,30 @@ module GitPusshuTen
     class Help < GitPusshuTen::Commands::Base
       description "Displays the command list, or the help screen for a specific command."
       usage       "help | help <command>"
-      example     "gitpusshuten help"
-      example     "gitpusshuten help initialize"
-      example     "gitpusshuten help setup"
-      example     "gitpusshuten help tag"
+      example     "gitpusshuten help                # Displays the main help screen."
+      example     "gitpusshuten help initialize     # Displays the help screen for the initialize command."
+      example     "gitpusshuten help setup          # Displays the help screen for the setup command."
+      example     "gitpusshuten help tag            # Displays the help screen for the tag command."
 
-      ##
-      # Help specific attributes/arguments
-      attr_accessor :command
+      attr_accessor :command_name
 
-      ##
-      # Initializes the Help command
       def initialize(*objects)
         super
         
-        @command = cli.arguments.shift
+        @command_name = cli.arguments.shift
       end
 
       ##
-      # Performs the Help command
-      def perform!
-        if command.nil?
+      # Displays the help screen if no arguments are specified
+      # Displays the help screen for a particular command if an argument is specified
+      def perform_!
+        if command_name.nil?
           command_object.display_commands
         else
-          if command_object.available_commands.include?(command)
-            command_object.display_usage(command)
+          if command_object.available_commands.include?(command_name)
+            command_object.display_usage(command_name)
           else
-            error "Command <#{r(command)}> not found."
+            error "Command <#{r(command_name)}> not found."
           end
         end
       end

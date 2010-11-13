@@ -4,7 +4,7 @@ module GitPusshuTen
     class Initialize < GitPusshuTen::Commands::Base
       description "Initializes Git Pusshu Ten (プッシュ点) with the working directory."
       usage       "initialize"
-      example     "gitpusshuten initialize"
+      example     "gitpusshuten initialize  # Initializes Git Pusshu Ten (プッシュ点) with the working directory."
 
       ##
       # Initialize specific attributes/arguments
@@ -14,8 +14,6 @@ module GitPusshuTen
       # Incase template files already exist
       attr_accessor :confirm_perform
 
-      ##
-      # Initializes the Initialize command
       def initialize(*objects)
         super
         

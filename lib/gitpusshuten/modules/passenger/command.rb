@@ -8,33 +8,16 @@ module GitPusshuTen
       example     "gitpusshuten passenger restart for production   # Restarts the Passenger instance for the specified environment"
 
       ##
-      # Passenger specific attributes/arguments
-      attr_accessor :command
-
-      ##
       # Contains the webserver we're working with
       # Either NginX or Apache
       attr_accessor :webserver
 
-      ##
-      # Initializes the Passenger command
       def initialize(*objects)
         super
         
         @command = cli.arguments.shift
         
         help if command.nil? or e.name.nil?
-      end
-
-      ##
-      # Performs the Passenger command
-      def perform!
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          error "Unknown RVM command: <#{y(command)}>"
-          error "Run #{y('gitpusshuten help passenger')} for a list rvm commands."
-        end
       end
       
       ##

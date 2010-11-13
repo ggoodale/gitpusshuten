@@ -2,24 +2,18 @@ module GitPusshuTen
   module Commands
     class Nginx < GitPusshuTen::Commands::Base
       description "[Module] NginX commands."
-      usage       "nginx <command> for <environment>"
-      example     "gitpusshuten nginx setup for staging                  # Sets up a managable vhost environment."
+      usage       "nginx <command> <for|from|to> <environment> (environment)"
+      example     "gitpusshuten nginx setup staging environment          # Sets up a managable vhost environment."
       example     "gitpusshuten nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
       example     "gitpusshuten nginx create-vhost for production        # Creates a local vhost template for the specified environment."
-      example     "gitpusshuten nginx delete-vhost for production        # Deletes the remote vhost for the specified environment."
-      example     "gitpusshuten nginx upload-vhost for staging           # Uploads your local vhost to the server for the specified environment."
-      example     "gitpusshuten nginx download-vhost for production      # Downloads the remote vhost from the specified environment."
-      example     "gitpusshuten nginx start for staging                  # Starts NginX."
-      example     "gitpusshuten nginx stop for production                # Stops NginX."
-      example     "gitpusshuten nginx restart for production             # Restarts NginX."
-      example     "gitpusshuten nginx reload for production              # Reloads NginX."
+      example     "gitpusshuten nginx delete-vhost from production       # Deletes the remote vhost for the specified environment."
+      example     "gitpusshuten nginx upload-vhost to staging            # Uploads your local vhost to the server for the specified environment."
+      example     "gitpusshuten nginx download-vhost from production     # Downloads the remote vhost from the specified environment."
+      example     "gitpusshuten nginx start staging environment          # Starts the NginX webserver."
+      example     "gitpusshuten nginx stop production environment        # Stops the NginX webserver."
+      example     "gitpusshuten nginx restart production environment     # Restarts the NginX webserver."
+      example     "gitpusshuten nginx reload production environment      # Reloads the NginX webserver."
 
-      ##
-      # NginX specific attributes/arguments
-      attr_accessor :command
-
-      ##
-      # Initializes the Nginx command
       def initialize(*objects)
         super
         
@@ -34,17 +28,6 @@ module GitPusshuTen
         @installation_dir         = "/opt/nginx"
         @installation_dir_found   = false
         @configuration_file_found = false
-      end
-
-      ##
-      # Performs the NginX command
-      def perform!
-        if respond_to?("perform_#{command}!")
-          send("perform_#{command}!")
-        else
-          error "Unknown Nginx command: <#{y(command)}>"
-          error "Run #{y('gitpusshuten help nginx')} for a list nginx commands."
-        end
       end
 
       ##
