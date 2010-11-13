@@ -21,7 +21,7 @@ module GitPusshuTen
         ##
         # Checks the remote server to see if the provided user exists
         def user_exists?
-          return false if(execute_as_root("grep '#{c.user}' /etc/passwd").nil?)
+          return false if execute_as_root("grep '#{c.user}' /etc/passwd").nil?
           true
         end
 
