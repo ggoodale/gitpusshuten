@@ -118,6 +118,10 @@ module GitPusshuTen
         exit
       end
       
+      ##
+      # Default to port 22 if no port is specified
+      @port ||= '22'
+      
       self
     end
 
