@@ -8,6 +8,8 @@ module GitPusshuTen
       example     "gitpusshuten user remove from production           # Removes the user and all it's applications."
       example     "gitpusshuten user install-ssh-key to staging       # Installs your ssh key on the server for the user."
       example     "gitpusshuten user install-root-ssh-key to staging  # Installs your ssh key on the server for the root user."
+      example     "$(gitpusshuten user login to staging)              # Logs the user in to the staging environment as user."
+      example     "$(gitpusshuten user login-root to production)      # Logs the user in to the production environment as root."
 
       def initialize(*objects)
         super
@@ -90,6 +92,23 @@ module GitPusshuTen
           error "If you want to add #{y(c.user)}, run the following command:"
           standard "\n\s\s#{y("gitpusshuten user add to #{e.name}")}"
         end
+      end
+
+      ##
+      # Returns a string which can be used to login the user
+      def perform_login!
+        if not e.user_exists?
+          error "Cannot login, #{y(c.user)} does not exist."
+          exit
+        end
+        
+        puts "ssh #{c.user}@#{c.ip} -p #{c.port}"
+      end
+
+      ##
+      # Returns a string which can be used to login as root
+      def perform_login_root!
+        puts "ssh root@#{c.ip} -p #{c.port}"
       end
 
       ##
