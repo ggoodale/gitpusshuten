@@ -37,7 +37,6 @@ module GitPusshuTen
     # Silently logs messages
     def self.silent(message)
       to_file message
-      nil
     end
 
     ##
