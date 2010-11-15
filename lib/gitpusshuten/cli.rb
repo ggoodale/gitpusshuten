@@ -18,26 +18,57 @@ module GitPusshuTen
       ##
       # Clean up arguments
       @arguments = args.flatten.uniq.compact.map(&:strip)
-
+      
       ##
-      # Extract Environment
-      if @arguments.join(' ') =~ /((\w+) environment|(for|from|on|to) (\w+))/
-        [$2, $3, $4].each do |match|
-          unless match.nil?
-            @environment = match.to_sym
-            @arguments.delete(match)
-          end
+      # If the arguments match the following pattern, it'll simply assign
+      # the variables accordingly
+      if @arguments.join(' ') =~ /(\w+\-?\w*) (.+) (for|to|from|on) (\w+)(.+)?/
+        @command     = $1
+        @arguments   = $2.split(' ')
+        @environment = $4.to_sym
+        
+        ##
+        # Allows for more arguments to be passed in after the regular expression.
+        # These arguments will be converted to an array and apended to the "@arguments" array
+        if $5.is_a?(String)
+          @arguments += $5.split(' ')
         end
-        %w[to for from on environment].each do |argument|
-          @arguments.delete(argument) if @arguments.include?(argument)
-        end
+        return
       end
-
+      
       ##
-      # Extract Command
-      @command = @arguments.shift
-      @command = @command.underscore unless @command.nil?
-
+      # If the arguments match the following pattern, it'll assign the variables
+      # and check check if the last argument in the array of @arguments is a
+      # "for", "to", "from" or "on" string value, and deletes it if it is
+      if @arguments.join(' ') =~ /(\w+\-?\w*) (.+) (\w+) environment/
+        @command     = $1
+        @arguments   = $2.split(' ')
+        @environment = $3.to_sym
+        
+        ##
+        # Clean up any for/to/from/on if it's the last argument
+        # of the @arguments array since that'd be part of the CLI
+        if %w[for to from on].include? @arguments.last
+           @arguments.delete_at(@arguments.count - 1)
+        end
+        return
+      end
+      
+      ##
+      # If no arguments are specified it'll just take the command,
+      # set the arguments to an empty array and set the environment
+      if @arguments.join(' ') =~ /(\w+\-?\w*) (.+) (\w+)$/
+        @command     = $1
+        @arguments   = []
+        @environment = $2.to_sym
+        return
+      end
+      
+      if @arguments.join(' ') =~ /(\w+\-?\w*) (.+)$/
+        @command     = $1
+        @arguments   = $2.split(' ')
+        return
+      end
     end
 
   end
