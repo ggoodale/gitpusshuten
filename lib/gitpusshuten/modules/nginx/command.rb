@@ -384,7 +384,7 @@ module GitPusshuTen
         while not @installation_dir_found
           if not e.directory?(@installation_dir)
             warning "Could not find NginX in #{y(@installation_dir)}."
-            message "Please provide the path to the installation directory."
+            message "Please provide the path to the installation directory. (Usually #{y('/opt/nginx')} or #{y('/etc/nginx')})"
             @installation_dir = ask('')
           else
             message "NginX installation directory found in #{y(@installation_dir)}!"
@@ -397,7 +397,8 @@ module GitPusshuTen
         while not @configuration_file_found
           if not environment.file?(@configuration_file)
             warning "Could not find the NginX configuration file in #{y(@configuration_file)}."
-            message "Please provide the (full/absolute) path to the NginX configuration file. (e.g. #{y(File.join(@installation_dir, "conf", "nginx.conf"))})"
+            message "Please provide the (full/absolute) path to the NginX configuration file."
+            message "(Usually #{y("#{@installation_dir}/conf/nginx.conf")} or #{y("#{@installation_dir}/nginx.conf")})"
             @configuration_file = ask('')
           else
             message "NginX configuration file found in #{y(@configuration_file)}!"
