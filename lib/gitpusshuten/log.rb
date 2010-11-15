@@ -48,9 +48,13 @@ module GitPusshuTen
         end
         
         ##
+        # Remove all ANSI coloring codes for clean logging
+        message.gsub!(/\[\d+m/, '')
+        
+        ##
         # Log the message to the file (append)
         File.open(File.join(log_dir, 'gitpusshuten.log'), 'a') do |file|
-          file << "\n#{message}"
+          file << "\n#{Time.now.strftime("[%m/%d/%Y %H:%M:%S]")} #{message}"
         end
         
       end
