@@ -35,10 +35,9 @@ module GitPusshuTen
         prompt_for_root_password!
         
         Spinner.return :message => "Installing Apache2 web server.." do
-          @out = e.install!('apache2')
+         e.install!('apache2')
           g('Done!')
         end
-        puts @out
         message "Apache2 has been installed in #{y('/etc/apache2')}."
       end
 

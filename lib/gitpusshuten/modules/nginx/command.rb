@@ -36,10 +36,9 @@ module GitPusshuTen
         prompt_for_root_password!
         
         Spinner.return :message => "Installing NginX web server.." do
-          @out = e.install!('nginx')
+          e.install!('nginx')
           g('Done!')
         end
-        puts @out
         message "NginX has been installed in #{y('/etc/nginx')}."
       end
 

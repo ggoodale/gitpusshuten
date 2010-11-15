@@ -36,10 +36,9 @@ module GitPusshuTen
         command += "mysqladmin -u root password '#{@new_password}'"
         
         Spinner.return :message => "Installing #{y('MySQL')} to #{y(e.name)}.." do
-          @out = e.execute_as_root(command)
+          e.execute_as_root(command)
           g('Done!')
         end
-        puts @out
       end
 
       ##
@@ -56,10 +55,9 @@ module GitPusshuTen
         prompt_for_new_password!
         
         Spinner.return :message => "Changing root password of #{y('MySQL')} on #{y(e.name)} environment.." do
-          @out = e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password '#{@new_password}'")
+          e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password '#{@new_password}'")
           g('Done!')
         end
-        puts @out
       end
 
       ##
@@ -75,11 +73,10 @@ module GitPusshuTen
         confirm_access!
         
         Spinner.return :message => "Uninstalling #{y('MySQL')} from #{y(e.name)} environment.." do
-          @out1  = e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password ''")
-          @out2  = e.execute_as_root("aptitude remove -y mysql-client mysql-server")
+          e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password ''")
+          e.execute_as_root("aptitude remove -y mysql-client mysql-server")
           g('Done!')
         end
-        puts @out1, @out2
       end
 
       ##
