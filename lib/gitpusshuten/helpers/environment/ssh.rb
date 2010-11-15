@@ -29,8 +29,10 @@ module GitPusshuTen
                 :passphrase => c.passphrase,
                 :port       => c.port
               }) do |ssh|
-                return ssh.exec!(command)
-              end              
+                response = ssh.exec!(command)
+                GitPusshuTen::Log.silent response 
+                return response
+              end
             rescue Net::SSH::AuthenticationFailed
               if @user_attempted
                 GitPusshuTen::Log.error "Password incorrect. Please retry."
@@ -53,7 +55,9 @@ module GitPusshuTen
                 :passphrase => c.passphrase,
                 :port       => c.port
               }) do |ssh|
-                return ssh.exec!(command)
+                response = ssh.exec!(command)
+                GitPusshuTen::Log.silent response 
+                return response
               end              
             rescue Net::SSH::AuthenticationFailed
               if @root_attempted
