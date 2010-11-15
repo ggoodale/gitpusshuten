@@ -4,10 +4,17 @@ module GitPusshuTen
       module Installers
 
         ##
-        # Installs Git
+        # Installs the specified package(s)
         def install!(utility)
           ensure_aptitude_installed!
           execute_as_root("aptitude update; aptitude install -y #{utility}")
+        end
+
+        ##
+        # Uninstalls the specified package(s)
+        def uninstall!(utility)
+          ensure_aptitude_installed!
+          execute_as_root("aptitude remove -y #{utility}")
         end
 
         ##
