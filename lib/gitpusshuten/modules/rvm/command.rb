@@ -34,9 +34,9 @@ module GitPusshuTen
         message "Going to install #{y(ruby_version)} after the #{y('RVM')} installation finishes."
         
         ##
-        # Update apt-get package list and install git/curl/wget
+        # Update aptitude package list and install git/curl/wget
         Spinner.return :message => "Updating package list and installing #{y('RVM')} requirements.." do
-          e.execute_as_root("apt-get update; apt-get install -y git-core curl wget;")
+          e.install!("git-core curl wget;")
           g("Done!")
         end
         
@@ -84,7 +84,7 @@ module GitPusshuTen
         ##
         # Install required packages for installing Ruby
         Spinner.return :message => "Installing the Ruby Interpreter #{y('dependency packages')}.." do
-          e.execute_as_root("apt-get install -y build-essential bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+          e.install!("build-essential bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
           g("Done!")
         end
         

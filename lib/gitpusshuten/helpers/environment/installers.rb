@@ -6,7 +6,8 @@ module GitPusshuTen
         ##
         # Installs Git
         def install!(utility)
-          execute_as_root("apt-get install -y #{utility}")
+          ensure_aptitude_installed!
+          execute_as_root("aptitude update; aptitude install -y #{utility}")
         end
 
         ##
@@ -32,6 +33,17 @@ module GitPusshuTen
         def installed?(utility)
           return false if execute_as_root("which #{utility}").nil?
           true
+        end
+
+        ##
+        # Ensures that the aptitude package manager is installed
+        def ensure_aptitude_installed!
+          if not installed?('aptitude')
+            Spinner.return :message => "Ensuring package manager is installed and up to date.." do
+              execute_as_root!('apt-get update; apt-get install -y aptitude')
+              g('Done!')
+            end
+          end
         end
 
       end

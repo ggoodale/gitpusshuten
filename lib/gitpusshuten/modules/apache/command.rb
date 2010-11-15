@@ -30,6 +30,19 @@ module GitPusshuTen
       end
 
       ##
+      # Installs the Apache2 web server
+      def perform_install!
+        prompt_for_root_password!
+        
+        Spinner.return :message => "Installing Apache2 web server.." do
+          @out = e.install!('apache2')
+          g('Done!')
+        end
+        puts @out
+        message "Apache2 has been installed in #{y('/etc/apache2')}."
+      end
+
+      ##
       # Starts Apache
       def perform_start!
         message "Starting Apache."
@@ -192,8 +205,8 @@ module GitPusshuTen
           
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('Apache')} dependencies are installed.." do
-              e.execute_as_root("apt-get update; apt-get install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
-              e.execute_as_root("apt-get update; apt-get install -y apache2-mpm-prefork apache2-prefork-dev libapr1-dev libaprutil1-dev")
+              e.install!("build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+              e.install!("apache2-mpm-prefork apache2-prefork-dev libapr1-dev libaprutil1-dev")
               g("Done!")
             end
             

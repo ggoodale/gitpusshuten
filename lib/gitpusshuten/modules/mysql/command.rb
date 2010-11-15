@@ -29,8 +29,10 @@ module GitPusshuTen
         
         prompt_for_new_password!
         
-        command  = "export DEBIAN_FRONTEND=noninteractive; apt-get update;"
-        command += "apt-get install -y mysql-client mysql-server;"
+        e.ensure_aptitude_installed!
+        
+        command  = "export DEBIAN_FRONTEND=noninteractive; aptitude update;"
+        command += "aptitude install -y mysql-client mysql-server;"
         command += "mysqladmin -u root password '#{@new_password}'"
         
         Spinner.return :message => "Installing #{y('MySQL')} to #{y(e.name)}.." do
@@ -48,12 +50,12 @@ module GitPusshuTen
           exit
         end
         
-        message "Please provide your #{y('root')} password."
+        message "Please provide your MySQL #{y('root')} password."
         @existing_password = ask('') { |q| q.echo = false }
         confirm_access!
         prompt_for_new_password!
         
-        Spinner.return :message => "Chaning root password of #{y('MySQL')} on #{y(e.name)} environment.." do
+        Spinner.return :message => "Changing root password of #{y('MySQL')} on #{y(e.name)} environment.." do
           @out = e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password '#{@new_password}'")
           g('Done!')
         end
@@ -68,13 +70,13 @@ module GitPusshuTen
           exit
         end
         
-        message "Please provide your #{y('root')} password."
+        message "Please provide your MySQL #{y('root')} password."
         @existing_password = ask('') { |q| q.echo = false }
         confirm_access!
         
         Spinner.return :message => "Uninstalling #{y('MySQL')} from #{y(e.name)} environment.." do
           @out1  = e.execute_as_root("mysqladmin -u root --password='#{@existing_password}' password ''")
-          @out2  = e.execute_as_root("apt-get remove -y mysql-client mysql-server; apt-get autoremove -y mysql-client mysql-server")
+          @out2  = e.execute_as_root("aptitude remove -y mysql-client mysql-server")
           g('Done!')
         end
         puts @out1, @out2

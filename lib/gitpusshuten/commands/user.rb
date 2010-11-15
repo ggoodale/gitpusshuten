@@ -158,7 +158,7 @@ module GitPusshuTen
           
           if yes?
             Spinner.return :message => "Installing #{y('Git')}.." do
-              e.execute_as_root('apt-get update; apt-get install -y git-core')
+              e.install!('git-core')
               @git_installed = e.installed?('git')
               if @git_installed
                 g("Done!")

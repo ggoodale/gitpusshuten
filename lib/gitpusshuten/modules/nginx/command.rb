@@ -266,7 +266,7 @@ module GitPusshuTen
           
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('NginX')} dependencies are installed.." do
-              e.execute_as_root("apt-get update; apt-get install -y build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
+              e.install!("build-essential libcurl4-openssl-dev bison openssl libreadline5 libreadline5-dev curl git-core zlib1g zlib1g-dev libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev")
               g("Done!")
             end
             
