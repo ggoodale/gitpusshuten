@@ -207,7 +207,7 @@ module GitPusshuTen
         # Connect to the remote environment and perform the pre deploy hooks
         hooks.render_commands(hooks.pre_hooks).each do |name, commands|
           GitPusshuTen::Log.message("Performing pre deploy hook: #{y(name)}")
-          puts environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
+          standard environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
         end
       end
 
@@ -225,7 +225,7 @@ module GitPusshuTen
         # Connect to the remote environment and perform the post deploy hooks
         hooks.render_commands(hooks.post_hooks).each do |name, commands|
           GitPusshuTen::Log.message("Performing post deploy hook: #{y(name)}")
-          puts environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
+          standard environment.execute_as_user("cd '#{e.app_dir}'; #{commands}")
         end
       end
 
