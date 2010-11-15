@@ -46,7 +46,7 @@ module GitPusshuTen
       # Adds the remote
       def set_remote!
         git.remove_remote(e.name) if git.has_remote?(e.name)
-        git.add_remote(e.name, c.user + '@' + c.ip + ':' + e.app_dir)
+        git.add_remote(e.name, "ssh://#{c.user}@#{c.ip}:#{c.port}/#{e.app_dir}")
       end
 
     end
