@@ -32,7 +32,7 @@ module GitPusshuTen
         e.ensure_aptitude_installed!
         
         command  = "export DEBIAN_FRONTEND=noninteractive; aptitude update;"
-        command += "aptitude install -y mysql-client mysql-server;"
+        command += "aptitude install -y mysql-client mysql-server libmysqlclient15off libmysqlclient15-dev mysql-common;"
         command += "mysqladmin -u root password '#{@new_password}'"
         
         Spinner.return :message => "Installing #{y('MySQL')} to #{y(e.name)}.." do
@@ -92,7 +92,7 @@ module GitPusshuTen
         
         ##
         # Confirm Root Password
-        message "Please provide your #{y('root')} password."
+        message "Please provide your MySQL #{y('root')} password."
         @existing_password = ask('') { |q| q.echo = false }
         confirm_access!
         
@@ -122,7 +122,7 @@ module GitPusshuTen
         
         ##
         # Confirm Root Password
-        message "Please provide your #{y('root')} password."
+        message "Please provide your MySQL #{y('root')} password."
         @existing_password = ask('') { |q| q.echo = false }
         confirm_access!
         
