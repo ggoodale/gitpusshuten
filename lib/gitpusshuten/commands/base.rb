@@ -161,6 +161,12 @@ module GitPusshuTen
       end
 
       ##
+      # Shorthand for silently creating logs
+      def silent(text)
+        GitPusshuTen::Log.silent(text)
+      end
+
+      ##
       # Initialize a new command
       def initialize(cli, configuration, hooks, environment)
         @cli           = cli

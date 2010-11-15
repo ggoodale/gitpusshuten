@@ -34,8 +34,16 @@ module GitPusshuTen
     end
 
     ##
+    # Silently logs messages
+    def self.silent(message)
+      to_file message
+      nil
+    end
+
+    ##
     # Logs the message to the log file
     def self.to_file(message)
+      return unless message.is_a?(String)
       
       ##
       # Don't log if we're not working within the Gitpusshuten directory
