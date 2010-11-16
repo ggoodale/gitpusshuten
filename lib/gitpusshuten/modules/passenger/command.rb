@@ -98,6 +98,12 @@ module GitPusshuTen
         end
         
         ##
+        # Configures NginX to setup a managable vhost environment like Apache2
+        if nginx?
+          GitPusshuTen::Initializer.new("nginx", "setup", "#{e.name}", "environment")
+        end
+        
+        ##
         # Inject the Passenger paths into the Apache2 configuration file
         if apache?
           Spinner.return :message => "Configuring Apache for Phusion Passenger.." do
@@ -133,12 +139,8 @@ CONFIG
         
         if apache?
           message "Apache directory: #{y('/etc/apache2')}"
+          GitPusshuTen::Initializer.new('apache', 'create-vhost', 'for', "#{e.name}")
         end
-        
-        ##
-        # Creates a vhost template locally
-        message "Creating a #{y(webserver)} vhost template."
-        GitPusshuTen::Initializer.new(webserver.downcase, 'create-vhost', 'for', "#{e.name}")
       end
 
       ##
