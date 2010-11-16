@@ -45,8 +45,7 @@ module GitPusshuTen
           g('Done!')
         end
         message "NginX has been installed in #{y('/etc/nginx')}."
-        message "Creating #{y('NginX')} vhost template."
-        GitPusshuTen::Initializer.new('nginx', 'create-vhost', 'for', "#{e.name}")
+        GitPusshuTen::Initializer.new('nginx', 'setup', 'for', "#{e.name}")
       end
 
       ##
