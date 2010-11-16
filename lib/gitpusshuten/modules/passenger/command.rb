@@ -134,6 +134,11 @@ CONFIG
         if apache?
           message "Apache directory: #{y('/etc/apache2')}"
         end
+        
+        ##
+        # Creates a vhost template locally
+        message "Creating a #{y(webserver)} vhost template."
+        GitPusshuTen::Initializer.new(webserver.downcase, 'create-vhost', 'for', "#{e.name}")
       end
 
       ##
