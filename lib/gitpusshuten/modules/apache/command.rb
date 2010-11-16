@@ -3,16 +3,18 @@ module GitPusshuTen
     class Apache < GitPusshuTen::Commands::Base
       description "[Module] Apache commands."
       usage       "apache <command> <for|from|to> <environment> (environment)"
-      example     "gitpusshuten apache install to staging                 # Installs the Apache2 web server"
-      example     "gitpusshuten apache update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "gitpusshuten apache create-vhost for production        # Creates a local vhost template for the specified environment."
-      example     "gitpusshuten apache delete-vhost from production       # Deletes the remote vhost for the specified environment."
-      example     "gitpusshuten apache upload-vhost to staging            # Uploads your local vhost to the server for the specified environment."
-      example     "gitpusshuten apache download-vhost from production     # Downloads the remote vhost from the specified environment."
-      example     "gitpusshuten apache start staging environment          # Starts the Apache webserver."
-      example     "gitpusshuten apache stop production environment        # Stops the Apache webserver."
-      example     "gitpusshuten apache restart production environment     # Restarts the Apache webserver."
-      example     "gitpusshuten apache reload production environment      # Reloads the Apache webserver."
+      example     "gitpusshuten apache install to staging                   # Installs the Apache2 web server"
+      example     "gitpusshuten apache update-configuration for staging     # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "gitpusshuten apache download-configuration from staging  # Downloads the Apache2 configuration file from the specified environment."
+      example     "gitpusshuten apache upload-configuration to staging      # Uploads the Apache2 configuration file to the specified environment."
+      example     "gitpusshuten apache create-vhost for production          # Creates a local vhost template for the specified environment."
+      example     "gitpusshuten apache delete-vhost from production         # Deletes the remote vhost for the specified environment."
+      example     "gitpusshuten apache upload-vhost to staging              # Uploads your local vhost to the server for the specified environment."
+      example     "gitpusshuten apache download-vhost from production       # Downloads the remote vhost from the specified environment."
+      example     "gitpusshuten apache start staging environment            # Starts the Apache webserver."
+      example     "gitpusshuten apache stop production environment          # Stops the Apache webserver."
+      example     "gitpusshuten apache restart production environment       # Restarts the Apache webserver."
+      example     "gitpusshuten apache reload production environment        # Reloads the Apache webserver."
 
       def initialize(*objects)
         super
@@ -35,7 +37,7 @@ module GitPusshuTen
       def perform_install!
         warning "If you are planning to use #{y('Ruby')} and #{y('Passenger')} then #{r("DON'T")} use this Apache2 installer."
         warning "Instead, use the Passenger module to install it."
-        standard "\n\s\s#{y("gitpusshuten passenger install to #{y(e.name)}")}"
+        standard "\n\s\s#{y("gitpusshuten passenger install to #{y(e.name)}")}\n\n"
         
         message "If you do not plan on using #{y('Ruby')} on this server, then this stand-alone installation should be fine."
         message "Do you want to continue?"
@@ -76,6 +78,42 @@ module GitPusshuTen
       def perform_reload!
         message "Reloading Apache Configuration."
         puts e.execute_as_root("/etc/init.d/apache2 reload")
+      end
+
+      ##
+      # Downloads the Apache2 configuration file
+      def perform_download_config!
+        if not e.file?('/etc/apache2/apache2.conf')
+          error "Could not find the Apache2 configuration file in #{y('/etc/apache2/apache2.conf')}"
+          exit
+        end
+        
+        local_apache_dir = File.join(local.gitpusshuten_dir, 'apache')
+        local.execute("mkdir -p '#{local_apache_dir}'")
+        Spinner.return :message => "Downloading Apache2 configuration file to #{y(local_apache_dir)}.." do
+          scp_as_root(:download, "/etc/apache2/apache2.conf", local_apache_dir)
+          g('Done!')
+        end
+      end
+
+      ##
+      # Uploads the Apache2 configuration file
+      def perform_upload_config!
+        if not e.directory?('/etc/apache2')
+          error "Could not find the Apache2 installation directory in #{y('/etc/apache2')}"
+          exit
+        end
+
+        local_configuration_file = File.join(local.gitpusshuten_dir, 'apache', 'apache2.conf')        
+        if not File.exist?(local_configuration_file)
+          error "Could not find the local Apache2 configuration file in #{y(local_configuration_file)}"
+          exit
+        end
+        
+        Spinner.return :message => "Uploading Apache2 configuration file #{y(local_configuration_file)}.." do
+          scp_as_root(:upload, local_configuration_file, "/etc/apache2/apache2.conf")
+          g('Done!')
+        end
       end
 
       def perform_download_vhost!
