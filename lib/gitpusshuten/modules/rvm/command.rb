@@ -225,7 +225,7 @@ module GitPusshuTen
         choose do |menu|
           menu.prompt = ''
           
-          %w[ruby-1.8.6 ruby-1.8.7 ruby-1.9.1 ruby-1.9.2 ].each do |mri|
+          %w[ruby-1.8.6 ruby-1.8.7 ruby-1.9.1 ruby-1.9.2].each do |mri|
             menu.choice(mri)
           end
           
@@ -268,7 +268,7 @@ module GitPusshuTen
           webserver = webserver?
           
           message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
-          GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
+          GitPusshuTen::Initializer.new(webserver.downcase, 'update-configuration', 'for', "#{e.name}")
         end
       end
       

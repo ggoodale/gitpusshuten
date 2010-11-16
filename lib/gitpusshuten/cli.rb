@@ -64,6 +64,9 @@ module GitPusshuTen
         return
       end
       
+      ##
+      # If only a command and one or more arguments are specified,
+      # without an environment, the regular expression below is matched.
       if @arguments.join(' ') =~ /(\w+\-?\w*) (.+)$/
         @command     = $1
         @arguments   = $2.split(' ')

@@ -3,6 +3,7 @@ module GitPusshuTen
     class Nginx < GitPusshuTen::Commands::Base
       description "[Module] NginX commands."
       usage       "nginx <command> <for|from|to> <environment> (environment)"
+      example     "gitpusshuten nginx install to staging                 # Installs the Nginx web server"
       example     "gitpusshuten nginx setup staging environment          # Sets up a managable vhost environment."
       example     "gitpusshuten nginx update-configuration for staging   # Only for Passenger users, when updating Ruby/Passenger versions."
       example     "gitpusshuten nginx create-vhost for production        # Creates a local vhost template for the specified environment."
@@ -22,17 +23,19 @@ module GitPusshuTen
         help if command.nil? or e.name.nil?
         
         @command = @command.underscore
-        
-        ##
-        # Default Configuration
-        @installation_dir         = "/opt/nginx"
-        @installation_dir_found   = false
-        @configuration_file_found = false
       end
 
       ##
       # Installs the NginX web server
       def perform_install!
+        warning "If you are planning to use #{y('Ruby')} and #{y('Passenger')} then #{r("DON'T")} use this NginX installer."
+        warning "Instead, use the Passenger module to install it."
+        standard "\n\s\s#{y("gitpusshuten passenger install to #{y(e.name)}")}"
+        
+        message "If you do not plan on using #{y('Ruby')} on this server, then this stand-alone installation should be fine."
+        message "Do you want to continue?"
+        exit unless yes?
+        
         prompt_for_root_password!
         
         Spinner.return :message => "Installing NginX web server.." do
@@ -78,14 +81,7 @@ module GitPusshuTen
       ##
       # Sets up a vHost directory and injects a snippet into the nginx.conf
       def perform_setup!
-        load_configuration!
-        find_correct_paths!
-        
-        ##
-        # Set configuration directory
-        @configuration_directory = @configuration_file.split('/')
-        @configuration_directory.pop
-        @configuration_directory = @configuration_directory.join('/')
+        find_nginx!
         
         ##
         # Creates a tmp dir
@@ -93,19 +89,18 @@ module GitPusshuTen
         
         ##
         # Downloads the NginX configuration file to tmp dir
-        e.scp_as_root(:download, @configuration_file, local.tmp_dir)
-        @configuration_file_name = @configuration_file.split('/').last
+        e.scp_as_root(:download, @nginx_conf, local.tmp_dir)
         
         ##
         # Set the path to the downloaded file
-        local_file = File.join(local.tmp_dir, @configuration_file_name)
+        local_file = File.join(local.tmp_dir, @nginx_conf_name)
         
-        if not File.read(local_file).include?('include vhosts/*;')
+        if not File.read(local_file).include?('include sites-enabled/*;')
           message "Configuring NginX configuration file."
           
           ##
-          # Inject the 'include vhosts/*'
-          contents = File.read(local_file).sub(/http(\s|\t|\n){0,}\{/, "http {\n\s\s\s\sinclude vhosts/*;\n")
+          # Inject the 'include sites-enabled/*'
+          contents = File.read(local_file).sub(/http(\s|\t|\n){0,}\{/, "http {\n\s\s\s\sinclude sites-enabled/*;\n")
           File.open(local_file, 'w') do |file|
             file << contents
           end
@@ -113,18 +108,17 @@ module GitPusshuTen
           ##
           # Make a backup of the old nginx.conf
           message "Creating a backup of old NginX configuration file."
-          e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup.#{Time.now.to_i}'")
+          e.execute_as_root("cp '#{@nginx_conf}' '#{@nginx_conf}.backup.#{Time.now.to_i}'")
           
           ##
           # Upload the file back
           message "Updating NginX configuration file."
-          e.scp_as_root(:upload, local_file, @configuration_file)
+          e.scp_as_root(:upload, local_file, @nginx_conf)
           
           ##
           # Create the vhosts dir on the server
-          @vhosts_directory = File.join(@configuration_directory, 'vhosts')
-          message "Creating #{@vhosts_directory} directory."
-          e.execute_as_root("mkdir #{@vhosts_directory}")
+          message "Creating #{@nginx_vhosts_dir} directory."
+          e.execute_as_root("mkdir -p #{@nginx_vhosts_dir}")
         end
         
         ##
@@ -135,28 +129,15 @@ module GitPusshuTen
         ##
         # Create NginX directory
         # Create NginX vhost file (if it doesn't already exist)
-        # Create or Overwrite NginX config file that stores the vhosts directory
         create_vhost_template_file!
-        
-        ##
-        # Writes the installation paths to a YAML file
-        config_file = File.join(local.gitpusshuten_dir, 'nginx', "config.yml")
-        File.open(config_file, 'w') do |file|
-          file << YAML::dump({
-            :installation_dir         => @installation_dir,
-            :configuration_directory  => @configuration_directory,
-            :configuration_file       => @configuration_file
-          })
-        end
       end
 
       ##
       # Updates a local vhost
       def perform_upload_vhost!
-        load_configuration!
-        find_correct_paths!
-        
-        if not e.directory?(File.join(@configuration_directory, 'vhosts'))
+        find_nginx!
+                
+        if not e.directory?(@nginx_vhosts_dir)
           error "Could not upload your vhost because the vhost directory does not exist on the server."
           error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
           exit
@@ -164,13 +145,12 @@ module GitPusshuTen
         
         vhost_file = File.join(local.gitpusshuten_dir, 'nginx', "#{e.name}.vhost")
         if File.exist?(vhost_file)
-          message "Uploading #{y(vhost_file)} to " +
-          y(File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost!"))
+          message "Uploading #{y(vhost_file)} to " + y(File.join(@nginx_vhosts_dir, "#{e.sanitized_app_name}.#{e.name}.vhost!"))
           
           prompt_for_root_password!
           
           Spinner.return :message => "Uploading vhost.." do
-            e.scp_as_root(:upload, vhost_file, File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost"))
+            e.scp_as_root(:upload, vhost_file, File.join(@nginx_vhosts_dir, "#{e.sanitized_app_name}.#{e.name}.vhost"))
             g("Finished uploading!")
           end
           
@@ -185,10 +165,9 @@ module GitPusshuTen
       ##
       # Deletes a vhost
       def perform_delete_vhost!
-        load_configuration!
-        find_correct_paths!
+        find_nginx!
         
-        vhost_file = File.join(@configuration_directory, 'vhosts', "#{e.sanitized_app_name}.#{e.name}.vhost")
+        vhost_file = File.join(@nginx_vhosts_dir, "#{e.sanitized_app_name}.#{e.name}.vhost")
         if e.file?(vhost_file)
           Spinner.return :message => "Deleting #{y(vhost_file)}!" do
             e.execute_as_root("rm #{vhost_file}")
@@ -212,11 +191,10 @@ module GitPusshuTen
       # This is particularly used when you change Passenger or Ruby versions
       # so these are updated in the nginx.conf file.
       def perform_update_configuration!
-        load_configuration!
-        find_correct_paths!
+        find_nginx!
         
-        message "Checking the #{y(@configuration_file)} for current Passenger configuration."
-        config_contents = e.execute_as_root("cat '#{@configuration_file}'")
+        message "Checking the #{y(@nginx_conf)} for current Passenger configuration."
+        config_contents = e.execute_as_root("cat '#{@nginx_conf}'")
         if not config_contents.include? 'passenger_root' or not config_contents.include?('passenger_ruby')
           error "Could not find Passenger configuration, has it ever been set up?"
           exit
@@ -272,9 +250,9 @@ module GitPusshuTen
         # If it is not, then Passenger needs to run the "passenger-install-nginx-module" so it gets installed
         if not e.directory?("/usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version}/agents")
           message "Phusion Passenger has not yet been installed for this Ruby's Passenger Gem."
-          message "You need to reinstall/update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration.\n\n"
-          message "Would you like to reinstall/update #{y('NginX')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
-          message "NOTE: Your current #{y('NginX')} configuration will #{g('not')} be lost. This is a reinstall/update that #{g('does not')} remove your NginX configuration."
+          message "You need to update #{y('NginX')} and #{y('Passenger')} to proceed with the configuration.\n\n"
+          message "Would you like to update #{y('NginX')} and #{y('Phusion Passenger')} #{y(@passenger_version)} for #{y(@ruby_version)}?"
+          message "NOTE: Your current #{y('NginX')} configuration will #{g('not')} be lost."
           
           if yes?
             Spinner.return :message => "Ensuring #{y('Phusion Passenger')} and #{y('NginX')} dependencies are installed.." do
@@ -284,7 +262,7 @@ module GitPusshuTen
             
             message "Installing NginX with the Phusion Passenger Module."
             Spinner.return :message => "Installing, this may take a while.." do
-              e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix='#{@installation_dir}'")
+              e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix='/etc/nginx'")
               g("Done!")
             end
           else
@@ -300,10 +278,9 @@ module GitPusshuTen
         # Downloads the NGINX configuration file to tmp dir
         message "Updating Phusion Passenger paths in the NginX Configuration."
         Spinner.return :message => "Configuring NginX.." do
-          e.scp_as_root(:download, @configuration_file, local.tmp_dir)
-          @configuration_file_name = @configuration_file.split('/').last
+          e.scp_as_root(:download, @nginx_conf, local.tmp_dir)
           
-          local_configuration_file = File.join(local.tmp_dir, @configuration_file_name)
+          local_configuration_file = File.join(local.tmp_dir, @nginx_conf_name)
           update = File.read(local_configuration_file)
           update.sub! /passenger_root \/usr\/local\/rvm\/gems\/(.+)\/gems\/passenger\-(.+)\;/,
                       "passenger_root /usr/local/rvm/gems/#{@ruby_version}/gems/passenger-#{@passenger_version};"
@@ -317,11 +294,11 @@ module GitPusshuTen
           
           ##
           # Create a backup of the current configuration file
-          e.execute_as_root("cp '#{@configuration_file}' '#{@configuration_file}.backup.#{Time.now.to_i}'")
+          e.execute_as_root("cp '#{@nginx_conf}' '#{@nginx_conf}.backup.#{Time.now.to_i}'")
           
           ##
           # Upload the updated NginX configuration file
-          e.scp_as_root(:upload, local_configuration_file, @configuration_file)
+          e.scp_as_root(:upload, local_configuration_file, @nginx_conf)
           
           ##
           # Remove the local tmp directory
@@ -331,13 +308,13 @@ module GitPusshuTen
         end
         
         message "NginX configuration file has been updated!"
-        message "#{y(@configuration_file)}\n\n"
+        message "#{y(@nginx_conf)}\n\n"
         
-        warning "If you changed Ruby versions, be sure that all the gems for your applications are installed."
+        warning "If you changed #{y('Ruby versions')}, be sure that all your application gems are installed."
         warning "If you only updated #{y('Phusion Passenger')} and did not change #{y('Ruby versions')}"
         warning "then you should be able to just restart #{y('NginX')} right away since all application gems should still be in tact.\n\n"
         
-        message "Run the following command to restart #{y('NginX')} and have the applied updates take effect:"
+        message "When ready, run the following command to restart #{y('NginX')} and have the applied updates take effect:"
         standard "\n\s\s#{y("gitpusshuten nginx restart for #{e.name}")}"
       end
 
@@ -345,7 +322,7 @@ module GitPusshuTen
         load_configuration!
         find_correct_paths!
         
-        remote_vhost = File.join(@configuration_directory, "vhosts", "#{e.sanitized_app_name}.#{e.name}.vhost")
+        remote_vhost = File.join(@nginx_vhosts_dir, "#{e.sanitized_app_name}.#{e.name}.vhost")
         if not e.file?(remote_vhost) # prompts root
           error "There is no vhost currently present in #{y(remote_vhost)}."
           exit
@@ -377,49 +354,6 @@ module GitPusshuTen
       end
 
       ##
-      # Attempts to find correct paths and prompts the user for them otherwise
-      def find_correct_paths!
-        message "Confirming NginX installation directory location."
-        while not @installation_dir_found
-          if not e.directory?(@installation_dir)
-            warning "Could not find NginX in #{y(@installation_dir)}."
-            message "Please provide the path to the installation directory. (Usually #{y('/opt/nginx')} or #{y('/etc/nginx')})"
-            @installation_dir = ask('')
-          else
-            message "NginX installation directory found in #{y(@installation_dir)}!"
-            @installation_dir_found = true
-          end
-        end
-        
-        message "Confirming NginX configuration file location."
-        @configuration_file = File.join(@installation_dir, "conf", "nginx.conf") if @configuration_file.nil?
-        while not @configuration_file_found
-          if not environment.file?(@configuration_file)
-            warning "Could not find the NginX configuration file in #{y(@configuration_file)}."
-            message "Please provide the (full/absolute) path to the NginX configuration file."
-            message "(Usually #{y("#{@installation_dir}/conf/nginx.conf")} or #{y("#{@installation_dir}/nginx.conf")})"
-            @configuration_file = ask('')
-          else
-            message "NginX configuration file found in #{y(@configuration_file)}!"
-            @configuration_file_found = true
-          end
-        end
-      end
-
-      ##
-      # Load in configuration if present
-      def load_configuration!
-        config_file_path = File.join(local.gitpusshuten_dir, 'nginx', 'config.yml')
-        if File.exist?(config_file_path)
-          message "Loading configuration from #{y(File.join(local.gitpusshuten_dir, 'nginx', 'config.yml'))}."
-          config = YAML::load(File.read(config_file_path))
-          @installation_dir         = config[:installation_dir]
-          @configuration_directory  = config[:configuration_directory]
-          @configuration_file       = config[:configuration_file]
-        end
-      end
-
-      ##
       # Creates a vhost template file if it doesn't already exist.
       def create_vhost_template_file!
         local.execute("mkdir -p '#{File.join(local.gitpusshuten_dir, 'nginx')}'")
@@ -442,7 +376,29 @@ module GitPusshuTen
           end
           message "The vhost has been created in #{y(vhost_file)}."
         end
+      end
+
+      ##
+      # Finds and sets the NginX Conf path
+      def find_nginx!
+        ##
+        # NginX Conf path you get from Passenger
+        if e.file?('/etc/nginx/conf/nginx.conf')
+          @nginx_conf     = '/etc/nginx/conf/nginx.conf'
+          @nginx_conf_dir = '/etc/nginx/conf'
+        end
         
+        ##
+        # NginX Conf path you get from Aptitude
+        if e.file?('/etc/nginx/nginx.conf')
+          @nginx_conf     = '/etc/nginx/nginx.conf'
+          @nginx_conf_dir = '/etc/nginx'
+        end
+        
+        ##
+        # Set additional configuration
+        @nginx_conf_name  = @nginx_conf.split('/').last
+        @nginx_vhosts_dir = @nginx_conf_dir + '/sites-enabled'
       end
 
     end

@@ -47,17 +47,7 @@ module GitPusshuTen
         end
         
         message "Starting #{y('Phusion Passenger')} installation for #{y(webserver)}!"
-        
-        ##
-        # Install Passenger (NginX Module) and NginX itself
-        if nginx? and not @updating
-          while @prefix_path.nil? or not @prefix_path =~ /^\//
-            message "Where would you like to install NginX? Provide an #{y('absolute')} path."
-            @prefix_path = ask("Leave empty if you want to use the default: /opt/nginx")
-            @prefix_path = '/opt/nginx' if @prefix_path.empty?
-          end
-        end
-        
+                
         ##
         # Install the latest Passenger Gem
         Spinner.return :message => "Installing latest Phusion Passenger Gem.." do
@@ -91,10 +81,11 @@ module GitPusshuTen
         end
         
         Spinner.return :message => "This may take a while.." do
+          
           ##
           # Run the Passenger NginX installation module if we're working with NginX
           if nginx?
-            e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix='#{@prefix_path}'")
+            e.execute_as_root("passenger-install-nginx-module --auto --auto-download --prefix=/etc/nginx")
           end
           
           ##
@@ -135,13 +126,21 @@ CONFIG
         else
           message "#{y('Phusion Passenger')} and #{y(webserver)} have been updated!"
         end
+        
+        if nginx?
+          message "NginX directory: #{y('/etc/nginx')}"
+        end
+        
+        if apache?
+          message "Apache directory: #{y('/etc/apache2')}"
+        end
       end
 
       ##
-      # Updates the Passenger Gem and NginX itself
+      # Updates the Passenger Gem and NginX or Apache2 itself
       # Compares the currently installed Passenger Gem with the latest (stable) version
       # on RubyGems.org to see if anything newer than the current version is out.
-      # If there is, then it will continue to update NginX using Phussions's NginX installation module.
+      # If there is, then it will continue to update NginX/Apache2 using Phussions's NginX/Apache2 installation module.
       def perform_update!
         prompt_for_root_password!
         
@@ -177,7 +176,7 @@ CONFIG
             @ruby_version = e.execute_as_root("ruby -v").chomp
             r("Couldn't find Phusion Passenger")
           else
-            g("Done!")
+            g("Found!")
           end
         end
         
@@ -213,57 +212,34 @@ CONFIG
         if yes?
           
           ##
-          # Loads webserver configuration file if it exists to figure out the
-          # webserver installation directory. Default to nil if no configuration could
-          # be found. If this is the case, the user will be prompted to provide the
-          # webserver installation directory.
-          #
-          # This only applies to NginX since Apache2 apparently always installs in /etc/apache2
-          load_configuration!(webserver)
-          @updating      = true
-          @prefix_path   = @installation_dir || '/opt/nginx'
-          @path_found  ||= false
-          
-          ##
           # Search for NginX installation directory by finding the configuration file
           if nginx?
-            while not @path_found
-              if not e.file?(File.join(@prefix_path, 'conf', 'nginx.conf'))
-                warning "Could not find the #{y('NginX')} installation directory."
-                @prefix_path = ask("Please provide the absolute path to the direction in which you've previously installed #{y('NginX')}.")
-              else
-                @path_found = true
-              end
+            find_nginx_conf!
+            
+            if not @nginx_conf
+              error "Could not find the NginX configuration file in #{y('/etc/nginx')} or #{y('/etc/nginx/conf')}."
+              exit 
             end
           end
           
           ##
           # Ensures the Apache2 configuration file exists
           if apache?
-            if not e.file?(File.join(@prefix_path, 'apache2.conf'))
-              error "Could not find Apache configuration file in #{y(File.join(@prefix_path, 'apache2.conf'))}."
+            find_apache2_conf!
+            
+            if not @apache2_conf
+              error "Could not find the Apache2 configuration file in #{y('/etc/apache2')}."
               exit
             end
           end
           
           ##
           # Installation directory has been found
-          message "#{y(webserver)} installation found in #{y(@prefix_path)}."
-          
-          ##
-          # Write local webserver configuration file
-          if nginx?
-            File.open(File.join(local.gitpusshuten_dir, 'nginx', 'config.yml'), 'w') do |file|
-              file << YAML::dump({
-                :installation_dir         => @prefix_path,
-                :configuration_directory  => File.join(@prefix_path, 'conf'),
-                :configuration_file       => File.join(@prefix_path, 'conf', 'nginx.conf')
-              })
-            end
-          end
+          message "#{y(webserver)} installation found in #{y(@nginx_conf || @apache2_conf)}."
           
           ##
           # Invoke the installation command to install NginX
+          @updating = true
           perform_install!
           
           ##
@@ -271,24 +247,6 @@ CONFIG
           message "The #{y(webserver)} configuration file needs to be updated with the new #{y('Passenger')} version."
           message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
           GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
-        end
-      end
-
-      ##
-      # Load in configuration if present
-      def load_configuration!(webserver)
-        if nginx?
-          config_file_path = File.join(local.gitpusshuten_dir, webserver.downcase, 'config.yml')
-          if File.exist?(config_file_path)
-            message "Loading configuration from #{y(File.join(local.gitpusshuten_dir, webserver, 'config.yml'))}."
-            config = YAML::load(File.read(config_file_path))
-            @installation_dir = config[:installation_dir]
-          end
-        end
-        
-        if apache?
-          @installation_dir = '/etc/apache2'
-          @path_found       = true
         end
       end
 
@@ -311,6 +269,32 @@ CONFIG
           menu.prompt = ''
           menu.choice('NginX')
           menu.choice('Apache')
+        end
+      end
+
+      ##
+      # Finds and sets the NginX Conf path
+      def find_nginx_conf!
+        ##
+        # NginX Conf path you get from Passenger
+        if e.file?('/etc/nginx/conf/nginx.conf')
+          @nginx_conf = '/etc/nginx/conf/nginx.conf'
+        end
+        
+        ##
+        # NginX Conf path you get from Aptitude
+        if e.file?('/etc/nginx/nginx.conf')
+          @nginx_conf = '/etc/nginx/nginx.conf'
+        end
+      end
+
+      ##
+      # Finds and sets the Apache2 Conf path
+      def find_apache2_conf!
+        ##
+        # Apache2 Conf path you get from Aptitude
+        if e.file?('/etc/apache2/apache2.conf')
+          @apache2_conf = '/etc/apache2/apache2.conf'
         end
       end
 
