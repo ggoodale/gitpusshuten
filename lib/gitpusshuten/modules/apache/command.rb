@@ -50,6 +50,8 @@ module GitPusshuTen
           g('Done!')
         end
         message "Apache2 has been installed in #{y('/etc/apache2')}."
+        message "Creating #{y('Apache')} vhost template."
+        GitPusshuTen::Initializer.new('apache', 'create-vhost', 'for', "#{e.name}")
       end
 
       ##
