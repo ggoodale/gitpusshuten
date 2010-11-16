@@ -27,6 +27,7 @@ module GitPusshuTen
           exit
         end
         
+        message "Please provide a new password for your MySQL database #{y('root')} user."
         prompt_for_new_password!
         
         e.ensure_aptitude_installed!
@@ -52,6 +53,8 @@ module GitPusshuTen
         message "Please provide your MySQL #{y('root')} password."
         @existing_password = ask('') { |q| q.echo = false }
         confirm_access!
+        
+        message "Please provide a new password for your MySQL database #{y('root')} user."
         prompt_for_new_password!
         
         Spinner.return :message => "Changing root password of #{y('MySQL')} on #{y(e.name)} environment.." do
@@ -95,6 +98,7 @@ module GitPusshuTen
         
         ##
         # Ask password for the new user
+        message "Please provide a new password for your MySQL database user."
         prompt_for_new_password!
                 
         command  = "\"CREATE USER '#{c.user}'@'localhost' IDENTIFIED BY '#{@new_password}';"
@@ -137,7 +141,6 @@ module GitPusshuTen
       # Prompts the user to fill in a new password
       def prompt_for_new_password!
         while not @mysql_new_password_confirmed
-          message "Please provide a new password for your MySQL database user."
           @new_password = ask('') { |q| q.echo = false }
           message "Please enter your password again."
           @password_confirmation = ask('')  { |q| q.echo = false }
