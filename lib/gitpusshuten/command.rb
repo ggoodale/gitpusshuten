@@ -109,8 +109,8 @@ module GitPusshuTen
     # Displays a list of available commands in the CLI
     def display_commands
       puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\n"
-      puts "[Aliases]\n\n"
-      puts "\s\s#{y 'push'}, #{y 'pusshu'}, #{y 'pusshuten'} and #{y 'ten'}\n\n"
+      puts "[Alias]\n\n"
+      puts "\s\s#{y('ten')}\n\n"
       puts "[Commands]\n\n"
       available_commands.compact.sort.each do |command|
         puts "\s\s" + y(command) + (command.length < 6 ? "\t" : "") + "\t" + get_constant_for(command).description          
