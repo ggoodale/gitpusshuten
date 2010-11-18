@@ -3,9 +3,9 @@ module GitPusshuTen
     class Passenger < GitPusshuTen::Commands::Base
       description "[Module] Phusion Passenger commands."
       usage       "passenger <command> for <environment>"
-      example     "gitpusshuten passenger install for staging      # Installs Phusion Passenger with the NginX or Apache2 web server"
-      example     "gitpusshuten passenger update for staging       # Updates Phusion Passenger and the NginX or Apache2 web server if a new version is available"
-      example     "gitpusshuten passenger restart for production   # Restarts the Passenger instance for the specified environment"
+      example     "heavenly passenger install for staging      # Installs Phusion Passenger with the NginX or Apache2 web server"
+      example     "heavenly passenger update for staging       # Updates Phusion Passenger and the NginX or Apache2 web server if a new version is available"
+      example     "heavenly passenger restart for production   # Restarts the Passenger instance for the specified environment"
 
       ##
       # Contains the webserver we're working with
@@ -34,7 +34,7 @@ module GitPusshuTen
         if not e.installed?('gem')
           error "Could not find RubyGems."
           error "Install RVM (Ruby Version Manager) and at least one Ruby version."
-          error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
+          error "To do this, run: #{y("heavenly rvm install for #{e.name}")}."
           exit
         end
         
@@ -171,7 +171,7 @@ CONFIG
         
         if not @rubygems_installed
           error "Install RVM (Ruby Version Manager) and at least one Ruby version."
-          error "To do this, run: #{y("gitpusshuten rvm install for #{e.name}")}."
+          error "To do this, run: #{y("heavenly rvm install for #{e.name}")}."
           exit
         end
         
@@ -190,7 +190,7 @@ CONFIG
         if not @passenger_installed
           error "Passenger has not been installed for #{y(@ruby_version)}"
           error "If you want to install Passenger, please run the following command:"
-          error y("gitpusshuten passenger install for #{e.name}")
+          error y("heavenly passenger install for #{e.name}")
           exit
         end
         
@@ -252,7 +252,7 @@ CONFIG
           ##
           # Update the webserver configuration file
           message "The #{y(webserver)} configuration file needs to be updated with the new #{y('Passenger')} version."
-          message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+          message "Invoking #{y("heavenly #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
           GitPusshuTen::Initializer.new([webserver.downcase, 'update-configuration', 'for', "#{e.name}"])
         end
       end

@@ -109,13 +109,13 @@ module GitPusshuTen
     # Displays a list of available commands in the CLI
     def display_commands
       puts "\nGit Pusshu Ten\n\s\s\s\sプッシュ点\n\n"
-      puts "[Alias]\n\n"
-      puts "\s\s#{y('ten')}\n\n"
+      puts "[Aliases]\n\n"
+      puts "\s\s#{y('gitpusshuten')}, #{y('heavenly')}, #{y('ten')}\n\n"
       puts "[Commands]\n\n"
       available_commands.compact.sort.each do |command|
         puts "\s\s" + y(command) + (command.length < 6 ? "\t" : "") + "\t" + get_constant_for(command).description          
       end
-      puts "\n[Command Specific Help]\n\n" + "\s\sgitpusshuten help <command>\n".color(:yellow)
+      puts "\n[Command Specific Help]\n\n" + "\s\sheavenly help <command>\n".color(:yellow)
       puts "For more information, visit: #{y 'http://gitpusshuten.com/'}"
     end
 
@@ -127,7 +127,7 @@ module GitPusshuTen
       puts "[Description]\n\n\s\s#{get_constant_for(command).description}\n\n"
       puts "[Usage]\n\n\s\s#{y get_constant_for(command).usage}\n\n"
       puts "[Examples]\n#{get_constant_for(command).example}\n\n"
-      puts "For a list of all commands: #{y 'gitpusshuten help'}"
+      puts "For a list of all commands: #{y 'heavenly help'}"
       puts "For more information, visit: #{y 'http://gitpusshuten.com/'}"
     end
 

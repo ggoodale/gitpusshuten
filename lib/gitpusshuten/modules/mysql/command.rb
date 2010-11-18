@@ -3,11 +3,11 @@ module GitPusshuTen
     class Mysql < GitPusshuTen::Commands::Base
       description "[Module] MySQL installer and manager."
       usage       "mysql <command> <environment>"
-      example     "gitpusshuten mysql install on staging                # Installs MySQL to the staging environment."
-      example     "gitpusshuten mysql uninstall from staging            # Uninstalls MySQL from the staging environment."
-      example     "gitpusshuten mysql add-user to staging               # Adds the user to MySQL on the production environment."
-      example     "gitpusshuten mysql remove-user from staging          # Remvoes the user from MySQL on the production environment."
-      example     "gitpusshuten mysql change-root-password on staging   # Changes the root password of MySQL on the staging environment."
+      example     "heavenly mysql install on staging                # Installs MySQL to the staging environment."
+      example     "heavenly mysql uninstall from staging            # Uninstalls MySQL from the staging environment."
+      example     "heavenly mysql add-user to staging               # Adds the user to MySQL on the production environment."
+      example     "heavenly mysql remove-user from staging          # Remvoes the user from MySQL on the production environment."
+      example     "heavenly mysql change-root-password on staging   # Changes the root password of MySQL on the staging environment."
 
       def initialize(*objects)
         super

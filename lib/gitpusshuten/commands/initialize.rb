@@ -4,7 +4,7 @@ module GitPusshuTen
     class Initialize < GitPusshuTen::Commands::Base
       description "Initializes Git Pusshu Ten (プッシュ点) with the working directory."
       usage       "initialize"
-      example     "gitpusshuten initialize  # Initializes Git Pusshu Ten (プッシュ点) with the working directory."
+      example     "heavenly initialize  # Initializes Git Pusshu Ten (プッシュ点) with the working directory."
 
       ##
       # Initialize specific attributes/arguments
@@ -32,7 +32,7 @@ module GitPusshuTen
           end
           git.ignore!
         else
-          message "If you wish to initialize it elsewhere, please move into that directory and run #{y("gitpusshuten initialize")} again."
+          message "If you wish to initialize it elsewhere, please move into that directory and run #{y("heavenly initialize")} again."
         end
       end
 

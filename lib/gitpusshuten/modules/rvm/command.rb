@@ -4,15 +4,15 @@ module GitPusshuTen
     class Rvm < GitPusshuTen::Commands::Base
       description "[Module] Ruby Version Manager (RVM) commands."
       usage       "rvm <command> for <environment>"
-      example     "gitpusshuten rvm install for staging                # Installs RVM (system wide)."
-      example     "gitpusshuten rvm update for staging                 # Updates RVM."
-      example     "gitpusshuten rvm list for staging                   # Lists installed Rubies under RVM."
-      example     "gitpusshuten rvm install-ruby for production        # Installs one of the available Ruby versions."
-      example     "gitpusshuten rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
-      example     "gitpusshuten rvm remove-ruby for production         # Uninstalls and removes the Ruby's complete source from RVM."
-      example     "gitpusshuten rvm set-default-ruby for production    # Sets the system wide default Ruby."
-      example     "                                                      This is required if you want to change the Ruby version"
-      example     "                                                      for your Ruby applications running Passenger."
+      example     "heavenly rvm install for staging                # Installs RVM (system wide)."
+      example     "heavenly rvm update for staging                 # Updates RVM."
+      example     "heavenly rvm list for staging                   # Lists installed Rubies under RVM."
+      example     "heavenly rvm install-ruby for production        # Installs one of the available Ruby versions."
+      example     "heavenly rvm uninstall-ruby for production      # Uninstalls an installed Ruby under RVM."
+      example     "heavenly rvm remove-ruby for production         # Uninstalls and removes the Ruby's complete source from RVM."
+      example     "heavenly rvm set-default-ruby for production    # Sets the system wide default Ruby."
+      example     "                                                  This is required if you want to change the Ruby version"
+      example     "                                                  for your Ruby applications running Passenger."
 
       def initialize(*objects)
         super
@@ -267,7 +267,7 @@ module GitPusshuTen
           message "Which webserver are you using?"
           webserver = webserver?
           
-          message "Invoking #{y("gitpusshuten #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
+          message "Invoking #{y("heavenly #{webserver.downcase} update-configuration for #{e.name}")} for you..\n\n\n"
           GitPusshuTen::Initializer.new(webserver.downcase, 'update-configuration', 'for', "#{e.name}")
         end
       end

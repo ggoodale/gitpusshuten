@@ -3,19 +3,19 @@ module GitPusshuTen
     class Nginx < GitPusshuTen::Commands::Base
       description "[Module] NginX commands."
       usage       "nginx <command> <for|from|to> <environment> (environment)"
-      example     "gitpusshuten nginx install to staging                   # Installs the Nginx web server"
-      example     "gitpusshuten nginx setup staging environment            # Sets up a managable vhost environment."
-      example     "gitpusshuten nginx update-configuration for staging     # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "gitpusshuten nginx download-configuration from staging  # Downloads the Nginx configuration file from the specified environment."
-      example     "gitpusshuten nginx upload-configuration to staging      # Uploads the NginX configuration file to the specified environment."
-      example     "gitpusshuten nginx create-vhost for production          # Creates a local vhost template for the specified environment."
-      example     "gitpusshuten nginx delete-vhost from production         # Deletes the remote vhost for the specified environment."
-      example     "gitpusshuten nginx upload-vhost to staging              # Uploads your local vhost to the server for the specified environment."
-      example     "gitpusshuten nginx download-vhost from production       # Downloads the remote vhost from the specified environment."
-      example     "gitpusshuten nginx start staging environment            # Starts the NginX webserver."
-      example     "gitpusshuten nginx stop production environment          # Stops the NginX webserver."
-      example     "gitpusshuten nginx restart production environment       # Restarts the NginX webserver."
-      example     "gitpusshuten nginx reload production environment        # Reloads the NginX webserver."
+      example     "heavenly nginx install to staging                   # Installs the Nginx web server"
+      example     "heavenly nginx setup staging environment            # Sets up a managable vhost environment."
+      example     "heavenly nginx update-configuration for staging     # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "heavenly nginx download-configuration from staging  # Downloads the Nginx configuration file from the specified environment."
+      example     "heavenly nginx upload-configuration to staging      # Uploads the NginX configuration file to the specified environment."
+      example     "heavenly nginx create-vhost for production          # Creates a local vhost template for the specified environment."
+      example     "heavenly nginx delete-vhost from production         # Deletes the remote vhost for the specified environment."
+      example     "heavenly nginx upload-vhost to staging              # Uploads your local vhost to the server for the specified environment."
+      example     "heavenly nginx download-vhost from production       # Downloads the remote vhost from the specified environment."
+      example     "heavenly nginx start staging environment            # Starts the NginX webserver."
+      example     "heavenly nginx stop production environment          # Stops the NginX webserver."
+      example     "heavenly nginx restart production environment       # Restarts the NginX webserver."
+      example     "heavenly nginx reload production environment        # Reloads the NginX webserver."
 
       def initialize(*objects)
         super
@@ -32,7 +32,7 @@ module GitPusshuTen
       def perform_install!
         warning "If you are planning to use #{y('Ruby')} and #{y('Passenger')} then #{r("DON'T")} use this NginX installer."
         warning "Instead, use the Passenger module to install it."
-        standard "\n\s\s#{y("gitpusshuten passenger install to #{y(e.name)}")}\n\n"
+        standard "\n\s\s#{y("heavenly passenger install to #{y(e.name)}")}\n\n"
         
         message "If you do not plan on using #{y('Ruby')} on this server, then this stand-alone installation should be fine."
         message "Do you want to continue?"
@@ -180,7 +180,7 @@ module GitPusshuTen
                 
         if not e.directory?(@nginx_vhosts_dir)
           error "Could not upload your vhost because the vhost directory does not exist on the server."
-          error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
+          error "Did you run #{y("heavenly nginx setup for #{e.name}")} yet?"
           exit
         end
         
@@ -198,7 +198,7 @@ module GitPusshuTen
           perform_restart!
         else
           error "Could not locate vhost file #{y(vhost_file)}."
-          error "Did you run #{y("gitpusshuten nginx setup for #{e.name}")} yet?"
+          error "Did you run #{y("heavenly nginx setup for #{e.name}")} yet?"
           exit
         end
       end
@@ -356,7 +356,7 @@ module GitPusshuTen
         warning "then you should be able to just restart #{y('NginX')} right away since all application gems should still be in tact.\n\n"
         
         message "When ready, run the following command to restart #{y('NginX')} and have the applied updates take effect:"
-        standard "\n\s\s#{y("gitpusshuten nginx restart for #{e.name}")}"
+        standard "\n\s\s#{y("heavenly nginx restart for #{e.name}")}"
       end
 
       def perform_download_vhost!

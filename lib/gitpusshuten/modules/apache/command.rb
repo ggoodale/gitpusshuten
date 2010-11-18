@@ -3,18 +3,18 @@ module GitPusshuTen
     class Apache < GitPusshuTen::Commands::Base
       description "[Module] Apache commands."
       usage       "apache <command> <for|from|to> <environment> (environment)"
-      example     "gitpusshuten apache install to staging                   # Installs the Apache2 web server"
-      example     "gitpusshuten apache update-configuration for staging     # Only for Passenger users, when updating Ruby/Passenger versions."
-      example     "gitpusshuten apache download-configuration from staging  # Downloads the Apache2 configuration file from the specified environment."
-      example     "gitpusshuten apache upload-configuration to staging      # Uploads the Apache2 configuration file to the specified environment."
-      example     "gitpusshuten apache create-vhost for production          # Creates a local vhost template for the specified environment."
-      example     "gitpusshuten apache delete-vhost from production         # Deletes the remote vhost for the specified environment."
-      example     "gitpusshuten apache upload-vhost to staging              # Uploads your local vhost to the server for the specified environment."
-      example     "gitpusshuten apache download-vhost from production       # Downloads the remote vhost from the specified environment."
-      example     "gitpusshuten apache start staging environment            # Starts the Apache webserver."
-      example     "gitpusshuten apache stop production environment          # Stops the Apache webserver."
-      example     "gitpusshuten apache restart production environment       # Restarts the Apache webserver."
-      example     "gitpusshuten apache reload production environment        # Reloads the Apache webserver."
+      example     "heavenly apache install to staging                   # Installs the Apache2 web server"
+      example     "heavenly apache update-configuration for staging     # Only for Passenger users, when updating Ruby/Passenger versions."
+      example     "heavenly apache download-configuration from staging  # Downloads the Apache2 configuration file from the specified environment."
+      example     "heavenly apache upload-configuration to staging      # Uploads the Apache2 configuration file to the specified environment."
+      example     "heavenly apache create-vhost for production          # Creates a local vhost template for the specified environment."
+      example     "heavenly apache delete-vhost from production         # Deletes the remote vhost for the specified environment."
+      example     "heavenly apache upload-vhost to staging              # Uploads your local vhost to the server for the specified environment."
+      example     "heavenly apache download-vhost from production       # Downloads the remote vhost from the specified environment."
+      example     "heavenly apache start staging environment            # Starts the Apache webserver."
+      example     "heavenly apache stop production environment          # Stops the Apache webserver."
+      example     "heavenly apache restart production environment       # Restarts the Apache webserver."
+      example     "heavenly apache reload production environment        # Reloads the Apache webserver."
 
       def initialize(*objects)
         super
@@ -37,7 +37,7 @@ module GitPusshuTen
       def perform_install!
         warning "If you are planning to use #{y('Ruby')} and #{y('Passenger')} then #{r("DON'T")} use this Apache2 installer."
         warning "Instead, use the Passenger module to install it."
-        standard "\n\s\s#{y("gitpusshuten passenger install to #{y(e.name)}")}\n\n"
+        standard "\n\s\s#{y("heavenly passenger install to #{y(e.name)}")}\n\n"
         
         message "If you do not plan on using #{y('Ruby')} on this server, then this stand-alone installation should be fine."
         message "Do you want to continue?"
@@ -158,9 +158,9 @@ module GitPusshuTen
         else
           error "Could not locate vhost file #{y(vhost_file)}."
           error "Download an existing one from your server with:"
-          standard "\n\s\s#{y("gitpusshuten apache download-vhost for #{e.name}")}\n\n"
+          standard "\n\s\s#{y("heavenly apache download-vhost for #{e.name}")}\n\n"
           error "Or create a new template by running:"
-          standard "\n\s\s#{y("gitpusshuten apache create-vhost for #{e.name}")}\n\n"
+          standard "\n\s\s#{y("heavenly apache create-vhost for #{e.name}")}\n\n"
           exit
         end
       end
@@ -318,7 +318,7 @@ module GitPusshuTen
         warning "then you should be able to just restart #{y('Apache')} right away since all application gems should still be in tact.\n\n"
         
         message "When ready, run the following command to restart #{y('Apache')} and have the applied updates take effect:"
-        standard "\n\s\s#{y("gitpusshuten apache restart for #{e.name}")}"
+        standard "\n\s\s#{y("heavenly apache restart for #{e.name}")}"
       end
 
       ##

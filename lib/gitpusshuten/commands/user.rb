@@ -3,13 +3,13 @@ module GitPusshuTen
     class User < GitPusshuTen::Commands::Base
       description "Interacts with users, based on the <app_root>/.gitpusshuten/config.rb file."
       usage       "user <command> (to|for|from|on) <environment>"
-      example     "gitpusshuten user add to production                # Sets up the user on the remote server for production."
-      example     "gitpusshuten user reconfigure for production       # Reconfigures the user without removing applications."
-      example     "gitpusshuten user remove from production           # Removes the user and all it's applications."
-      example     "gitpusshuten user install-ssh-key to staging       # Installs your ssh key on the server for the user."
-      example     "gitpusshuten user install-root-ssh-key to staging  # Installs your ssh key on the server for the root user."
-      example     "$(gitpusshuten user login to staging)              # Logs the user in to the staging environment as user."
-      example     "$(gitpusshuten user login-root to production)      # Logs the user in to the production environment as root."
+      example     "heavenly user add to production                # Sets up the user on the remote server for production."
+      example     "heavenly user reconfigure for production       # Reconfigures the user without removing applications."
+      example     "heavenly user remove from production           # Removes the user and all it's applications."
+      example     "heavenly user install-ssh-key to staging       # Installs your ssh key on the server for the user."
+      example     "heavenly user install-root-ssh-key to staging  # Installs your ssh key on the server for the root user."
+      example     "$(heavenly user login to staging)              # Logs the user in to the staging environment as user."
+      example     "$(heavenly user login-root to production)      # Logs the user in to the production environment as root."
 
       def initialize(*objects)
         super
@@ -41,9 +41,9 @@ module GitPusshuTen
         else
           error "User #{y(c.user)} already exists."
           error "If you want to remove this user, run the following command:"
-          standard "\n\s\s#{y("gitpusshuten user remove from #{e.name}")}\n\n"
+          standard "\n\s\s#{y("heavenly user remove from #{e.name}")}\n\n"
           error "If you just want to reconfigure the user without removing it, run the following ommand:"
-          standard "\n\s\s#{(y("gitpusshuten user reconfigure for #{e.name}"))}"
+          standard "\n\s\s#{(y("heavenly user reconfigure for #{e.name}"))}"
           exit
         end
         
@@ -90,7 +90,7 @@ module GitPusshuTen
         else
           error "User #{y(c.user)} does not exist at #{y(c.ip)}."
           error "If you want to add #{y(c.user)}, run the following command:"
-          standard "\n\s\s#{y("gitpusshuten user add to #{e.name}")}"
+          standard "\n\s\s#{y("heavenly user add to #{e.name}")}"
         end
       end
 

@@ -3,8 +3,8 @@ module GitPusshuTen
     class Delete < GitPusshuTen::Commands::Base
       description "Deletes the application of the specified environment."
       usage       "delete <environment> environment"
-      example     "gitpusshuten delete staging environment      # Deletes the application in the staging environment."
-      example     "gitpusshuten delete production environment   # Deletes the application in the production environment."
+      example     "heavenly delete staging environment      # Deletes the application in the staging environment."
+      example     "heavenly delete production environment   # Deletes the application in the production environment."
 
       def initialize(*objects)
         super

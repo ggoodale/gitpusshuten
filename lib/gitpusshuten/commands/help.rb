@@ -3,10 +3,10 @@ module GitPusshuTen
     class Help < GitPusshuTen::Commands::Base
       description "Displays the command list, or the help screen for a specific command."
       usage       "help | help <command>"
-      example     "gitpusshuten help                # Displays the main help screen."
-      example     "gitpusshuten help initialize     # Displays the help screen for the initialize command."
-      example     "gitpusshuten help setup          # Displays the help screen for the setup command."
-      example     "gitpusshuten help tag            # Displays the help screen for the tag command."
+      example     "heavenly help                # Displays the main help screen."
+      example     "heavenly help initialize     # Displays the help screen for the initialize command."
+      example     "heavenly help setup          # Displays the help screen for the setup command."
+      example     "heavenly help tag            # Displays the help screen for the tag command."
 
       attr_accessor :command_name
 
