@@ -34,16 +34,9 @@ module GitPusshuTen
     attr_accessor :force_parse
 
     ##
-    # Authorize
-    # Helper method for the pusshuten configuration method 
-    def authorize
-      yield self
-    end
-
-    ##
-    # Applications
-    # Helper method for the pusshuten configuration method
-    def applications
+    # Configure
+    # helper method for the pusshuten configuration method
+    def configure
       yield self
     end
 

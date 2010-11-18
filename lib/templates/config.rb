@@ -13,52 +13,25 @@
 # Example of configuring both a staging and production environment
 pusshuten 'My Application', :staging, :production do
 
-  authorize do |a|
-    a.user       = 'gitpusshuten'
-    # a.password   = 'my-password'
-    # a.passphrase = 'my-ssh-passphrase'
-    a.ip         = '123.45.678.90'
-    a.port       = '22'
+  configure do |c|
+    c.user       = 'gitpusshuten'
+    c.ip         = '123.45.678.90'
+    # c.password   = 'my-password'
+    # c.passphrase = 'my-ssh-passphrase'
+    # c.port       = '22'
+    
+    c.path = '/var/applications/'
   end
 
-  applications do |a|
-    a.path = '/var/applications/'
+  modules do |m|
+    # m.add :bundler
+    # m.add :active_record
+    # m.add :passenger
+    # m.add :nginx
+    # m.add :apache
+    # m.add :nanoc
+    # m.add :rvm
+    # m.add :mysql
   end
 
 end
-
-##
-# Example of only configuring a staging environment
-# pusshuten 'My Application', :staging do
-# 
-#   authorize do |a|
-#     a.user       = 'gitpusshuten'
-#     # a.password   = 'my-password'
-#     # a.passphrase = 'my-ssh-passphrase'
-#     a.ip         = '123.45.678.90'
-#     a.port       = '22'
-#   end
-# 
-#   applications do |a|
-#     a.path = '/var/applications/'
-#   end
-# 
-# end
-
-##
-# Example of only configuring a production environment
-# pusshuten 'My Application', :production do
-# 
-#   authorize do |a|
-#     a.user       = 'gitpusshuten'
-#     # a.password   = 'my-password'
-#     # a.passphrase = 'my-ssh-passphrase'
-#     a.ip         = '123.45.678.90'
-#     a.port       = '22'
-#   end
-#   
-#   applications do |a|
-#     a.path = '/var/applications/'
-#   end
-# 
-# end

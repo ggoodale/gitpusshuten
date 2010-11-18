@@ -1,15 +1,13 @@
 pusshuten 'RSpec Staging Example Application', :staging do
   
-  authorize do |a|
-    a.user        = 'git'
-    a.password    = 'testtest'
-    a.passphrase  = 'myphrase'
-    a.ip          = '123.45.678.910'
-    a.port        = '20'
-  end
-  
-  applications do |a|
-    a.path = '/var/apps/'
+  configure do |c|
+    c.user        = 'git'
+    c.password    = 'testtest'
+    c.passphrase  = 'myphrase'
+    c.ip          = '123.45.678.910'
+    c.port        = '20'
+    
+    c.path        = '/var/apps/'
   end
   
   modules do |m|
