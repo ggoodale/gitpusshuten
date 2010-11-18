@@ -10,7 +10,8 @@
 # then you do not need to specify a nginx restart hook here since the
 # module will automatically add a hook that already does that for you.
 #
-# For more information, visit: http://gitpusshuten.com/modules
+# For more information, visit:
+# http://secretpreview.gitpusshuten.com/documentation/getting-started/deployment-hooks/
 
 perform_on :staging, :production do
   # pre "Echo out something" do

@@ -5,7 +5,8 @@
 # satisfied with just 2: "staging" and "production". These are included
 # in this configuration template. If you need more, feel free to add more.
 #
-# For more information, visit: http://gitpusshuten.com/configuration
+# For more information, visit:
+# http://gitpusshuten.com/documentation/getting-started/configuration/
 
 
 ##
