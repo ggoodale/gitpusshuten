@@ -19,8 +19,8 @@ pusshuten 'My Application', :staging, :production do
     # c.password   = 'my-password'
     # c.passphrase = 'my-ssh-passphrase'
     # c.port       = '22'
-    
-    c.path = '/var/applications/'
+
+    c.path       = '/var/applications/'
   end
 
   modules do |m|
