@@ -1,12 +1,14 @@
 Gem::Specification.new do |gem|
+
   gem.name        = 'gitpusshuten'
   gem.version     = '0.0.1'
   gem.platform    = Gem::Platform::RUBY
   gem.authors     = 'Michael van Rooijen'
   gem.email       = 'meskyanichi@gmail.com'
-  gem.homepage    = 'http://rubygems.org/gems/gitpusshuten'
-  gem.summary     = 'Heavenly Application Deployment.'
-  gem.description = 'Heavenly Application Deployment.'
+  gem.homepage    = 'http://gitpusshuten.com/'
+  gem.summary     = 'Heavenly Git-based Application Deployment.'
+  gem.description = 'A Git-based application deployment tool that allows you to define your environment
+                    by utilizing modules and provision your server with basic deployment needs.'
 
   gem.files         = %x[git ls-files].split("\n")
   gem.test_files    = %x[git ls-files -- {spec}/*].split("\n")
