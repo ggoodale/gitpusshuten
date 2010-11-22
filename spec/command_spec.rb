@@ -13,7 +13,7 @@ describe GitPusshuTen::Command do
   end
   
   it "should error out if the command was not found" do
-    GitPusshuTen::Log.expects(:error).with('Command <non_existing_command> not found.')
+    GitPusshuTen::Log.expects(:error).with("Command <\e[31mnon_existing_command\e[0m> not found.")
     GitPusshuTen::Command.any_instance.expects(:exit)
     
     GitPusshuTen::Command.new(cli, configuration, hooks, environment)
