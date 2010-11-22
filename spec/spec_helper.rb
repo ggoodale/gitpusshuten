@@ -14,11 +14,24 @@ module GitPusshuTen
          super
          self
       end
-      
+
       def perform!
         self
       end
     end
+
+    class NonExistingRootCommand < GitPusshuTen::Commands::Base
+      def initialize(cli, configuration, hooks, environment)
+         super
+         self
+      end
+
+      def perform!
+        prompt_for_root_password!
+        self
+      end
+    end
+
   end
 end
 

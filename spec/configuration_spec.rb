@@ -31,7 +31,7 @@ describe GitPusshuTen::Configuration do
       configuration.passphrase.should == 'myphrase'
       configuration.ip.should         == '123.45.678.910'
       configuration.port.should       == '20'
-      
+      configuration.use_sudo.should   == false
       configuration.path.should       == '/var/apps/'
       
       configuration.additional_modules.should == [:nginx, :passenger, :active_record]

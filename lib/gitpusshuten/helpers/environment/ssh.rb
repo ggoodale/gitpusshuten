@@ -18,57 +18,53 @@ module GitPusshuTen
         end
 
         ##
-        # Performs a single command on the remote environment as a user
-        def execute_as_user(command)
-          @user_password ||= c.password
-          
+        # Performs a single command on the remote environment as the
+        # specified user
+        def execute_as(user, command)
+          @passwords ||= {}
+          if (c.use_sudo && user == 'root')
+            true_user = c.user
+            true_command = "sudo su - -c '#{command}'"
+          else
+            true_user = user
+            true_command = command
+          end
+
+          @passwords[true_user] ||= c.password unless true_user == 'root'
+
           while true
             begin
-              Net::SSH.start(c.ip, c.user, {
-                :password   => @user_password,
+              Net::SSH.start(c.ip, true_user, {
+                :password   => @passwords[true_user],
                 :passphrase => c.passphrase,
                 :port       => c.port
               }) do |ssh|
-                response = ssh.exec!(command)
-                GitPusshuTen::Log.silent response 
+                response = ssh.exec!(true_command)
+                GitPusshuTen::Log.silent response
                 return response
               end
             rescue Net::SSH::AuthenticationFailed
               if @user_attempted
                 GitPusshuTen::Log.error "Password incorrect. Please retry."
               else
-                GitPusshuTen::Log.message "Please provide the password for #{c.user.to_s.color(:yellow)} (#{c.ip.color(:yellow)})."
+                GitPusshuTen::Log.message "Please provide the password for #{true_user.to_s.color(:yellow)} (#{c.ip.color(:yellow)})."
                 @user_attempted = true
               end
-              @user_password = ask('') { |q| q.echo = false }
+              @passwords[user] = ask('') { |q| q.echo = false }
             end
           end
         end
 
         ##
-        # Performs a command as root
+        # Performs a single command on the remote environment as a user
+        def execute_as_user(command)
+          execute_as(c.user, command)
+        end
+
+        ##
+        # Performs a command as root.
         def execute_as_root(command)
-          while true
-            begin
-              Net::SSH.start(c.ip, 'root', {
-                :password   => @root_password,
-                :passphrase => c.passphrase,
-                :port       => c.port
-              }) do |ssh|
-                response = ssh.exec!(command)
-                GitPusshuTen::Log.silent response 
-                return response
-              end              
-            rescue Net::SSH::AuthenticationFailed
-              if @root_attempted
-                GitPusshuTen::Log.error "Password incorrect. Please retry."
-              else
-                GitPusshuTen::Log.message "Please provide the password for #{'root'.color(:yellow)} (#{c.ip.color(:yellow)})."
-                @root_attempted = true
-              end
-              @root_password = ask('') { |q| q.echo = false }
-            end
-          end
+          execute_as('root', command)
         end
 
       end
